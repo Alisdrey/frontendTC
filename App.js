@@ -11,6 +11,13 @@ import HomeScreen from './src/screens/home/HomeScreen';
 import HomeScreenDetail from './src/screens/home/HomeScreenDetail';
 import SettingsScreen from './src/screens/home/SettingsScreen';
 import SettingsScreenDetail from './src/screens/home/SettingsScreenDetail';
+import SplashScreen from './src/SplashScreen';
+import SignInScreen from './src/screens/auth/SignInScreen';
+import SignUpScreen from './src/screens/auth/SignUpScreen';
+import SignUpTwoScreen from './src/screens/auth/SignUpTwoScreen';
+import SignUpTreeScreen from './src/screens/auth/SignUpTreeScreen';
+
+
 
 import NotificationsScreen from './src/componets/drawer/NotificationsScreen';
 
@@ -86,6 +93,11 @@ function DrawerNavigator({navigation}){
     drawerContent={() => <CustomDrawerContent  navigation={navigation}/>}>
       <Drawer.Screen name="MenuTab" component={TabNavigator} />
       <Drawer.Screen name="Notifications" component={NotificationsScreen} />
+      <Drawer.Screen name="Splash" component={SplashScreen} />
+      <Drawer.Screen name="SignIn" component={SignInScreen} />
+      <Drawer.Screen name="SignUp" component={SignUpScreen} />
+      <Drawer.Screen name="SignUpTwo" component={SignUpTwoScreen} />
+      <Drawer.Screen name="SignUpTree" component={SignUpTreeScreen} />
     </Drawer.Navigator>
   )
 
