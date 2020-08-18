@@ -1,26 +1,30 @@
-import React from 'react';
-import { 
-    View, 
-    Text, 
-    TouchableOpacity, 
+import React, {useEffect } from 'react';
+import {
+    View,
+    Text,
+    TouchableOpacity,
     TextInput,
     Platform,
-    StyleSheet ,
+    StyleSheet,
     StatusBar,
-    Alert
+    Alert,
+    ScrollView
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
+import AsyncStorage from '@react-native-community/async-storage';
+import Server from '../settings/Server';
 
 import { useTheme } from 'react-native-paper';
 
-const SignInScreen = ({navigation}) => {
+const SignInScreen = ({ navigation }) => {
 
     const [data, setData] = React.useState({
         username: '',
+        user: {},
         password: '',
         check_textInputChange: false,
         secureTextEntry: true,
@@ -31,7 +35,7 @@ const SignInScreen = ({navigation}) => {
     const { colors } = useTheme();
 
     const textInputChange = (val) => {
-        if( val.trim().length >= 4 ) {
+        if (val.trim().length >= 4) {
             setData({
                 ...data,
                 username: val,
@@ -49,7 +53,7 @@ const SignInScreen = ({navigation}) => {
     }
 
     const handlePasswordChange = (val) => {
-        if( val.trim().length >= 8 ) {
+        if (val.trim().length >= 8) {
             setData({
                 ...data,
                 password: val,
@@ -72,7 +76,7 @@ const SignInScreen = ({navigation}) => {
     }
 
     const handleValidUser = (val) => {
-        if( val.trim().length >= 4 ) {
+        if (val.trim().length >= 4) {
             setData({
                 ...data,
                 isValidUser: true
@@ -85,156 +89,195 @@ const SignInScreen = ({navigation}) => {
         }
     }
 
-    const loginHandle = (userName, password) => {
+    const loginHandle = () => {
 
-        // const foundUser = Users.filter( item => {
-        //     return userName == item.username && password == item.password;
-        // } );
+        if (data.username != "" && data.password != "") {
+            const url = Server.API +
+                data.username +
+                "/" +
+                data.password
 
-        // if ( data.username.length == 0 || data.password.length == 0 ) {
-            Alert.alert('Wrong Input!', 'Username or password field cannot be empty.', [
-                {text: 'Okay'}
-            ]);
-        //     return;
-        // }
+            fetch(url)
+                .then(response => response.json())
+                .then(responseJson => {
+                    if (responseJson.success != "false") {
+                        AsyncStorage.setItem(
+                            "User",
+                            JSON.stringify(responseJson)
+                        ).then(() => {
+                            navigation.navigate("HomeAP");
+                        });
 
-        // if ( foundUser.length == 0 ) {
-        //     Alert.alert('Invalid User!', 'Username or password is incorrect.', [
-        //         {text: 'Okay'}
-        //     ]);
-        //     return;
-        // }
-        // signIn(foundUser);
+                    } else {
+
+                        Alert.alert(
+                            "Nome ou senha de usuário incorreto",
+                            "O nome de usuário ou senha não parece pertencer a uma conta. Verifique seus dados e tente novamente. ",
+                            [
+                                {
+                                    text: "OK",
+                                    onPress: () =>
+                                        console.log("cancel"),
+                                    style: "default"
+                                },
+                            ],
+                            { cancelable: false }
+                        )
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        } else {
+
+            Alert.alert(
+                "Nome ou senha vazios",
+                "Preencha todos os campos e tente novamente. ",
+                [
+                    {
+                        text: "OK",
+                        onPress: () =>
+                            console.log("cancel"),
+                        style: "default"
+                    },
+                ],
+                { cancelable: false }
+            )
+        }
     }
 
     return (
-      <View style={styles.container}>
-          <StatusBar backgroundColor='#009387' barStyle="light-content"/>
-        <View style={styles.header}>
-            <Text style={styles.text_header}>Bem-Vindo!</Text>
-        </View>
-        <Animatable.View 
-            animation="fadeInUpBig"
-            style={[styles.footer, {
-                backgroundColor: colors.background
-            }]}
-        >
-            <Text style={[styles.text_footer, {
-                color: colors.text
-            }]}>Usuário</Text>
-            <View style={styles.action}>
-                <MaterialIcons 
-                    name="person"
-                    color={colors.text}
-                    size={20}
-                />
-                <TextInput 
-                    placeholder="Seu usuário"
-                    placeholderTextColor="#666666"
-                    style={[styles.textInput, {
+
+        <View style={styles.container}>
+            <StatusBar backgroundColor='#009387' barStyle="light-content" />
+            <View style={styles.header}>
+                <Text style={styles.text_header}>Bem-Vindo!</Text>
+            </View>
+            <Animatable.View
+                animation="fadeInUpBig"
+                style={[styles.footer, {
+                    backgroundColor: colors.background
+                }]}
+            >
+                <ScrollView style={{ width: "100%", marginBottom: -25 }}>
+                    <Text style={[styles.text_footer, {
                         color: colors.text
-                    }]}
-                    autoCapitalize="none"
-                    onChangeText={(val) => textInputChange(val)}
-                    onEndEditing={(e)=>handleValidUser(e.nativeEvent.text)}
-                />
-                {data.check_textInputChange ? 
-                <Animatable.View
-                    animation="bounceIn"
-                >
-                    <Feather 
-                        name="check-circle"
-                        color="green"
+                    }]}>Usuário</Text>
+                <View style={styles.action}>
+                    <MaterialIcons
+                        name="person"
+                        color={colors.text}
                         size={20}
                     />
-                </Animatable.View>
-                : null}
-            </View>
-            { data.isValidUser ? null : 
-            <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styles.errorMsg}>O nome de usuário deve ter 4 caracteres.</Text>
-            </Animatable.View>
-            }
-            
+                    <TextInput
+                        placeholder="Seu usuário"
+                        placeholderTextColor="#666666"
+                        style={[styles.textInput, {
+                            color: colors.text
+                        }]}
+                        autoCapitalize="none"
+                        onChangeText={(val) => textInputChange(val)}
+                        onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
+                    />
+                    {data.check_textInputChange ?
+                        <Animatable.View
+                            animation="bounceIn"
+                        >
+                            <Feather
+                                name="check-circle"
+                                color="green"
+                                size={20}
+                            />
+                        </Animatable.View>
+                        : null}
+                </View>
+                {data.isValidUser ? null :
+                    <Animatable.View animation="fadeInLeft" duration={500}>
+                        <Text style={styles.errorMsg}>O nome de usuário deve ter 4 caracteres.</Text>
+                    </Animatable.View>
+                }
 
-            <Text style={[styles.text_footer, {
-                color: colors.text,
-                marginTop: 35
-            }]}>Senha</Text>
-            <View style={styles.action}>
-                <Feather 
-                    name="lock"
-                    color={colors.text}
-                    size={20}
-                />
-                <TextInput 
-                    placeholder="Sua senha"
-                    placeholderTextColor="#666666"
-                    secureTextEntry={data.secureTextEntry ? true : false}
-                    style={[styles.textInput, {
-                        color: colors.text
-                    }]}
-                    autoCapitalize="none"
-                    onChangeText={(val) => handlePasswordChange(val)}
-                />
-                <TouchableOpacity
-                    onPress={updateSecureTextEntry}
-                >
-                    {data.secureTextEntry ? 
-                    <Feather 
-                        name="eye-off"
-                        color="grey"
+
+                <Text style={[styles.text_footer, {
+                    color: colors.text,
+                    marginTop: 35
+                }]}>Senha</Text>
+                <View style={styles.action}>
+                    <Feather
+                        name="lock"
+                        color={colors.text}
                         size={20}
                     />
-                    :
-                    <Feather 
-                        name="eye"
-                        color="grey"
-                        size={20}
+                    <TextInput
+                        placeholder="Sua senha"
+                        placeholderTextColor="#666666"
+                        secureTextEntry={data.secureTextEntry ? true : false}
+                        style={[styles.textInput, {
+                            color: colors.text
+                        }]}
+                        autoCapitalize="none"
+                        onChangeText={(val) => handlePasswordChange(val)}
                     />
-                    }
-                </TouchableOpacity>
-            </View>
-            { data.isValidPassword ? null : 
-            <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styles.errorMsg}>A senha deve conter pelo menos 8 caracteres.</Text>
-            </Animatable.View>
-            }
-            
+                    <TouchableOpacity
+                        onPress={updateSecureTextEntry}
+                    >
+                        {data.secureTextEntry ?
+                            <Feather
+                                name="eye-off"
+                                color="grey"
+                                size={20}
+                            />
+                            :
+                            <Feather
+                                name="eye"
+                                color="grey"
+                                size={20}
+                            />
+                        }
+                    </TouchableOpacity>
+                </View>
+                {data.isValidPassword ? null :
+                    <Animatable.View animation="fadeInLeft" duration={500}>
+                        <Text style={styles.errorMsg}>A senha deve conter pelo menos 8 caracteres.</Text>
+                    </Animatable.View>
+                }
 
-            <TouchableOpacity>
-                <Text style={{color: '#009387', marginTop:15}}>Esqueceu sua senha?</Text>
-            </TouchableOpacity>
-            <View style={styles.button}>
-                <TouchableOpacity
-                    style={styles.signIn}
-                    onPress={() => {loginHandle( data.username, data.password )}}
-                >
-                <LinearGradient
-                    colors={['#08d4c4', '#01ab9d']}
-                    style={styles.signIn}
-                >
-                    <Text style={[styles.textSign, {
-                        color:'#fff'
-                    }]}>Entrar</Text>
-                </LinearGradient>
-                </TouchableOpacity>
 
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('SignUp')}
-                    style={[styles.signIn, {
-                        borderColor: '#009387',
-                        borderWidth: 1,
-                        marginTop: 15
-                    }]}
-                >
-                    <Text style={[styles.textSign, {
-                        color: '#009387'
-                    }]}>Cadastrar</Text>
+                <TouchableOpacity>
+                    <Text style={{ color: '#009387', marginTop: 15 }}>Esqueceu sua senha?</Text>
                 </TouchableOpacity>
-            </View>
+                <View style={styles.button}>
+                    <TouchableOpacity
+                        style={styles.signIn}
+                        onPress={() => { loginHandle() }}
+                    >
+                        <LinearGradient
+                            colors={['#08d4c4', '#01ab9d']}
+                            style={styles.signIn}
+                        >
+                            <Text style={[styles.textSign, {
+                                color: '#fff'
+                            }]}>Entrar</Text>
+                        </LinearGradient>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate('SignUp')}
+                        style={[styles.signIn, {
+                            borderColor: '#009387',
+                            borderWidth: 1,
+                            marginTop: 15
+                        }]}
+                    >
+                        <Text style={[styles.textSign, {
+                            color: '#009387'
+                        }]}>Cadastrar</Text>
+                    </TouchableOpacity>
+
+                </View>
+            </ScrollView>
         </Animatable.View>
-      </View>
+      </View >
     );
 };
 
@@ -242,8 +285,8 @@ export default SignInScreen;
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1, 
-      backgroundColor: '#009387'
+        flex: 1,
+        backgroundColor: '#009387'
     },
     header: {
         flex: 1,
@@ -307,4 +350,4 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold'
     }
-  });
+});

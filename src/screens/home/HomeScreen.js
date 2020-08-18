@@ -1,22 +1,41 @@
-import React, { Component } from 'react';
-import { Text, View, SafeAreaView, TouchableOpacity, Image, ScrollView } from 'react-native';
-import {CustomHeader} from '../../index';
-
-export default class HomeScreen extends Component {
-    render(){
-        return (
-            <SafeAreaView style={{ flex: 1 }}>
-              <CustomHeader title="Home" isHome={true} navigation={this.props.navigation} />
-              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Text>Home!</Text>
-                <TouchableOpacity
-                  style={{ marginTop: 20 }}
-                  onPress={() => this.props.navigation.navigate('Splash')}
-                >
-                  <Text>Go home detail</Text>
-                </TouchableOpacity>
-              </View>
-            </SafeAreaView>
-        );
-    }
+import * as React from 'react';
+import { View, StyleSheet, Dimensions } from 'react-native';
+import { TabView, SceneMap } from 'react-native-tab-view';
+ 
+const FirstRoute = () => (
+  <View style={[styles.scene, { backgroundColor: '#ff4081' }]} />
+);
+ 
+const SecondRoute = () => (
+  <View style={[styles.scene, { backgroundColor: '#673ab7' }]} />
+);
+ 
+const initialLayout = { width: Dimensions.get('window').width };
+ 
+export default function TabViewExample() {
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    { key: 'first', title: 'First' },
+    { key: 'second', title: 'Second' },
+  ]);
+ 
+  const renderScene = SceneMap({
+    first: FirstRoute,
+    second: SecondRoute,
+  });
+ 
+  return (
+    <TabView
+      navigationState={{ index, routes }}
+      renderScene={renderScene}
+      onIndexChange={setIndex}
+      initialLayout={initialLayout}
+    />
+  );
 }
+ 
+const styles = StyleSheet.create({
+  scene: {
+    flex: 1,
+  },
+});

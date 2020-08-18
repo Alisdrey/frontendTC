@@ -233,8 +233,8 @@ const SignUpTwoScreen = ({ route, navigation }) => {
                         color: colors.text
                     }]}>Rua</Text>
                     <View style={styles.action}>
-                        <MaterialIcons
-                            name="person"
+                        <FontAwesome
+                            name="road"
                             color={colors.text}
                             size={20}
                         />
@@ -266,15 +266,15 @@ const SignUpTwoScreen = ({ route, navigation }) => {
                         </Animatable.View>
                     }
 
-                    {/* ========= Sobrenome ========= */}
+                    {/* ========= Número ========= */}
 
                     <Text style={[styles.text_footer, {
                         color: colors.text,
                         marginTop: 35
                     }]}>Número</Text>
                     <View style={styles.action}>
-                        <MaterialIcons
-                            name="person"
+                        <FontAwesome
+                            name="sort-numeric-asc"
                             color={colors.text}
                             size={20}
                         />
@@ -315,8 +315,8 @@ const SignUpTwoScreen = ({ route, navigation }) => {
                         marginTop: 35
                     }]}>Bairro</Text>
                     <View style={styles.action}>
-                        <MaterialIcons
-                            name="local-phone"
+                        <FontAwesome
+                            name="road"
                             color={colors.text}
                             size={20}
                         />
@@ -355,7 +355,7 @@ const SignUpTwoScreen = ({ route, navigation }) => {
                     }]}>Cidade</Text>
                     <View style={styles.action}>
                         <MaterialIcons
-                            name="local-phone"
+                            name="location-city"
                             color={colors.text}
                             size={20}
                         />
@@ -394,7 +394,7 @@ const SignUpTwoScreen = ({ route, navigation }) => {
                     }]}>UF</Text>
                     <View style={styles.action}>
                         <MaterialIcons
-                            name="local-phone"
+                            name="location-city"
                             color={colors.text}
                             size={20}
                         />
@@ -433,7 +433,7 @@ const SignUpTwoScreen = ({ route, navigation }) => {
                     }]}>Cep</Text>
                     <View style={styles.action}>
                         <MaterialIcons
-                            name="local-phone"
+                            name="location-city"
                             color={colors.text}
                             size={20}
                         />

@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 import CustomHeader from './src/CustumHeader';
 import CustomDrawerContent from './src/CustomDrawerContent';
@@ -16,6 +17,12 @@ import SignInScreen from './src/screens/auth/SignInScreen';
 import SignUpScreen from './src/screens/auth/SignUpScreen';
 import SignUpTwoScreen from './src/screens/auth/SignUpTwoScreen';
 import SignUpTreeScreen from './src/screens/auth/SignUpTreeScreen';
+import HomeAPScreen from './src/screens/home/HomeAPScreen';
+import RegisterAnimalScreen from './src/screens/registerAnimals/RegisterAnimalScreen';
+import RegisterPhotoAnimalScreen from './src/screens/registerAnimals/RegisterPhotoAnimalsScreen';
+
+
+
 
 
 
@@ -35,6 +42,7 @@ function HomeStack() {
     <StackHome.Navigator>
       <StackHome.Screen name="HomeScreen" component={HomeScreen} options={navOptionHandler} />
       <StackHome.Screen name="HomeDetail" component={HomeScreenDetail} options={navOptionHandler} />
+      <StackHome.Screen name="TopTabs" children={createTopTabs} />
     </StackHome.Navigator>
   )
 }
@@ -85,11 +93,22 @@ function TabNavigator() {
   )
 }
 
+const MaterialTopTabs = createMaterialTopTabNavigator();
+
+function createTopTabs () {
+  return (
+    <MaterialTopTabs.Navigator>
+      <MaterialTopTabs.Screen name="Home" component={HomeScreen} />
+      <MaterialTopTabs.Screen name="Settings" component={SettingsScreen} />
+    </MaterialTopTabs.Navigator>
+  );
+}
+
 const Drawer = createDrawerNavigator();
 
 function DrawerNavigator({navigation}){
   return(
-    <Drawer.Navigator initialRouteName="MenuTab" 
+    <Drawer.Navigator initialRouteName="HomeAP" 
     drawerContent={() => <CustomDrawerContent  navigation={navigation}/>}>
       <Drawer.Screen name="MenuTab" component={TabNavigator} />
       <Drawer.Screen name="Notifications" component={NotificationsScreen} />
@@ -98,7 +117,12 @@ function DrawerNavigator({navigation}){
       <Drawer.Screen name="SignUp" component={SignUpScreen} />
       <Drawer.Screen name="SignUpTwo" component={SignUpTwoScreen} />
       <Drawer.Screen name="SignUpTree" component={SignUpTreeScreen} />
+      <Drawer.Screen name="HomeAP" component={HomeAPScreen} />
+      <Drawer.Screen name="RegisterAnimal" component={RegisterAnimalScreen} />
+      <Drawer.Screen name="RegisterPhotoAnimals" component={RegisterPhotoAnimalScreen} />
+
     </Drawer.Navigator>
+    
   )
 
 }
@@ -109,10 +133,12 @@ const StackApp = createStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <StackApp.Navigator initialRouteName="Setting" >
+    <NavigationContainer >
+      <StackApp.Navigator initialRouteName="HomeAP" >
+        <StackApp.Screen name="Home" component={DrawerNavigator} options={navOptionHandler} />
         <StackApp.Screen name="Setting" component={DrawerNavigator} options={navOptionHandler} />
       </StackApp.Navigator>
     </NavigationContainer>
+
   );
 }

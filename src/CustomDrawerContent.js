@@ -4,7 +4,7 @@ import { Text, View, SafeAreaView, TouchableOpacity, Image, ScrollView } from 'r
 export default class CustomDrawerContent extends Component{
     render(props){
         return (
-            <SafeAreaView style={{ flex: 1, backgroundColor: 'orange' }}>
+            <SafeAreaView style={{ flex: 1, backgroundColor: 'green' }}>
               <View style={{height:150, alignItems: 'center', justifyContent: 'center'}}>
                 <Image source={require('./source/user.png')} style={{height: 120,width: 120, borderRadius: 60}}/>
         
@@ -12,15 +12,15 @@ export default class CustomDrawerContent extends Component{
               <ScrollView style={{marginLeft: 5}}>
                 <TouchableOpacity
                   style={{ marginTop: 20 }}
-                  onPress={() => this.props.navigation.navigate('MenuTab')}
+                  onPress={() => this.props.navigation.navigate('HomeAP')}
                 >
-                  <Text>Menu Tab</Text>
+                  <Text>Home</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={{ marginTop: 20 }}
-                  onPress={() => this.props.navigation.navigate('Notifications')}
+                  onPress={() => this.props.navigation.navigate('RegisterAnimal')}
                 >
-                  <Text>Notifications</Text>
+                  <Text>Cadastrar Animal</Text>
                 </TouchableOpacity>
               </ScrollView>
             </SafeAreaView>

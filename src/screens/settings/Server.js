@@ -18,7 +18,7 @@ export default {
     API_GET_PET_ACHADO_ID: "http://192.140.89.25:8022/PetWorld/achado/",
     API_GET_PET_PERDIDO_ID: "http://192.140.89.25:8022/PetWorld/perdido/",
     API_INSERT_DOACAO: "http://192.140.89.25:8022/PetWorld/doacao/inserir",
-    API_GET_DOADO: "http://192.140.89.25:8022/PetWorld/doacao",
+    API_GET_DOADO: "http://andremreis.ddns.net:8022/PetWorld/doacao",
 
 
 
