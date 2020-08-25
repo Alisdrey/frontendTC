@@ -20,13 +20,9 @@ import SignUpTreeScreen from './src/screens/auth/SignUpTreeScreen';
 import HomeAPScreen from './src/screens/home/HomeAPScreen';
 import RegisterAnimalScreen from './src/screens/registerAnimals/RegisterAnimalScreen';
 import RegisterPhotoAnimalScreen from './src/screens/registerAnimals/RegisterPhotoAnimalsScreen';
+import RegisterPhotoAnimalTwoScreen from './src/screens/registerAnimals/RegisterPhotoAnimalsTwoScreen';
+import RegisterPhotoAnimalTreeScreen from './src/screens/registerAnimals/RegisterPhotoAnimalsTreeScreen';
 
-
-
-
-
-
-import NotificationsScreen from './src/componets/drawer/NotificationsScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -111,7 +107,6 @@ function DrawerNavigator({navigation}){
     <Drawer.Navigator initialRouteName="HomeAP" 
     drawerContent={() => <CustomDrawerContent  navigation={navigation}/>}>
       <Drawer.Screen name="MenuTab" component={TabNavigator} />
-      <Drawer.Screen name="Notifications" component={NotificationsScreen} />
       <Drawer.Screen name="Splash" component={SplashScreen} />
       <Drawer.Screen name="SignIn" component={SignInScreen} />
       <Drawer.Screen name="SignUp" component={SignUpScreen} />
@@ -120,6 +115,8 @@ function DrawerNavigator({navigation}){
       <Drawer.Screen name="HomeAP" component={HomeAPScreen} />
       <Drawer.Screen name="RegisterAnimal" component={RegisterAnimalScreen} />
       <Drawer.Screen name="RegisterPhotoAnimals" component={RegisterPhotoAnimalScreen} />
+      <Drawer.Screen name="RegisterPhotoAnimalsTwo" component={RegisterPhotoAnimalTwoScreen} />
+      <Drawer.Screen name="RegisterPhotoAnimalsTree" component={RegisterPhotoAnimalTreeScreen} />
 
     </Drawer.Navigator>
     

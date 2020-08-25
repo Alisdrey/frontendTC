@@ -3,31 +3,48 @@ import {
     View,
     Text,
     TouchableOpacity,
+    TextInput,
+    Platform,
+    StyleSheet,
+    StatusBar,
     Alert,
+    ScrollView,
+    PermissionsAndroid,
+    SafeAreaView,
     Image,
     Dimensions
 
 } from 'react-native';
-import { Root } from 'native-base'
+import { Root, ActionSheet } from 'native-base'
 import * as Animatable from 'react-native-animatable';
+import LinearGradient from 'react-native-linear-gradient';
+import Feather from 'react-native-vector-icons/Feather';
+import { Col, Row, Grid } from "react-native-easy-grid";
+import Geolocation from 'react-native-geolocation-service';
+import { useTheme } from 'react-native-paper';
 import Renderif from "../../componets/RenderIf";
-import { Avatar } from 'react-native-paper';
+import { Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
 import ImagePicker from 'react-native-image-crop-picker';
+import { Picker } from '@react-native-community/picker';
+import ResponsiveImage from 'react-native-responsive-image';
 import styles from '../settings/styles';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Server from '../settings/Server';
 
+
+
 const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
 
-const RegisterPhotoAnimals = ({ route, navigation, props }) => {
+const RegisterPhotoAnimalsTree = ({ route, navigation, props }) => {
+
 
     const { idanimal } = route.params;
-
+    const { imagem } = route.params;
 
     const [date, setData] = React.useState({
         idanimal: idanimal,
+        imagem: imagem,
         user: {},
-        imagem: [],
         variant: '',
         haveimg: false
 
@@ -52,10 +69,20 @@ const RegisterPhotoAnimals = ({ route, navigation, props }) => {
         }
     ];
 
+    const _enviar = () => {
+        if (date.imagem.length != 0) {
+            sendToServer().then(() => {
+                date.imagem.forEach(element => {
+                    console.log("element", element)
+                });
+            })
+        }
+    }
+
+
 
     const sendToServer = async () => {
         try {
-            
             let formdata_img = new FormData();
 
             date.imagem.forEach(item => {
@@ -81,7 +108,7 @@ const RegisterPhotoAnimals = ({ route, navigation, props }) => {
                     body: formdata_img
                 }).then(response => response.json())
                     .then(response => {
-                       navigation.navigate("HomeAP")
+                        props.navigation.navigate("HomeAP")
 
                     }).catch(error => {
                         console.log(error);
@@ -93,33 +120,38 @@ const RegisterPhotoAnimals = ({ route, navigation, props }) => {
     }
 
 
-    const _enviar = () => {
-        if (date.imagem != "") {
-            sendToServer().then(() => {
-                date.imagem.forEach(element => {
-                    console.log("element", element)
-                });
-            })
-        } else {
-            Alert.alert(
-                "[Sem imagem]",
-                "Ops, parece que você não inseriu nenhuma imagem :( ",
-                [
-                    {
-                        text: "OK",
-                        onPress: () =>
-                           console.log("cancel"),
-                        style: "default"
-                    },
-                ],
-                { cancelable: false }
-            )
-        }
-    }
+    const _handleActionSheetButton = (btnIndex) => {
+        { console.log(date) }
+        switch (btnIndex) {
+            case 0:
+                ImagePicker.openCamera({
+                    width: 800,
+                    height: 800,
+                    includeBase64: true,
+                    cropping: true,
+                    compressImageQuality: 0.4,
+                    compressImageMaxWidth: 800,
+                    compressImageMaxHeight: 800,
+                    cropperChooseText: "Confirmar",
+                    cropperCancelText: "Cancelar",
+                    loadingLabelText: "Carregando",
+                    cropperStatusBarColor: "#E76801",
+                    cropperToolbarColor: "#E76801",
+                    cropperActiveWidgetColor: "#E76801",
+                    cropperTintColor: "#E76801",
+                })
+                    .then(imagem => {
+                        console.log(imagem)
+                        const dados = {
+                            imagem: imagem
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    })
+                break;
 
-
-    const _handleActionSheetButton = () => {
-        
+            case 1:
                 ImagePicker.openPicker({
                     multiple: true,
                     width: 800,
@@ -138,50 +170,38 @@ const RegisterPhotoAnimals = ({ route, navigation, props }) => {
                     cropperTintColor: "#E76801",
                 })
                     .then(imagem => {
-
                         setData(prevState => ({
                             ...date,
-                            imagem: [...prevState.imagem, {"imagem": imagem[0]}],
+                            imagem: [...prevState.imagem, { "imagem": imagem[0] }],
                             haveimg: true
                         }))
                     })
-         
-    }
+                break;
 
-    const _navigation = () => {
-        if (date.imagem.length != 0) {
-            navigation.navigate(
-                "RegisterPhotoAnimalsTwo"
-                , {
-                   imagem: date.imagem,
-                   idanimal: date.idanimal
-                }
-            )
-        } else {
-            Alert.alert(
-                "[Sem imagem]",
-                "Ops, parece que você não inseriu nenhuma imagem :( ",
-                [
-                    {
-                        text: "OK",
-                        onPress: () =>
-                           console.log("cancel"),
-                        style: "default"
-                    },
-                ],
-                { cancelable: false }
-            )
+            default:
+                break;
         }
     }
+    const _handleChooseImage = () => {
+        ActionSheet.show(
+            {
+                options: ["Câmera", "Galeria", "Cancelar"],
+                cancelButtonIndex: 2,
+                title: "Escolha o que fazer"
+            },
+            buttonIndex => {
+                _handleActionSheetButton(buttonIndex);
+            }
+        );
+    }
+
 
     return (
         <Root>
-            {console.log(date)}
             <View style={styles.containerCardItem}>
-                {/* IMAGE */}
                 <TouchableOpacity
                     style={{ padding: 15, }}
-                    onPress={() => { _handleActionSheetButton() }}
+                    onPress={() => { _handleChooseImage() }}
                 >
                     {
                         !date.haveimg ?
@@ -191,11 +211,10 @@ const RegisterPhotoAnimals = ({ route, navigation, props }) => {
                             <Image source={{
                                 uri:
                                     "data:image/jpeg;base64," +
-                                    date.imagem[0].imagem.data
+                                    date.imagem[2].imagem.data
                             }} style={imageStyle} />
 
                     }
-
 
                 </TouchableOpacity>
 
@@ -207,13 +226,12 @@ const RegisterPhotoAnimals = ({ route, navigation, props }) => {
 
                 {/* <Text style={nameStyle}>olá</Text> */}
 
-
-                <Text style={styles.descriptionCardItem,nameStyle}>1/3</Text>
+                <Text style={styles.descriptionCardItem, nameStyle}>3/3</Text>
 
 
                 <View style={styles.actionsCardItem}>
 
-                    <TouchableOpacity
+                <TouchableOpacity
                        style={{ padding: 20 }}
                         onPress={() =>
                             navigation.goBack()} >
@@ -233,23 +251,12 @@ const RegisterPhotoAnimals = ({ route, navigation, props }) => {
                             </Text>
                         </View>
                     </TouchableOpacity>
-                   
-                    <TouchableOpacity 
-                        style={{ padding: 20 }}
-                         onPress={() =>
-                           _navigation()} >
-                            <View style={styles.matchesCardItem}>
-                                <Text style={styles.matchesTextGoUp}>
-                                    <FontAwesome style={{fontSize:15}} name="arrow-right" />
-                                    {/* <Text>{'\n'} próximo </Text> */}
-                                </Text>
-                            </View>
-                    </TouchableOpacity>
-                 
+
+
                 </View>
             </View>
         </Root>
     );
 };
 
-export default RegisterPhotoAnimals;
+export default RegisterPhotoAnimalsTree;
