@@ -165,53 +165,9 @@ const SignUpTwoScreen = ({ route, navigation }) => {
     }
 
 
-    const handleValidNome = (val) => {
-        if (val.trim().length > 0) {
-            setData({
-                ...data,
-                isValidNome: true
-            });
-        } else {
-            setData({
-                ...data,
-                isValidNome: false
-            });
-        }
-    }
-
-
-    const handleValidSobrenome = (val) => {
-        if (val.trim().length > 1) {
-            setData({
-                ...data,
-                isValidSobrenome: true
-            });
-        } else {
-            setData({
-                ...data,
-                isValidSobrenome: false
-            });
-        }
-    }
-
-    const handleValidTelefone = (val) => {
-        if (val.trim().length > 0) {
-            setData({
-                ...data,
-                isValidTelefone: true
-            });
-        } else {
-            setData({
-                ...data,
-                isValidTelefone: false
-            });
-        }
-    }
-
-
     return (
         <View style={styles.container}>
-            <StatusBar backgroundColor='#009387' barStyle="light-content" />
+            <StatusBar backgroundColor='#b8510d' barStyle="light-content" />
             <View style={styles.header}>
                 <Text style={styles.text_header}>Boa! Agora vamos para seu endereço residencial. {"\n"}Conta para gente onde você mora.</Text>
             </View>
@@ -492,7 +448,7 @@ const SignUpTwoScreen = ({ route, navigation }) => {
 
                         >
                             <LinearGradient
-                                colors={['#08d4c4', '#01ab9d']}
+                                colors={['#f7cf72', '#b8510d']}
                                 style={styles.signIn}
                             >
                                 <Text style={[styles.textSign, {
@@ -513,7 +469,7 @@ export default SignUpTwoScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#009387'
+        backgroundColor: '#b8510d'
     },
     header: {
         flex: 1,

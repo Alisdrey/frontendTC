@@ -1,6 +1,6 @@
 import { StyleSheet, Dimensions } from "react-native";
 
-const PRIMARY_COLOR = "#f0f0f0";
+const PRIMARY_COLOR = '#db921d';
 const SECONDARY_COLOR = "#5636B8";
 const WHITE = "#FFFFFF";
 const GRAY = "#757E90";
@@ -33,7 +33,7 @@ export default StyleSheet.create({
 	},
 	matchesCardItem: {
 		marginTop: -20,
-		backgroundColor: PRIMARY_COLOR,
+		backgroundColor: '#ededed',
 		paddingVertical: 15,
 		paddingHorizontal: 20,
 		borderRadius: 50
@@ -214,7 +214,7 @@ export default StyleSheet.create({
 	},
 	matchesTextProfileItem: {
 		fontFamily: ICON_FONT,
-		color: WHITE
+		color: 'white'
 	},
 	name: {
 		paddingTop: 25,
@@ -250,7 +250,7 @@ export default StyleSheet.create({
 		flex: 1,
 		resizeMode: "cover",
 		width: DIMENSION_WIDTH,
-		height: DIMENSION_HEIGHT
+		height: DIMENSION_HEIGHT,
 	},
 	top: {
 		paddingTop: 50,

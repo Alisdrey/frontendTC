@@ -5,7 +5,8 @@ import {
     TouchableOpacity,
     Alert,
     Image,
-    Dimensions
+    Dimensions,
+    StatusBar
 
 } from 'react-native';
 import { Root } from 'native-base'
@@ -178,6 +179,7 @@ const RegisterPhotoAnimals = ({ route, navigation, props }) => {
         <Root>
             {console.log(date)}
             <View style={styles.containerCardItem}>
+            <StatusBar backgroundColor='#f4f4f1' barStyle="light-content" />
                 {/* IMAGE */}
                 <TouchableOpacity
                     style={{ padding: 15, }}

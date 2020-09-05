@@ -22,6 +22,15 @@ import RegisterAnimalScreen from './src/screens/registerAnimals/RegisterAnimalSc
 import RegisterPhotoAnimalScreen from './src/screens/registerAnimals/RegisterPhotoAnimalsScreen';
 import RegisterPhotoAnimalTwoScreen from './src/screens/registerAnimals/RegisterPhotoAnimalsTwoScreen';
 import RegisterPhotoAnimalTreeScreen from './src/screens/registerAnimals/RegisterPhotoAnimalsTreeScreen';
+import RegisterAnimalPerdidoScreen from './src/screens/AchadoPerdido/registerAnimalsPerdidoScreen';
+import RegisterAnimalsAchadoScreen from './src/screens/AchadoPerdido/registerAnimalsAchadoScreen';
+import registerPhotoAnimalsAchadoScreen from './src/screens/AchadoPerdido/registerPhotoAnimalsAchadoScreen';
+import registerDoacaoScreen from './src/screens/doacoes/registerDoacaoScreen';
+import editAnimalPerdidoScreen from './src/screens/AchadoPerdido/editAnimalsPerdidoScreen';
+import editAnimalsAchadoScreen from './src/screens/AchadoPerdido/editAnimalsAchadoScreen';
+import editAnimalsDoacaoScreen from './src/screens/doacoes/editAnimalsDoacaoScreen';
+import updatePerdidoScreen from './src/screens/AchadoPerdido/updatePerdidoScreen';
+import updateAchadoScreen from './src/screens/AchadoPerdido/updateAchadoScreen';
 
 
 const Tab = createBottomTabNavigator();
@@ -104,7 +113,7 @@ const Drawer = createDrawerNavigator();
 
 function DrawerNavigator({navigation}){
   return(
-    <Drawer.Navigator initialRouteName="HomeAP" 
+    <Drawer.Navigator initialRouteName="Splash" 
     drawerContent={() => <CustomDrawerContent  navigation={navigation}/>}>
       <Drawer.Screen name="MenuTab" component={TabNavigator} />
       <Drawer.Screen name="Splash" component={SplashScreen} />
@@ -117,7 +126,20 @@ function DrawerNavigator({navigation}){
       <Drawer.Screen name="RegisterPhotoAnimals" component={RegisterPhotoAnimalScreen} />
       <Drawer.Screen name="RegisterPhotoAnimalsTwo" component={RegisterPhotoAnimalTwoScreen} />
       <Drawer.Screen name="RegisterPhotoAnimalsTree" component={RegisterPhotoAnimalTreeScreen} />
+      <Drawer.Screen name="RegisterAnimalsPerdido" component={RegisterAnimalPerdidoScreen} />
+      <Drawer.Screen name="RegisterAnimalsAchado" component={RegisterAnimalsAchadoScreen} />
+      <Drawer.Screen name="registerPhotoAnimalsAchado" component={registerPhotoAnimalsAchadoScreen} />
+      <Drawer.Screen name="RegisterDoacao" component={registerDoacaoScreen} />
+      <Drawer.Screen name="editAnimalPerdido" component={editAnimalPerdidoScreen} />
+      <Drawer.Screen name="editAnimalAchado" component={editAnimalsAchadoScreen} />
+      <Drawer.Screen name="editAnimalDoacao" component={editAnimalsDoacaoScreen} />
+      <Drawer.Screen name="updatePerdido" component={updatePerdidoScreen} />
+      <Drawer.Screen name="updateAchado" component={updateAchadoScreen} />
 
+
+
+
+      
     </Drawer.Navigator>
     
   )

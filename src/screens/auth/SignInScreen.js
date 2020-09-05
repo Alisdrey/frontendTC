@@ -8,7 +8,9 @@ import {
     StyleSheet,
     StatusBar,
     Alert,
-    ScrollView
+    ScrollView,
+    Dimensions,
+
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
@@ -149,9 +151,16 @@ const SignInScreen = ({ navigation }) => {
     return (
 
         <View style={styles.container}>
-            <StatusBar backgroundColor='#009387' barStyle="light-content" />
+            <StatusBar backgroundColor='#b8510d' barStyle="light-content" />
             <View style={styles.header}>
-                <Text style={styles.text_header}>Bem-Vindo!</Text>
+            <Animatable.Image 
+                animation="bounceIn"
+                duraton="1500"
+            source={require('../../source/logo.png')}
+            style={styles.logo}
+           // resizeMode="contain"
+            />
+                {/* <Text style={styles.text_header}>Bem-Vindo!</Text> */}
             </View>
             <Animatable.View
                 animation="fadeInUpBig"
@@ -244,7 +253,7 @@ const SignInScreen = ({ navigation }) => {
 
 
                 <TouchableOpacity>
-                    <Text style={{ color: '#009387', marginTop: 15 }}>Esqueceu sua senha?</Text>
+                    <Text style={{ color: '#b8510d', marginTop: 15 }}>Esqueceu sua senha?</Text>
                 </TouchableOpacity>
                 <View style={styles.button}>
                     <TouchableOpacity
@@ -252,7 +261,7 @@ const SignInScreen = ({ navigation }) => {
                         onPress={() => { loginHandle() }}
                     >
                         <LinearGradient
-                            colors={['#08d4c4', '#01ab9d']}
+                            colors={['#f7cf72', '#b8510d']}
                             style={styles.signIn}
                         >
                             <Text style={[styles.textSign, {
@@ -264,13 +273,13 @@ const SignInScreen = ({ navigation }) => {
                     <TouchableOpacity
                         onPress={() => navigation.navigate('SignUp')}
                         style={[styles.signIn, {
-                            borderColor: '#009387',
+                            borderColor: '#b8510d',
                             borderWidth: 1,
                             marginTop: 15
                         }]}
                     >
                         <Text style={[styles.textSign, {
-                            color: '#009387'
+                            color: '#b8510d'
                         }]}>Cadastrar</Text>
                     </TouchableOpacity>
 
@@ -283,10 +292,13 @@ const SignInScreen = ({ navigation }) => {
 
 export default SignInScreen;
 
+const {height} = Dimensions.get("screen");
+const height_logo = height * 0.28;
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#009387'
+        backgroundColor: '#b8510d'
     },
     header: {
         flex: 1,
@@ -294,6 +306,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingBottom: 50
     },
+    
     footer: {
         flex: 3,
         backgroundColor: '#fff',
@@ -349,5 +362,12 @@ const styles = StyleSheet.create({
     textSign: {
         fontSize: 18,
         fontWeight: 'bold'
+    },
+    logo:{
+        flex: 1,
+        top:30,
+        width: null,
+        height: null,
+        resizeMode: 'contain'
     }
 });

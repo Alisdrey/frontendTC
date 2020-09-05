@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import { 
     View, 
     Text, 
@@ -12,22 +12,44 @@ import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useTheme } from '@react-navigation/native';
+import AsyncStorage from '@react-native-community/async-storage';
 
-const SplashScreen = ({navigation}) => {
+
+const SplashScreen = ({navigation, props}) => {
     const { colors } = useTheme();
+
+
+    useEffect(() => {
+        AsyncStorage.getItem("User").then(userText => {
+            const user = JSON.parse(userText);
+            if (user !== null) {
+              navigation.navigate("HomeAP");
+              
+            } else {
+                setTimeout(() => {
+                    navigation.navigate("Splash");
+                }, 3000);
+            }
+        });
+    }, []);
 
     return (
       <View style={styles.container}>
-          <StatusBar backgroundColor='#009387' barStyle="light-content"/>
+        <StatusBar backgroundColor='#b8510d' barStyle="light-content"/>
+        <LinearGradient
+                    colors={['#b8510d', '#b8510d']}
+                    style={styles.header}
+                >
         <View style={styles.header}>
             <Animatable.Image 
                 animation="bounceIn"
                 duraton="1500"
-            source={require('../src/source/arrow.png')}
-            style={styles.logo}
-            resizeMode="stretch"
+            source={require('../src/source/logotc.png')}
+            style={styles.logo,{right:10}}
+            resizeMode="contain"
             />
         </View>
+        </LinearGradient>
         <Animatable.View 
             style={[styles.footer, {
                 backgroundColor: colors.background
@@ -36,15 +58,15 @@ const SplashScreen = ({navigation}) => {
         >
             <Text style={[styles.title, {
                 color: colors.text
-            }]}>Stay connected with everyone!</Text>
-            <Text style={styles.text}>Sign in with account</Text>
+            }]}>Seja Bem-Vindo ao PetWord!</Text>
+            <Text style={styles.text}>Entrar com uma conta</Text>
             <View style={styles.button}>
             <TouchableOpacity onPress={()=>navigation.navigate('SignIn')}>
                 <LinearGradient
-                    colors={['#08d4c4', '#01ab9d']}
+                    colors={['#f7cf72', '#b8510d']}
                     style={styles.signIn}
                 >
-                    <Text style={styles.textSign}>Get Started</Text>
+                    <Text style={styles.textSign}>Entrar</Text>
                     <MaterialIcons 
                         name="navigate-next"
                         color="#fff"
@@ -66,7 +88,7 @@ const height_logo = height * 0.28;
 const styles = StyleSheet.create({
   container: {
     flex: 1, 
-    backgroundColor: '#009387'
+    backgroundColor: '#a34803',
   },
   header: {
       flex: 2,

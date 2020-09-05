@@ -31,20 +31,25 @@ import styles from '../settings/styles';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Server from '../settings/Server';
 
+const registerPhotoAnimalsAchadoScreen = ({ route, navigation, props }) => {
 
 
-const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
-
-const RegisterPhotoAnimalsTree = ({ route, navigation, props }) => {
-
-
-    const { idanimal } = route.params;
-    const { imagem } = route.params;
+    const { idusuario } = route.params;
+    const { descricaolocal } = route.params;
+    const { descricaoanimal } = route.params;
+    const { cidade } = route.params;
+    const { estado } = route.params;
+    const { acolhido } = route.params;
 
     const [date, setData] = React.useState({
-        idanimal: idanimal,
-        imagem: imagem,
-        user: {},
+        hasImage: false,
+        idusuario: idusuario,
+        descricaolocal: descricaolocal,
+        descricaoanimal: descricaoanimal,
+        cidade: cidade,
+        estado: estado,
+        acolhido: acolhido,
+        imagem: "",
         variant: '',
         haveimg: false
 
@@ -68,6 +73,11 @@ const RegisterPhotoAnimalsTree = ({ route, navigation, props }) => {
             fontSize: date.variant ? 15 : 14
         }
     ];
+
+    useEffect(() => {
+            console.log(date)
+    }, []);
+
 
     const _enviar = () => {
         if (date.imagem.length != 0) {
@@ -98,17 +108,22 @@ const RegisterPhotoAnimalsTree = ({ route, navigation, props }) => {
 
                 });
 
-                formdata_img.append("idanimal", date.idanimal);
+                formdata_img.append("idusuario", date.idusuario);
+                formdata_img.append("descricaolocal", date.descricaolocal);
+                formdata_img.append("descricaoanimal", date.descricaoanimal);
+                formdata_img.append("cidade", date.cidade);
+                formdata_img.append("estado", date.estado);
+                formdata_img.append("acolhido", date.acolhido);
 
                 console.log(formdata_img)
 
-                fetch(Server.API_UPLOAD_IMG, {
+                fetch(Server.API_INSERIR_IMAGEM_ACHADO, {
                     method: "POST",
                     'Content-Type': 'multipart/form-data',
                     body: formdata_img
                 }).then(response => response.json())
                     .then(response => {
-                       navigation.navigate("HomeAP")
+                        navigation.navigate("HomeAP")
 
                     }).catch(error => {
                         console.log(error);
@@ -195,7 +210,6 @@ const RegisterPhotoAnimalsTree = ({ route, navigation, props }) => {
         );
     }
 
-
     return (
         <Root>
             <View style={styles.containerCardItem}>
@@ -211,7 +225,7 @@ const RegisterPhotoAnimalsTree = ({ route, navigation, props }) => {
                             <Image source={{
                                 uri:
                                     "data:image/jpeg;base64," +
-                                    date.imagem[2].imagem.data
+                                    date.imagem[0].imagem.data
                             }} style={imageStyle} />
 
                     }
@@ -226,7 +240,7 @@ const RegisterPhotoAnimalsTree = ({ route, navigation, props }) => {
 
                 {/* <Text style={nameStyle}>olá</Text> */}
 
-                <Text style={styles.descriptionCardItem, nameStyle}>3/3</Text>
+                <Text style={styles.descriptionCardItem, nameStyle}>2/2</Text>
 
 
                 <View style={styles.actionsCardItem}>
@@ -251,12 +265,10 @@ const RegisterPhotoAnimalsTree = ({ route, navigation, props }) => {
                             </Text>
                         </View>
                     </TouchableOpacity>
-
-
                 </View>
             </View>
         </Root>
     );
 };
 
-export default RegisterPhotoAnimalsTree;
+export default registerPhotoAnimalsAchadoScreen;
