@@ -11,7 +11,8 @@ import {
     ScrollView,
     PermissionsAndroid,
     SafeAreaView,
-    Dimensions
+    Dimensions,
+    Image
 } from 'react-native';
 import {
     Thumbnail, Textarea,
@@ -52,12 +53,16 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
 
     });
 
+  const [cidade, setCidade] = useState([]);
+  const [estado, setEstado] = useState([]);
+
+
 
     const { colors } = useTheme();
 
-   
+
     useEffect(() => {
-        
+        get()
     }, []);
 
     useEffect(() => {
@@ -65,15 +70,8 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
         AsyncStorage.getItem("User").then(userText => {
             const user = JSON.parse(userText);
 
-            if (user.estado != "" ) {
-                setData({
-                    ...data,
-                    estado: user.estado,
-                });
-            }
-        
-            let url = Server.API_PET_DO_USUARIO + user.idUsuario  + '/pets'
-                fetch(url)
+            let url = Server.API_PET_DO_USUARIO + user.idUsuario + '/pets'
+            fetch(url)
                 .then(response => response.json())
                 .then(responseJson => {
                     console.log(responseJson)
@@ -88,45 +86,34 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                 .catch(error => {
                     console.log(error);
                 });
-            });
+        });
     }, []);
 
 
-        const get = () => {
-        
-            // if (data.user.cidade != "" ) {
-            //     alert("bb")
-            //     setData({
-            //         ...data,
-            //         cidade: data.user.cidade,
-            //     });
-            // }
+    const get = () => {
 
-        if (data.user.estado != "" ) {
-            setData({
-                ...data,
-                user: data.user.estado,
-            });
+        if (data.user.cidade != "" ) {
+            setCidade(data.user.cidade);
+        }
+
+        if (data.user.estado != "") {
+            setEstado(data.user.estado);
         }
     }
 
 
-    const getAnimalUsuario = () => {
-    
-     };
 
- 
     const _enviar = () => {
         console.log(data)
 
 
-    if( data.idanimal != '' && data.descricao != '' && 
-        data.cor != '') {
+        if (data.idanimal != '' && data.descricao != '' &&
+            data.cor != '') {
 
             let formdata = new FormData();
 
             formdata.append('idusuario', data.user.idUsuario)
-            formdata.append('idanimal',data.idanimal)
+            formdata.append('idanimal', data.idanimal)
             formdata.append('cidade', data.user.cidade)
             formdata.append('estado', data.user.estado)
             formdata.append('descricao', data.descricao)
@@ -140,10 +127,10 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
             }).then(response => response.json())
                 .then(response => {
                     console.log("erro", response)
-                   navigation.navigate("HomeAP")
+                    navigation.navigate("HomeAP")
 
                 })
-        
+
 
         } else {
             Alert.alert(
@@ -153,7 +140,7 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                     {
                         text: "OK",
                         onPress: () =>
-                           console.log("cancel"),
+                            console.log("cancel"),
                         style: "default"
                     },
                 ],
@@ -185,7 +172,7 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
 
     const textInputChangeDescricao = (val) => {
 
-        if (val.trim().length > 0) {
+        if (val.trim().length >= 0) {
 
             setData({
                 ...data,
@@ -203,31 +190,21 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
     }
 
     const textInputChangeCidade = (val) => {
-
-        if (val.trim().length > 0) {
-            setData({
-                ...data,
-                cidade: val,
-                check_Cidade: true,
-                isValidCidade: true
-            });
+        if (val.trim().length >= 0) {
+            setCidade(val);
         } else {
             setData({
                 ...data,
-                check_Cidade: false,
-                isValidCidade: false
+                check_Estado: false,
+                isValidEstado: false
             });
         }
+      
     }
 
     const textInputChangeEstado = (val) => {
-        if (val.trim().length > 0) {
-            setData({
-                ...data,
-                estado: val,
-                check_Estado: true,
-                isValidEstado: true
-            });
+        if (val.trim().length >= 0) {
+           setEstado(val);
         } else {
             setData({
                 ...data,
@@ -236,219 +213,200 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
             });
         }
     }
-   
 
 
     return (
 
-        <SafeAreaView style={{ flex: 1 }}>
-            <View style={styles.container}>
-                <StatusBar backgroundColor='#009387' barStyle="light-content" />
-                <View style={styles.header}>
-                    <Text style={styles.text_header}>Cadastrar seu animal.</Text>
-                </View>
-               
-                    <Animatable.Image
-                        animation="bounceIn"
-                        duraton="1500"
-                        source={require('../../source/logoapp.png')}
-                        style={styles.logo}
-                        resizeMode="cover"
-                    />
+        <View style={styles.container}>
+            <StatusBar backgroundColor='#323a4e' barStyle="light-content" />
+            <View style={styles.header}>
+                <Animatable.Image
+                    animation="bounceIn"
+                    duraton="1500"
+                    source={require('../../source/logo.png')}
+                    style={styles.logo}
 
-
-
-                {/* ====== Cidade ======= */}
-
-                <Animatable.View
-                    animation="fadeInUpBig"
-                    style={[styles.footer, {
-                        backgroundColor: colors.background
-                    }]}
-                >
-                    <ScrollView style={{ width: "100%", marginBottom: -25 }}>
+                // resizeMode="contain"
+                />
+                <TouchableOpacity style={{ flexDirection: 'row', alignContent: 'center' }}
+                    onPress={() => navigation.goBack()}>
+                    <Image style={{ width: 80, height: 25, bottom: 90 }}
+                        source={require('../../source/arrow.png')}
+                        resizeMode='contain' />
+                </TouchableOpacity>
+            </View>
+            <Animatable.View
+                animation="fadeInUpBig"
+                style={[styles.footer, {
+                    backgroundColor: colors.background
+                }]}
+            >
+                <ScrollView style={{ width: "100%", marginBottom: -25 }}>
 
                     <Text style={[styles.text_footer, {
-                            color: colors.text, marginTop: 30
-                        }]}>Escolha seu animal</Text>
-                        <View style={styles.action}>
-                            <FontAwesome
-                                name="asterisk"
-                                color={colors.text}
-                                size={20}
-                            />
-                            <Picker
-                                note
-                                mode="dialog"
-                                style={{ width: "100%" }}
-                                selectedValue={data.idanimal}
-                                onValueChange={textInputChangeAnimal.bind(this)}
-                                placeholder={"Selecione..."}
+                        color: colors.text, marginTop: 30
+                    }]}>Escolha seu animal</Text>
+                    <View style={styles.action}>
+                        <Picker
+                            note
+                            mode="dialog"
+                            style={{ width: "100%" }}
+                            selectedValue={data.idanimal}
+                            onValueChange={textInputChangeAnimal.bind(this)}
+                            placeholder={"Selecione..."}
 
+                        >
+                            <Picker.Item style={{ fontSize: 12 }} label="Selecione seu animal..." value="key0" />
+                            {
+                                data.animalusuario.map((item, index) =>
+                                    <Picker.Item key={item.nome} label={item.nome} value={item.idAnimal} />
+                                )
+
+                            }
+
+                        </Picker>
+
+                        {data.check_Animal ?
+                            <Animatable.View
+                                animation="bounceIn"
                             >
-                                <Picker.Item style={{ fontSize: 12 }} label="Selecione seu animal..." value="key0" />
-                                {
-                                    data.animalusuario.map((item, index) =>
-                                        <Picker.Item key={item.nome} label={item.nome} value={item.idAnimal} />
-                                    )
-
-                                }
-
-                            </Picker>
-
-                            {data.check_Animal ?
-                                <Animatable.View
-                                    animation="bounceIn"
-                                >
-                                    <Feather
-                                        name="check-circle"
-                                        color="green"
-                                        size={20}
-                                    />
-                                </Animatable.View>
-                                : null}
-                        </View>
-                        {data.isValidAnimal ? null :
-                            <Animatable.View animation="fadeInLeft" duration={500}>
-                                <Text style={styles.errorMsg}>Campo obrigatório.</Text>
-                            </Animatable.View>
-                        }
-
-                        <Text style={[styles.text_footer, {
-                            color: colors.text
-                        }]}>Cidade</Text>
-                        <View style={styles.action}>
-                            <FontAwesome
-                                name="asterisk"
-                                color={colors.text}
-                                size={20}
-                            />
-                            <TextInput
-                               value={data.user.cidade}
-                                placeholder="Informe a cidade"
-                                placeholderTextColor="#666666"
-                                style={[styles.textInput, {
-                                    color: colors.text
-                                }]}
-                                autoCapitalize="none"
-                                onChangeText={(val) => textInputChangeCidade(val)}
-                            //onEndEditing={(e) => handleValidNome(e.nativeEvent.text)}
-                            />
-                            {data.check_Cidade ?
-                                <Animatable.View
-                                    animation="bounceIn"
-                                >
-                                    <Feather
-                                        name="check-circle"
-                                        color="green"
-                                        size={20}
-                                    />
-                                </Animatable.View>
-                                : null}
-                        </View>
-                        {data.isValidCidade ? null :
-                            <Animatable.View animation="fadeInLeft" duration={500}>
-                                <Text style={styles.errorMsg}>Campo obrigatório.</Text>
-                            </Animatable.View>
-                        }
-
-                        {/* ========= Estado ========= */}
-
-
-                        <Text style={[styles.text_footer, {
-                            color: colors.text
-                        }]}>Estado</Text>
-                        <View style={styles.action}>
-                            <FontAwesome
-                                name="asterisk"
-                                color={colors.text}
-                                size={20}
-                            />
-                            <TextInput
-                                value={data.user.estado}
-                                placeholder="Informe o estado"
-                                placeholderTextColor="#666666"
-                                style={[styles.textInput, {
-                                    color: colors.text
-                                }]}
-                                autoCapitalize="none"
-                                onChangeText={(val) => textInputChangeEstado(val)}
-                            //onEndEditing={(e) => handleValidNome(e.nativeEvent.text)}
-                            />
-                            {data.check_Estado ?
-                                <Animatable.View
-                                    animation="bounceIn"
-                                >
-                                    <Feather
-                                        name="check-circle"
-                                        color="green"
-                                        size={20}
-                                    />
-                                </Animatable.View>
-                                : null}
-                        </View>
-                        {data.isValidEstado ? null :
-                            <Animatable.View animation="fadeInLeft" duration={500}>
-                                <Text style={styles.errorMsg}>Campo obrigatório.</Text>
-                            </Animatable.View>
-                        }
-
-                        {/* ========= Descrição ========= */}
-
-
-                        <Grid style={{marginTop:30}}>
-                            <Col size={7}>
-                                <FontAwesome
-                                    name="asterisk"
-                                    color={colors.text}
+                                <Feather
+                                    name="check-circle"
+                                    color="green"
                                     size={20}
                                 />
-                            </Col>
+                            </Animatable.View>
+                            : null}
+                    </View>
+                    {data.isValidAnimal ? null :
+                        <Animatable.View animation="fadeInLeft" duration={500}>
+                            <Text style={styles.errorMsg}>Campo obrigatório.</Text>
+                        </Animatable.View>
+                    }
 
-                            <Col size={80}>
-                                <Text style={[styles.text_footer, {
-                                    color: colors.text, marginTop:0
-                                }]}>Descrição do Local</Text>
-                            </Col>
-                        </Grid>
-                      
-                        <View style={styles.action}>
-                          
-                            <Text></Text>
-                            <View style={{flex:1, flexDirection:'column'}}>
-                        
-                            <Textarea style={{ height: 90  }}
+                    <Text style={[styles.text_footer, {
+                        color: colors.text
+                    }]}>Cidade</Text>
+                    <View style={styles.action}>
+                        {/* <FontAwesome
+                                name="asterisk"
+                                color={colors.text}
+                                size={20}
+                            /> */}
+                        <TextInput
+                            value={cidade}
+                            placeholder="Informe a cidade"
+                            placeholderTextColor="#666666"
+                            style={[styles.textInput, {
+                                color: colors.text
+                            }]}
+                            autoCapitalize="none"
+                            onChangeText={(val) => textInputChangeCidade(val)}
+                        //onEndEditing={(e) => handleValidNome(e.nativeEvent.text)}
+                        />
+                        {data.check_Cidade ?
+                            <Animatable.View
+                                animation="bounceIn"
+                            >
+                                <Feather
+                                    name="check-circle"
+                                    color="green"
+                                    size={20}
+                                />
+                            </Animatable.View>
+                            : null}
+                    </View>
+                    {data.isValidCidade ? null :
+                        <Animatable.View animation="fadeInLeft" duration={500}>
+                            <Text style={styles.errorMsg}>Campo obrigatório.</Text>
+                        </Animatable.View>
+                    }
+
+                    {/* ========= Estado ========= */}
+
+
+                    <Text style={[styles.text_footer, {
+                        color: colors.text
+                    }]}>Estado</Text>
+                    <View style={styles.action}>
+                        {/* <FontAwesome
+                                name="asterisk"
+                                color={colors.text}
+                                size={20}
+                            /> */}
+                        <TextInput
+                            value={estado}
+                            placeholder="Informe o estado"
+                            placeholderTextColor="#666666"
+                            style={[styles.textInput, {
+                                color: colors.text
+                            }]}
+                            autoCapitalize="none"
+                            onChangeText={(val) => textInputChangeEstado(val)}
+                        //onEndEditing={(e) => handleValidNome(e.nativeEvent.text)}
+                        />
+                        {data.check_Estado ?
+                            <Animatable.View
+                                animation="bounceIn"
+                            >
+                                <Feather
+                                    name="check-circle"
+                                    color="green"
+                                    size={20}
+                                />
+                            </Animatable.View>
+                            : null}
+                    </View>
+                    {data.isValidEstado ? null :
+                        <Animatable.View animation="fadeInLeft" duration={500}>
+                            <Text style={styles.errorMsg}>Campo obrigatório.</Text>
+                        </Animatable.View>
+                    }
+
+                    {/* ========= Descrição ========= */}
+
+                    <Text style={[styles.text_footer, {
+                        color: colors.text, marginTop: 0
+                    }]}>Descrição do Local</Text>
+
+
+                    <View style={styles.action}>
+
+                        <Text></Text>
+                        <View style={{ flex: 1, flexDirection: 'column' }}>
+
+                            <Textarea style={{ height: 90 }}
                                 placeholder="Informe uma descrição detalhada de onde foi perdido seu animalzinho."
                                 //value={this.state.descricao}
                                 onChangeText={(val) => textInputChangeDescricao(val)}
                                 rowSpan={2}
                                 bordered
                             />
-                            </View>
-                          
-                            {data.check_Descricao ?
-                                <Animatable.View
-                                    animation="bounceIn"
-                                >
-                                    <Feather
-                                        name="check-circle"
-                                        color="green"
-                                        size={20}
-                                        style={{padding:5}}
-                                    />
-                                </Animatable.View>
-                                : null}
                         </View>
-                        {data.isValidDescricao ? null :
-                            <Animatable.View animation="fadeInLeft" duration={500}>
-                                <Text style={styles.errorMsg}>Campo obrigatório.</Text>
+
+                        {data.check_Descricao ?
+                            <Animatable.View
+                                animation="bounceIn"
+                            >
+                                <Feather
+                                    name="check-circle"
+                                    color="green"
+                                    size={20}
+                                    style={{ padding: 5 }}
+                                />
                             </Animatable.View>
-                        }
+                            : null}
+                    </View>
+                    {data.isValidDescricao ? null :
+                        <Animatable.View animation="fadeInLeft" duration={500}>
+                            <Text style={styles.errorMsg}>Campo obrigatório.</Text>
+                        </Animatable.View>
+                    }
 
-                      
 
 
-                        {/* <Renderif test={data.outraEspecie}>
+
+                    {/* <Renderif test={data.outraEspecie}>
                             <Text style={[styles.text_footer, {
                                 color: colors.text, marginTop: 30
                             }]}>Outra Espécie</Text>
@@ -485,29 +443,27 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                             }
                         </Renderif> */}
 
-                      
-                        <View style={styles.button}>
 
-                            <TouchableOpacity
+                    <View style={styles.button}>
+
+                        <TouchableOpacity
+                            style={styles.signIn}
+                            onPress={() => { _enviar() }}
+
+                        >
+                            <LinearGradient
+                                colors={['#ff9517', '#ff9517']}
                                 style={styles.signIn}
-                                onPress={() => { _enviar() }}
-
                             >
-                                <LinearGradient
-                                    colors={['#08d4c4', '#01ab9d']}
-                                    style={styles.signIn}
-                                >
-                                    <Text style={[styles.textSign, {
-                                        color: '#fff'
-                                    }]}>Cadastrar</Text>
-                                </LinearGradient>
-                            </TouchableOpacity>
-                        </View>
-                    </ScrollView>
-                </Animatable.View>
-
-            </View>
-        </SafeAreaView>
+                                <Text style={[styles.textSign, {
+                                    color: '#fff'
+                                }]}>Cadastrar</Text>
+                            </LinearGradient>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
+            </Animatable.View>
+        </View>
     );
 };
 
@@ -519,7 +475,7 @@ const height_logo = height * 0.28;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#009387'
+        backgroundColor: '#323a4e'
     },
     header: {
         flex: 1,
@@ -543,7 +499,7 @@ const styles = StyleSheet.create({
     text_footer: {
         color: '#05375a',
         fontSize: 18,
-        marginTop:30
+        marginTop: 30
     },
     action: {
         flexDirection: 'row',
@@ -561,7 +517,7 @@ const styles = StyleSheet.create({
     textInput: {
         flex: 1,
         marginTop: Platform.OS === 'ios' ? 0 : -12,
-        paddingLeft: 10,
+        paddingLeft: 0,
         color: '#05375a',
     },
     errorMsg: {
@@ -596,16 +552,11 @@ const styles = StyleSheet.create({
     },
 
     logo: {
-        width: height_logo,
-        height: height_logo,
-        borderRadius: 55,
-        borderWidth: 2,
-        height: 85,
-        width: 90,
-        position: "absolute",
-        marginLeft: 130,
-        justifyContent: 'center',
-        alignItems: 'center',
+        flex: 1,
+        top: 10,
+        width: null,
+        height: null,
+        resizeMode: 'contain'
     },
 
 });

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../settings/styles';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Renderif from "../../componets/RenderIf";
 
 import {
     ScrollView,
@@ -18,28 +20,41 @@ import AsyncStorage from '@react-native-community/async-storage';
 const editAnimalsAchadoScreen = ({ route, navigation, props }) => {
 
     const { date_Achado } = route.params;
+    const { user } = route.params;
 
     const [date, setData] = React.useState({
         detailachado: date_Achado,
-        user: {}
+        infDono: false
     });
 
-    useEffect(() => {
-        AsyncStorage.getItem("User").then(userText => {
-            const user = JSON.parse(userText);
-            setData({
-                ...date,
-                user: user,
-            });
-        });
+    const [load, setLoad] = useState(true)
 
-    }, []);
+    useEffect(() => {
+        const url = Server.API_GET_PET_ACHADO_ID + date_Achado.idAchado
+        fetch(url)
+            .then(response => response.json())
+            .then(responseJson => {
+                if (responseJson) {
+                    console.log(responseJson)
+                    setData({
+                        ...date,
+                        detailachado: responseJson
+                    })
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            });
+
+
+        navigation.addListener('focus', () => setLoad(!load))
+    }, [load, navigation])
 
 
     return (
 
         <ImageBackground
-            style={styles.bg, { backgroundColor: '#c9871e', height:"100%" }}
+            style={styles.bg, { backgroundColor: '#c9871e', height: "100%" }}
         >
             <ScrollView style={styles.containerProfile}>
                 <ImageBackground source={{ uri: Server.API_PRINC + date.detailachado.url }} style={styles.photo}>
@@ -53,33 +68,61 @@ const editAnimalsAchadoScreen = ({ route, navigation, props }) => {
                     </View>
                 </ImageBackground>
 
-                <ProfileItem
-                    navigation={navigation}
-                    matches={'Detalhes'}
-                    name={'AJUDE A ENCONTRAR :('}
-                    age={date.detailachado.estado}
-                    location={date.detailachado.cidade}
-                    info5={('Descrição do local: ') + (date.detailachado.descricaoLocal)}
-                    info6={('Descrição do animal: ') + (date.detailachado.descricaoAnimal)}
-                    info7={date.detailachado}
-                    iduser={date.detailachado.idUsuario}
-                    iduserPerdido={date.user.idUsuario}
-                />
+                <Renderif test={!date.infDono}>
+                    <ProfileItem
+                        navigation={navigation}
+                        matches={'Detalhes do Animal'}
+                        name={'AJUDE A ENCONTRAR :('}
+                        age={date.detailachado.estado}
+                        location={date.detailachado.cidade}
+                        info1={('Descrição do local: ') + (date.detailachado.descricaoLocal)}
+                        info2={('Descrição do animal: ') + (date.detailachado.descricaoAnimal)}
+                        info3={date.detailachado}
+                        iduser={date.detailachado.idUsuario}
+                        iduserPerdido={user.idUsuario}
+                    />
+                </Renderif>
+                <Renderif test={date.infDono}>
+                    <ProfileItem
+                        navigation={navigation}
+                        matches={'Dados do usuário'}
+                        name={(user.nome.toUpperCase()) + (user.sobrenome.toUpperCase())}
+                        age={user.estado}
+                        location={user.cidade}
+                        info1={'Cep: ' + (user.cep)}
+                        info2={'Cidade: ' + (user.cidade)}
+                        info3={'Rua: ' + (user.rua) + ' - ' + (user.numero)}
+                        info4={('Telefone: ') + (user.telefone)}
 
-                {/* <View style={styles.actionsProfile}>
-                    <TouchableOpacity style={styles.circledButton}>
-                        <Text style={styles.iconButton}>
-                            <Icon name="optionsH" />
-                        </Text>
-                    </TouchableOpacity>
+                    />
+                </Renderif>
 
-                    <TouchableOpacity style={styles.roundedButton}>
-                        <Text style={styles.iconButton}>
-                            <Icon name="chat" />
-                        </Text>
-                        <Text style={styles.textButton}>Start chatting</Text>
-                    </TouchableOpacity>
-                </View> */}
+                <View style={{ marginBottom: 20, marginTop: 10 }}>
+                    <View style={styles.matchesProfileItemInfDono}>
+                        {!date.infDono ?
+                            <TouchableOpacity
+                                onPress={() => setData({
+                                    ...date,
+                                    infDono: true
+                                })}>
+                                <Text style={styles.matchesTextProfileItem}>
+                                    <FontAwesome name="info-circle" />  Informações do Dono
+                         </Text>
+                            </TouchableOpacity>
+                            :
+
+                            <TouchableOpacity
+                                onPress={() => setData({
+                                    ...date,
+                                    infDono: false
+                                })}>
+                                <Text style={styles.matchesTextProfileItem}>
+                                    <FontAwesome name="info-circle" />  Informações do Animal
+                                </Text>
+                            </TouchableOpacity>}
+
+                    </View>
+                </View>
             </ScrollView>
         </ImageBackground>
     );

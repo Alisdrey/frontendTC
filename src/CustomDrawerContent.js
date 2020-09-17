@@ -11,7 +11,7 @@ export default class CustomDrawerContent extends Component {
 
   render(props) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#db921d' }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#323a4e' }}>
         <ImageBackground
           resizeMode="cover"
           blurAmount={1}
@@ -30,136 +30,150 @@ export default class CustomDrawerContent extends Component {
               style={{ marginTop: 20 }}
               onPress={() => this.props.navigation.navigate('HomeAP')}
             >
-                <LinearGradient colors={['#f0d7af', '#c9871e']} style={styles.signIn}>
-                  <Grid>
-                    <Col size={12}>
-                      <MaterialIcons
-                        name="person"
-                        size={20}
-                      />
-                    </Col>
 
-                    <Col size={80}>
-                      <Text style={[styles.textSign, {
-                        color: '#fff'
-                      }]}>Home</Text>
-                    </Col>
-                  </Grid>
-                </LinearGradient>
-              </TouchableOpacity>
+              <Grid>
+                <Col size={12}>
+                  <MaterialIcons
+                    name="person"
+                    size={20}
+                  />
+                </Col>
 
-              <TouchableOpacity
-                  style={{ marginTop: 5 }}
-                  onPress={() => this.props.navigation.navigate('RegisterAnimal')}
-                >
-                   <LinearGradient colors={['#f0d7af', '#c9871e']} style={styles.signIn}>
-                      <Grid>
-                        <Col size={12}>
-                          <MaterialIcons
-                            name="person"
-                            size={20}
-                          />
-                        </Col>
+                <Col size={80}>
+                  <Text style={{
+                    color: '#fff', fontSize: 15
+                  }}>Home</Text>
+                </Col>
+              </Grid>
 
-                        <Col size={80}>
-                          <Text style={[styles.textSign, {
-                              color: '#fff'
-                          }]}>Cadastrar Animal</Text>
-                        </Col>
-                      </Grid>
-                  </LinearGradient>
-                </TouchableOpacity>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={{ marginTop: 30 }}
+              onPress={() => this.props.navigation.navigate('RegisterAnimal')}
+            >
+              <Grid>
+                <Col size={12}>
+                  <MaterialIcons
+                    name="person"
+                    size={20}
+                  />
+                </Col>
+
+                <Col size={80}>
+                  <Text style={{
+                    color: '#fff', fontSize: 15
+                  }}>Cadastrar Animal</Text>
+                </Col>
+              </Grid>
+            </TouchableOpacity>
 
 
-                <TouchableOpacity
-                  style={{ marginTop: 5 }}
-                  onPress={() => this.props.navigation.navigate('RegisterAnimalsPerdido')}
-                >
-                   <LinearGradient colors={['#f0d7af', '#c9871e']} style={styles.signIn}>
-                      <Grid>
-                        <Col size={12}>
-                          <MaterialIcons
-                            name="person"
-                            size={20}
-                          />
-                        </Col>
+            <TouchableOpacity
+              style={{ marginTop: 30 }}
+              onPress={() => this.props.navigation.navigate('RegisterAnimalsPerdido')}
+            >
+              <Grid>
+                <Col size={12}>
+                  <MaterialIcons
+                    name="person"
+                    size={20}
+                  />
+                </Col>
 
-                        <Col size={80}>
-                          <Text style={[styles.textSign, {
-                              color: '#fff'
-                          }]}>Animal Perdido</Text>
-                        </Col>
-                      </Grid>
-                  </LinearGradient>
-                </TouchableOpacity>
+                <Col size={80}>
+                  <Text style={{
+                    color: '#fff', fontSize: 15
+                  }}>Animal Perdido</Text>
+                </Col>
+              </Grid>
 
-                <TouchableOpacity
-                  style={{ marginTop: 5 }}
-                  onPress={() => this.props.navigation.navigate('RegisterAnimalsAchado')}
-                >
-                   <LinearGradient colors={['#f0d7af', '#c9871e']} style={styles.signIn}>
-                      <Grid>
-                        <Col size={12}>
-                          <MaterialIcons
-                            name="person"
-                            size={20}
-                          />
-                        </Col>
+            </TouchableOpacity>
 
-                        <Col size={80}>
-                          <Text style={[styles.textSign, {
-                              color: '#fff'
-                          }]}>Animal Encontrado</Text>
-                        </Col>
-                      </Grid>
-                  </LinearGradient>
-                </TouchableOpacity>
+            <TouchableOpacity
+              style={{ marginTop: 30 }}
+              onPress={() => this.props.navigation.navigate('RegisterAnimalsAchado')}
+            >
+              <Grid>
+                <Col size={12}>
+                  <MaterialIcons
+                    name="person"
+                    size={20}
+                  />
+                </Col>
 
-                <TouchableOpacity
-                  style={{ marginTop: 5 }}
-                  onPress={() => this.props.navigation.navigate('RegisterDoacao')}
-                >
-                   <LinearGradient colors={['#f0d7af', '#c9871e']} style={styles.signIn}>
-                      <Grid>
-                        <Col size={12}>
-                          <MaterialIcons
-                            name="person"
-                            size={20}
-                          />
-                        </Col>
+                <Col size={80}>
+                  <Text style={{
+                    color: '#fff', fontSize: 15
+                  }}>Animal Encontrado</Text>
+                </Col>
+              </Grid>
+            </TouchableOpacity>
 
-                        <Col size={80}>
-                          <Text style={[styles.textSign, {
-                              color: '#fff'
-                          }]}>Doar Animal</Text>
-                        </Col>
-                      </Grid>
-                  </LinearGradient>
-                </TouchableOpacity>
+            <TouchableOpacity
+              style={{ marginTop: 30 }}
+              onPress={() => this.props.navigation.navigate('RegisterDoacao')}
+            >
+              <Grid>
+                <Col size={12}>
+                  <MaterialIcons
+                    name="person"
+                    size={20}
+                  />
+                </Col>
 
-                <TouchableOpacity
-                  style={{ marginTop: 5 }}
-                  onPress={() => AsyncStorage.clear().then(() => {
-                    this.props.navigation.navigate("Splash");
-                  })}
-                >
-                   <LinearGradient colors={['#f0d7af', '#c9871e']} style={styles.signIn}>
-                      <Grid>
-                        <Col size={12}>
-                          <MaterialIcons
-                            name="person"
-                            size={20}
-                          />
-                        </Col>
+                <Col size={80}>
+                  <Text style={{
+                    color: '#fff', fontSize: 15
+                  }}>Doar Animal</Text>
+                </Col>
+              </Grid>
+            </TouchableOpacity>
 
-                        <Col size={80}>
-                          <Text style={[styles.textSign, {
-                              color: '#fff'
-                          }]}>Sair</Text>
-                        </Col>
-                      </Grid>
-                  </LinearGradient>
-                </TouchableOpacity>
+            <TouchableOpacity
+              style={{ marginTop: 30 }}
+              onPress={() => this.props.navigation.navigate('minhaspublicacoes')}
+            >
+              <Grid>
+                <Col size={12}>
+                  <MaterialIcons
+                    name="person"
+                    size={20}
+                  />
+                </Col>
+
+                <Col size={80}>
+                  <Text style={{
+                    color: '#fff', fontSize: 15
+                  }}>Minhas Publicações</Text>
+                </Col>
+              </Grid>
+
+            </TouchableOpacity>
+
+
+            <TouchableOpacity
+              style={{ marginTop: 30 }}
+              onPress={() => AsyncStorage.clear().then(() => {
+                this.props.navigation.navigate("Splash");
+              })}
+            >
+              <Grid>
+                <Col size={12}>
+                  <MaterialIcons
+                    name="person"
+                    size={20}
+                  />
+                </Col>
+
+                <Col size={80}>
+                  <Text style={{
+                    color: '#fff', fontSize: 15
+                  }}>Sair</Text>
+                </Col>
+              </Grid>
+
+            </TouchableOpacity>
           </ScrollView>
         </ImageBackground>
       </SafeAreaView>

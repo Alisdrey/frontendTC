@@ -151,7 +151,7 @@ const SignInScreen = ({ navigation }) => {
     return (
 
         <View style={styles.container}>
-            <StatusBar backgroundColor='#b8510d' barStyle="light-content" />
+            <StatusBar backgroundColor='#323a4e' barStyle="light-content" />
             <View style={styles.header}>
             <Animatable.Image 
                 animation="bounceIn"
@@ -253,7 +253,7 @@ const SignInScreen = ({ navigation }) => {
 
 
                 <TouchableOpacity>
-                    <Text style={{ color: '#b8510d', marginTop: 15 }}>Esqueceu sua senha?</Text>
+                    <Text style={{ color: '#ff9517', marginTop: 15 }}>Esqueceu sua senha?</Text>
                 </TouchableOpacity>
                 <View style={styles.button}>
                     <TouchableOpacity
@@ -261,7 +261,7 @@ const SignInScreen = ({ navigation }) => {
                         onPress={() => { loginHandle() }}
                     >
                         <LinearGradient
-                            colors={['#f7cf72', '#b8510d']}
+                            colors={['#ff9517', '#ff9517']}
                             style={styles.signIn}
                         >
                             <Text style={[styles.textSign, {
@@ -273,13 +273,13 @@ const SignInScreen = ({ navigation }) => {
                     <TouchableOpacity
                         onPress={() => navigation.navigate('SignUp')}
                         style={[styles.signIn, {
-                            borderColor: '#b8510d',
+                            borderColor: '#ff9517',
                             borderWidth: 1,
                             marginTop: 15
                         }]}
                     >
                         <Text style={[styles.textSign, {
-                            color: '#b8510d'
+                            color: '#ff9517'
                         }]}>Cadastrar</Text>
                     </TouchableOpacity>
 
@@ -298,7 +298,7 @@ const height_logo = height * 0.28;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#b8510d'
+        backgroundColor: '#323a4e'
     },
     header: {
         flex: 1,

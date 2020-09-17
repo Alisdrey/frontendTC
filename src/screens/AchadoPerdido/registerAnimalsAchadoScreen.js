@@ -55,11 +55,14 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
     });
 
 
+    const [cidade, setCidade] = useState([]);
+    const [estado, setEstado] = useState([]);
+
+
     const { colors } = useTheme();
 
-
     useEffect(() => {
-      
+        get()
     }, []);
 
     useEffect(() => {
@@ -85,6 +88,18 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
                 });
         });
     }, []);
+
+    
+    const get = () => {
+
+        if (data.user.cidade != "" ) {
+            setCidade(data.user.cidade);
+        }
+
+        if (data.user.estado != "") {
+            setEstado(data.user.estado);
+        }
+    }
 
 
     const textInputChangeAnimal = (val) => {
@@ -126,31 +141,21 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
     }
 
     const textInputChangeCidade = (val) => {
-
-        if (val.trim().length > 0) {
-            setData({
-                ...data,
-                cidade: val,
-                check_Cidade: true,
-                isValidCidade: true
-            });
+        if (val.trim().length >= 0) {
+            setCidade(val);
         } else {
             setData({
                 ...data,
-                check_Cidade: false,
-                isValidCidade: false
+                check_Estado: false,
+                isValidEstado: false
             });
         }
+      
     }
 
     const textInputChangeEstado = (val) => {
-        if (val.trim().length > 0) {
-            setData({
-                ...data,
-                estado: val,
-                check_Estado: true,
-                isValidEstado: true
-            });
+        if (val.trim().length >= 0) {
+           setEstado(val);
         } else {
             setData({
                 ...data,
@@ -182,21 +187,19 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
 
     return (
 
-        <SafeAreaView style={{ flex: 1 }}>
-            <View style={styles.container}>
-                <StatusBar backgroundColor='#009387' barStyle="light-content" />
-                <View style={styles.header}>
-                    <Text style={styles.text_header}>Cadastrar animal achado.</Text>
-                </View>
+        <View style={styles.container}>
+        <StatusBar backgroundColor='#323a4e' barStyle="light-content" />
+        <View style={styles.header}>
+            <Animatable.Image
+                animation="bounceIn"
+                duraton="1500"
+                source={require('../../source/logo.png')}
+                style={styles.logo}
 
-                <Animatable.Image
-                    animation="bounceIn"
-                    duraton="1500"
-                    source={require('../../source/logoapp.png')}
-                    style={styles.logo}
-                    resizeMode="cover"
-                />
-
+            // resizeMode="contain"
+            />
+            {/* <Text style={styles.text_header}>Bem-Vindo!</Text> */}
+        </View>
 
 
 
@@ -212,13 +215,9 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
                             color: colors.text
                         }]}>Cidade</Text>
                         <View style={styles.action}>
-                            <FontAwesome
-                                name="asterisk"
-                                color={colors.text}
-                                size={20}
-                            />
+                            
                             <TextInput
-                                value={data.user.cidade}
+                                value={cidade}
                                 placeholder="Informe a cidade"
                                 placeholderTextColor="#666666"
                                 style={[styles.textInput, {
@@ -253,17 +252,13 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
                             color: colors.text
                         }]}>Estado</Text>
                         <View style={styles.action}>
-                            <FontAwesome
-                                name="asterisk"
-                                color={colors.text}
-                                size={20}
-                            />
+                          
                             <TextInput
-                                value={data.user.estado}
+                                value={estado}
                                 placeholder="Informe o estado"
                                 placeholderTextColor="#666666"
                                 style={[styles.textInput, {
-                                    color: colors.text, marginBottom: 30
+                                    color: colors.text, marginBottom: 0
                                 }]}
                                 autoCapitalize="none"
                                 onChangeText={(val) => textInputChangeEstado(val)}
@@ -289,28 +284,16 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
 
                         {/* ========= Descrição ========= */}
 
-
-                        <Grid>
-                            <Col size={7}>
-                                <FontAwesome
-                                    name="asterisk"
-                                    color={colors.text}
-                                    size={20}
-                                />
-                            </Col>
-
-                            <Col size={80}>
-                                <Text style={[styles.text_footer, {
-                                    color: colors.text, bottom: 2
-                                }]}>Descrição do Animal</Text>
-                            </Col>
-                        </Grid>
+                        <Text style={[styles.text_footer, {
+                            color: colors.text
+                        }]}>Descrição do Animal</Text>
+                         
                         <View style={styles.action}>
 
                             <Text></Text>
                             <View style={{ flex: 1, flexDirection: 'column' }}>
 
-                                <Textarea style={{ height: 90, marginBottom: 30 }}
+                                <Textarea style={{ height: 90, marginBottom: 10 }}
                                     placeholder="Informe uma descrição detalhada do animal."
                                     //value={this.state.descricao}
                                     onChangeText={(val) => textInputChangeAnimal(val)}
@@ -337,21 +320,12 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
                                 <Text style={styles.errorMsg}>Campo obrigatório.</Text>
                             </Animatable.View>
                         }
-                        <Grid>
-                            <Col size={7}>
-                                <FontAwesome
-                                    name="asterisk"
-                                    color={colors.text}
-                                    size={20}
-                                />
-                            </Col>
-
-                            <Col size={80}>
-                                <Text style={[styles.text_footer, {
-                                    color: colors.text, bottom: 2
-                                }]}>Descrição do Local</Text>
-                            </Col>
-                        </Grid>
+                      
+                        
+                        <Text style={[styles.text_footer, {
+                            color: colors.text, bottom: 2
+                        }]}>Descrição do Local</Text>
+                            
 
                         <View style={styles.action}>
 
@@ -388,15 +362,10 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
 
 
                         <Text style={[styles.text_footer, {
-                            color: colors.text, marginTop: 30
+                            color: colors.text, marginTop: 10
                         }]}>Animal Acolhido</Text>
                         <View style={styles.action}>
-                            <FontAwesome
-                                name="asterisk"
-                                color={colors.text}
-                                size={20}
-                                style={{marginTop:15}}
-                            />
+                    
                             <Picker
                                 note
                                 mode="dialog"
@@ -491,7 +460,7 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
 
                             >
                                 <LinearGradient
-                                    colors={['#08d4c4', '#01ab9d']}
+                                    colors={['#ff9517', '#ff9517']}
                                     style={styles.signIn}
                                 >
                                     <Text style={[styles.textSign, {
@@ -504,7 +473,6 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
                 </Animatable.View>
 
             </View>
-        </SafeAreaView>
     );
 };
 
@@ -516,7 +484,7 @@ const height_logo = height * 0.28;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#009387'
+        backgroundColor: '#323a4e'
     },
     header: {
         flex: 1,
@@ -558,7 +526,7 @@ const styles = StyleSheet.create({
     textInput: {
         flex: 1,
         marginTop: Platform.OS === 'ios' ? 0 : -12,
-        paddingLeft: 10,
+        paddingLeft: 0,
         color: '#05375a',
     },
     errorMsg: {
@@ -593,16 +561,11 @@ const styles = StyleSheet.create({
     },
 
     logo: {
-        width: height_logo,
-        height: height_logo,
-        borderRadius: 55,
-        borderWidth: 2,
-        height: 85,
-        width: 90,
-        position: "absolute",
-        marginLeft: 130,
-        justifyContent: 'center',
-        alignItems: 'center',
+        flex: 1,
+        top: 10,
+        width: null,
+        height: null,
+        resizeMode: 'contain'
     },
 
 });

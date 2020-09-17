@@ -19,9 +19,9 @@ const ProfileItemDoacao = ({
 }) => {
   return (
     <View style={styles.containerProfileItem}>
-      <View style={styles.matchesProfileItem}>
+      <View style={styles.matchesProfileItemPerdido}>
         <Text style={styles.matchesTextProfileItem}>
-          <FontAwesome name="info-circle" />   {matches}
+          <FontAwesome name="info-circle" /> {matches}
         </Text>
       </View>
 

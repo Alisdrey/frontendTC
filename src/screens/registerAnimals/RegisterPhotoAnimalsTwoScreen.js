@@ -29,6 +29,8 @@ import { Picker } from '@react-native-community/picker';
 import ResponsiveImage from 'react-native-responsive-image';
 import styles from '../settings/styles';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Server from '../settings/Server';
+
 
 
 

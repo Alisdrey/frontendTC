@@ -235,7 +235,7 @@ const SignUpTreeScreen = ({ route, navigation, props}) => {
 
     return (
         <View style={styles.container}>
-            <StatusBar backgroundColor='#b8510d' barStyle="light-content" />
+            <StatusBar backgroundColor='#323a4e' barStyle="light-content" />
                 <View style={styles.header}>
                 <Text style={styles.text_header}> Falta pouco! {"\n"}Informe um login e senha para acesso ao aplicativo ;D</Text>
             </View>
@@ -339,7 +339,7 @@ const SignUpTreeScreen = ({ route, navigation, props}) => {
                             onPress={() => { loginHandle() }}
                         >
                             <LinearGradient
-                                colors={['#f7cf72', '#b8510d']}
+                                colors={['#ff9517', '#ff9517']}
                                 style={styles.signIn}
                             >
                                 <Text style={[styles.textSign, {
@@ -360,7 +360,7 @@ export default SignUpTreeScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#b8510d'
+        backgroundColor: '#323a4e'
     },
     header: {
         flex: 1,
@@ -411,8 +411,7 @@ const styles = StyleSheet.create({
     },
     button: {
         alignItems: 'center',
-        marginTop: 50,
-        marginBottom: 20
+        marginTop: 160,
     },
     signIn: {
         width: '100%',

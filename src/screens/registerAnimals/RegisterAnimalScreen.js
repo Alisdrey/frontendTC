@@ -11,7 +11,8 @@ import {
     ScrollView,
     PermissionsAndroid,
     SafeAreaView,
-    Dimensions
+    Dimensions,
+    Image
 } from 'react-native';
 import {
     Thumbnail
@@ -269,17 +270,23 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
     return (
 
         <View style={styles.container}>
-            <StatusBar backgroundColor='#b8510d' barStyle="light-content" />
+            <StatusBar backgroundColor='#323a4e' barStyle="light-content" />
             <View style={styles.header}>
-            <Animatable.Image 
-                animation="bounceIn"
-                duraton="1500"
-            source={require('../../source/logo.png')}
-            style={styles.logo}
-              
-           // resizeMode="contain"
-            />
-                {/* <Text style={styles.text_header}>Bem-Vindo!</Text> */}
+
+                <Animatable.Image
+                    animation="bounceIn"
+                    duraton="1500"
+                    source={require('../../source/logo.png')}
+                    style={styles.logo}
+
+                // resizeMode="contain"
+                />
+                <TouchableOpacity style={{ flexDirection: 'row', alignContent: 'center' }}
+                    onPress={() => navigation.goBack()}>
+                    <Image style={{ width: 25, height: 25, marginLeft: 5, bottom: 85 }}
+                        source={require('../../source/arrow.png')}
+                        resizeMode='contain' />
+                </TouchableOpacity>
             </View>
 
 
@@ -297,11 +304,7 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                         color: colors.text
                     }]}>Nome</Text>
                     <View style={styles.action}>
-                        <FontAwesome
-                            name="asterisk"
-                            color={colors.text}
-                            size={20}
-                        />
+                        
                         <TextInput
                             placeholder="Informe o nome do seu animal"
                             placeholderTextColor="#666666"
@@ -337,11 +340,11 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                         color: colors.text
                     }]}>Raça</Text>
                     <View style={styles.action}>
-                        <FontAwesome
+                        {/* <FontAwesome
                             name="asterisk"
                             color={colors.text}
                             size={20}
-                        />
+                        /> */}
                         <TextInput
                             placeholder="Informe a raça do seu animal"
                             placeholderTextColor="#666666"
@@ -377,11 +380,7 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                         color: colors.text
                     }]}>Cor</Text>
                     <View style={styles.action}>
-                        <FontAwesome
-                            name="asterisk"
-                            color={colors.text}
-                            size={20}
-                        />
+
                         <TextInput
                             placeholder="Informe a cor do seu animal"
                             placeholderTextColor="#666666"
@@ -466,31 +465,43 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                                 <TouchableOpacity
 
                                     onPress={() =>
-                                        setData({ ...data, especie: 'Gato', outraEspecie: false })
-
-                                    }
-                                >
-                                    <FontAwesome name="paw" style={{ fontSize: 40, }} color=
-                                        {data.especie == "Gato" ? color = "#E76801" : color = "#999"} />
-
-                                </TouchableOpacity>
-                            </Col>
-                            <Col style={{ left: 30 }}>
-                                <TouchableOpacity
-
-
-                                    onPress={() =>
                                         setData({ ...data, especie: 'Cão', outraEspecie: false })
 
                                     }
                                 >
-                                    <FontAwesome name="paw" style={{ fontSize: 40, }} color=
-                                        {data.especie == "Cão" ? color = "#E76801" : color = "#999"} />
+                                    {data.especie == "Cão" ?
+                                        <Image style={{ width: 30, height: 30, marginLeft: 20, bottom: 1 }}
+                                            source={require('../../source/dog-escuro.png')}
+                                        /> :
+                                        <Image style={{ width: 30, height: 30, marginLeft: 20, bottom: 1 }}
+                                            source={require('../../source/dog.png')}
+                                        />}
+
+
+                                </TouchableOpacity>
+                            </Col>
+                            <Col style={{ left: 20 }}>
+                                <TouchableOpacity
+
+
+                                    onPress={() =>
+                                        setData({ ...data, especie: 'Gato', outraEspecie: false })
+
+                                    }
+                                >
+
+                                    {data.especie == "Gato" ?
+                                        <Image style={{ width: 30, height: 30, marginLeft: 20, bottom: 1 }}
+                                            source={require('../../source/gato-preto.png')}
+                                        /> :
+                                        <Image style={{ width: 30, height: 30, marginLeft: 20, bottom: 1 }}
+                                            source={require('../../source/gato.png')}
+                                        />}
 
                                 </TouchableOpacity>
                             </Col>
 
-                            <Col style={{ right: 5 }}>
+                            <Col style={{ right: 5, bottom: 5 }}>
                                 <TouchableOpacity
 
 
@@ -499,7 +510,7 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                                     }>
 
 
-                                    <FontAwesome name={"question"} style={{ fontSize: 35 }} color=
+                                    <FontAwesome name={"question"} style={{ fontSize: 37 }} color=
                                         {data.outraEspecie ? color = "#E76801" : color = "#999"} />
 
                                 </TouchableOpacity>
@@ -514,11 +525,7 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                             color: colors.text, marginTop: 30
                         }]}>Outra Espécie</Text>
                         <View style={styles.action}>
-                            <FontAwesome
-                                name="asterisk"
-                                color={colors.text}
-                                size={20}
-                            />
+
                             <TextInput
                                 placeholder="Informe a espécie do seu animal"
                                 placeholderTextColor="#666666"
@@ -547,15 +554,15 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                     </Renderif>
 
                     <Text style={[styles.text_footer, {
-                        color: colors.text, marginTop: 30
+                        color: colors.text, marginTop: 0
                     }]}>Porte</Text>
 
                     <View style={styles.action}>
-                        <FontAwesome
+                        {/* <FontAwesome
                             name="asterisk"
                             color={colors.text}
                             size={20}
-                        />
+                        /> */}
                         <Picker
                             note
                             mode="dialog"
@@ -595,11 +602,11 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                         color: colors.text, marginTop: 30
                     }]}>Pelagem</Text>
                     <View style={styles.action}>
-                        <FontAwesome
+                        {/* <FontAwesome
                             name="asterisk"
                             color={colors.text}
                             size={20}
-                        />
+                        /> */}
                         <Picker
                             note
                             mode="dialog"
@@ -644,11 +651,11 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                         color: colors.text, marginTop: 30
                     }]}>Filhote</Text>
                     <View style={styles.action}>
-                        <FontAwesome
+                        {/* <FontAwesome
                             name="asterisk"
                             color={colors.text}
                             size={20}
-                        />
+                        /> */}
                         <Picker
                             note
                             mode="dialog"
@@ -692,7 +699,7 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
 
                         >
                             <LinearGradient
-                                colors={['#f7cf72', '#b8510d']}
+                                colors={['#ff9517', '#ff9517']}
                                 style={styles.signIn}
                             >
                                 <Text style={[styles.textSign, {
@@ -716,7 +723,7 @@ const height_logo = height * 0.28;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#b8510d'
+        backgroundColor: '#323a4e'
     },
     header: {
         flex: 1,

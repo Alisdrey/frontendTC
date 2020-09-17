@@ -8,9 +8,10 @@ import Renderif from "../componets/RenderIf";
 
 const ProfileItemAchado = ({
   age,
-  info5,
-  info6,
-  info7,
+  info1,
+  info2,
+  info3,
+  info4,
   location,
   matches,
   name,
@@ -21,15 +22,15 @@ const ProfileItemAchado = ({
 }) => {
   return (
     <View style={styles.containerProfileItem}>
-      <View style={styles.matchesProfileItem}>
+      <View style={styles.matchesProfileItemAchado}>
         <Text style={styles.matchesTextProfileItem}>
-          <FontAwesome name="info-circle" />   {matches}
+          <FontAwesome name="info-circle" /> {matches}
         </Text>
       </View>
    
         <TouchableOpacity
           onPress={() => navigation.navigate('updateAchado', {
-            date_Achado: info7
+            date_Achado: info3
           })}>
           <Text style={styles.name}>{name}  {'  '}    
             <Renderif test={iduser == iduserPerdido }>
@@ -41,24 +42,32 @@ const ProfileItemAchado = ({
         {age} - {location}
       </Text>
 
-      <View style={styles.info}>
+      {info1 && <View style={styles.info}>
         <Text style={styles.iconProfile}>
           <FontAwesome name="hashtag" />
         </Text>
         <View style={styles.info,{width:'90%'}}>
-          <Text style={styles.infoContent}>{info5}</Text>
+          <Text style={styles.infoContent}>{info1}</Text>
         </View>
-      </View>
+      </View>}
 
-      <View style={styles.info}>
+      {info2 && <View style={styles.info}>
         <Text style={styles.iconProfile}>
           <FontAwesome name="hashtag" />
         </Text>
         <View style={styles.info,{width:'90%'}}>
-          <Text style={styles.infoContent}>{info6}</Text>
+          <Text style={styles.infoContent}>{info2}</Text>
         </View>
-      </View>
+      </View>}
 
+      {info4 && <View style={styles.info}>
+        <Text style={styles.iconProfile}>
+          <FontAwesome name="hashtag" />
+        </Text>
+        <View style={styles.info,{width:'90%'}}>
+          <Text style={styles.infoContent}>{info4}</Text>
+        </View>
+      </View>}
 
 
     </View>

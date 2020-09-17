@@ -31,6 +31,7 @@ import editAnimalsAchadoScreen from './src/screens/AchadoPerdido/editAnimalsAcha
 import editAnimalsDoacaoScreen from './src/screens/doacoes/editAnimalsDoacaoScreen';
 import updatePerdidoScreen from './src/screens/AchadoPerdido/updatePerdidoScreen';
 import updateAchadoScreen from './src/screens/AchadoPerdido/updateAchadoScreen';
+import minhaspublicacoesScreen from './src/screens/meus/minhaspublicacoesScreen';
 
 
 const Tab = createBottomTabNavigator();
@@ -135,7 +136,7 @@ function DrawerNavigator({navigation}){
       <Drawer.Screen name="editAnimalDoacao" component={editAnimalsDoacaoScreen} />
       <Drawer.Screen name="updatePerdido" component={updatePerdidoScreen} />
       <Drawer.Screen name="updateAchado" component={updateAchadoScreen} />
-
+      <Drawer.Screen name="minhaspublicacoes" component={minhaspublicacoesScreen} />
 
 
 

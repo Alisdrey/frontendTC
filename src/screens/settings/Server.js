@@ -20,6 +20,11 @@ export default {
     API_INSERT_DOACAO: "https://petworld.marinamendesacademy.com.br/doacao/inserir",
     API_GET_DOADO: "https://petworld.marinamendesacademy.com.br/doacao",
     API_INSERT_ANIMAL: "https://petworld.marinamendesacademy.com.br/animal/inserir",
+    API_DOADO_USER: "https://petworld.marinamendesacademy.com.br/doacao/usuario/",
+    API_DOADO_ID: "https://petworld.marinamendesacademy.com.br/doacao/",
+    API_DOADO_EDITAR: "https://petworld.marinamendesacademy.com.br/doacao/editar",
+    API_RECOMENDACAO_CONTEUDO: "https://petworld.marinamendesacademy.com.br/recomendacao/pessoal/",
+    API_RECOMENDACAO_COLABORATIVA: "https://petworld.marinamendesacademy.com.br/recomendacao/colaborativa/"
 
 
 

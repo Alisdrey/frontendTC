@@ -1,6 +1,6 @@
 import { StyleSheet, Dimensions } from "react-native";
 
-const PRIMARY_COLOR = '#db921d';
+const PRIMARY_COLOR = '#E76801';
 const SECONDARY_COLOR = "#5636B8";
 const WHITE = "#FFFFFF";
 const GRAY = "#757E90";
@@ -202,8 +202,8 @@ export default StyleSheet.create({
 		shadowColor: BLACK,
 		shadowOffset: { height: 0, width: 0 }
 	},
-	matchesProfileItem: {
-		width: 131,
+	matchesProfileItemAchado: {
+		width: 180,
 		marginTop: -15,
 		backgroundColor: PRIMARY_COLOR,
 		paddingVertical: 7,
@@ -211,6 +211,28 @@ export default StyleSheet.create({
 		borderRadius: 20,
 		textAlign: "center",
 		alignSelf: "center"
+	},
+
+	matchesProfileItemPerdido: {
+		width: 180,
+		marginTop: -15,
+		backgroundColor: PRIMARY_COLOR,
+		paddingVertical: 7,
+		paddingHorizontal: 20,
+		borderRadius: 20,
+		textAlign: "center",
+		alignSelf: "center"
+	},
+
+	matchesProfileItemInfDono: {
+		width: 210,
+		marginTop: -15,
+		backgroundColor: PRIMARY_COLOR,
+		paddingVertical: 7,
+		paddingHorizontal: 20,
+		borderRadius: 20,
+		textAlign: "center",
+		alignSelf: "center",
 	},
 	matchesTextProfileItem: {
 		fontFamily: ICON_FONT,
@@ -242,7 +264,7 @@ export default StyleSheet.create({
 	},
 	infoContent: {
 		color: GRAY,
-		fontSize: 13
+		fontSize: 13,
 	},
 
 	// CONTAINER - GENERAL
@@ -274,7 +296,8 @@ export default StyleSheet.create({
 	containerMatches: {
 		justifyContent: "space-between",
 		flex: 1,
-		paddingHorizontal: 10
+		paddingHorizontal: 10,
+		backgroundColor: '#f0f0f0'
 	},
 
 	// CONTAINER - MESSAGES

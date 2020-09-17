@@ -21,7 +21,7 @@ const ProfileItem = ({
 }) => {
   return (
     <View style={styles.containerProfileItem}>
-      <View style={styles.matchesProfileItem}>
+      <View style={styles.matchesProfileItemPerdido}>
         <Text style={styles.matchesTextProfileItem}>
           <FontAwesome name="info-circle" />   {matches}
         </Text>
@@ -37,50 +37,50 @@ const ProfileItem = ({
         {age} - {location}
       </Text>
 
-      <View style={styles.info}>
+      {info1 && <View style={styles.info}>
         <Text style={styles.iconProfile}>
           <FontAwesome name="hashtag" />
         </Text>
         <Text style={styles.infoContent}>{info1}</Text>
-      </View>
+      </View>}
 
-      <View style={styles.info}>
+      {info2 && <View style={styles.info}>
         <Text style={styles.iconProfile}>
           <FontAwesome name="hashtag" />
         </Text>
         <Text style={styles.infoContent}>{info2}</Text>
-      </View>
+      </View>}
 
-      <View style={styles.info}>
+      {info3 && <View style={styles.info}>
         <Text style={styles.iconProfile}>
           <FontAwesome name="hashtag" />
         </Text>
         <Text style={styles.infoContent}>{info3}</Text>
-      </View>
+      </View>}
 
-      <View style={styles.info}>
+      {info4 && <View style={styles.info}>
         <Text style={styles.iconProfile}>
           <FontAwesome name="hashtag" />
         </Text>
         <Text style={styles.infoContent}>{info4}</Text>
-      </View>
+      </View>}
 
 
-      <View style={styles.info}>
+      {info5 && <View style={styles.info}>
         <Text style={styles.iconProfile}>
           <FontAwesome name="hashtag" />
         </Text>
         <View style={styles.info, { width: '90%' }}>
           <Text style={styles.infoContent}>{info5}</Text>
         </View>
-      </View>
+      </View>}
 
-      <View style={styles.info}>
+      {info6 && <View style={styles.info}>
         <Text style={styles.iconProfile}>
           {/* <FontAwesome name="hashtag" /> */}
         </Text>
         <Text style={styles.infoContent}>{info6}</Text>
-      </View>
+      </View>}
 
 
 

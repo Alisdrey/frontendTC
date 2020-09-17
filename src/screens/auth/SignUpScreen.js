@@ -177,7 +177,7 @@ const SignUpScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <StatusBar backgroundColor='#b8510d' barStyle="light-content" />
+            <StatusBar backgroundColor='#323a4e' barStyle="light-content" />
             <View style={styles.header}>
                 <Text style={styles.text_header}>Comece sua experiência no PetWord ;)
             {"\n"}Agora vamos pedir algumas informações para fazermos seu cadastro.</Text>
@@ -430,7 +430,7 @@ const SignUpScreen = ({ navigation }) => {
                         //                          sexo )}}
                 >
                 <LinearGradient
-                     colors={['#f7cf72', '#b8510d']}
+                     colors={['#ff9517', '#ff9517']}
                     style={styles.signIn}
                 >
                     <Text style={[styles.textSign, {
@@ -451,7 +451,7 @@ export default SignUpScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#b8510d'
+        backgroundColor: '#323a4e'
     },
     header: {
         flex: 1,

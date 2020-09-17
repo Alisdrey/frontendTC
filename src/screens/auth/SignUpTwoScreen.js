@@ -167,7 +167,7 @@ const SignUpTwoScreen = ({ route, navigation }) => {
 
     return (
         <View style={styles.container}>
-            <StatusBar backgroundColor='#b8510d' barStyle="light-content" />
+            <StatusBar backgroundColor='#323a4e' barStyle="light-content" />
             <View style={styles.header}>
                 <Text style={styles.text_header}>Boa! Agora vamos para seu endereço residencial. {"\n"}Conta para gente onde você mora.</Text>
             </View>
@@ -448,7 +448,7 @@ const SignUpTwoScreen = ({ route, navigation }) => {
 
                         >
                             <LinearGradient
-                                colors={['#f7cf72', '#b8510d']}
+                                colors={['#ff9517', '#ff9517']}
                                 style={styles.signIn}
                             >
                                 <Text style={[styles.textSign, {
@@ -469,7 +469,7 @@ export default SignUpTwoScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#b8510d'
+        backgroundColor: '#323a4e'
     },
     header: {
         flex: 1,
