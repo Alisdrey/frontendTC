@@ -34,8 +34,8 @@ const updatePerdidoScreen = ({ route, navigation, props }) => {
     const { date_Achado } = route.params;
     const [data, setData] = React.useState({
         date_Achado: date_Achado,
-        descricaoAnimal: "",
-        descricaoLocal: "",
+        descricaoAnimal: date_Achado.descricaoAnimal,
+        descricaoLocal: date_Achado.descricaoLocal,
         isValidDescricao: true,
         check_Descricao: false,
         isloading: true,
@@ -85,25 +85,26 @@ const updatePerdidoScreen = ({ route, navigation, props }) => {
 
 
     const textInputChangeDescricaoLocal = (val) => {
-
-        if (val.trim().length > 0) {
+       
+        //data.date_Achado.descricaoLocal = val
+       
 
             setData({
                 ...data,
                 descricaoLocal: val,
             });
-        }
+       
     }
 
     const textInputChangeAnimal = (val) => {
 
-        if (val.trim().length > 0) {
+      
 
             setData({
                 ...data,
                 descricaoAnimal: val,
             });
-        } 
+    
     }
 
   
@@ -148,8 +149,8 @@ const updatePerdidoScreen = ({ route, navigation, props }) => {
                             <View style={{ flex: 1, flexDirection: 'column' }}>
 
                                 <Textarea style={{ height: 90 }}
-                                    placeholder={data.date_Achado.descricaoLocal}
-                                    // value={data.date_Perdido.descricao}
+                                    //placeholder={data.date_Achado.descricaoLocal}
+                                    value={data.descricaoLocal}
                                     onChangeText={(val) => textInputChangeDescricaoLocal(val)}
                                     rowSpan={2}
                                     bordered
@@ -169,8 +170,8 @@ const updatePerdidoScreen = ({ route, navigation, props }) => {
                         <View style={{ flex: 1, flexDirection: 'column' }}>
 
                             <Textarea style={{ height: 90 }}
-                                placeholder={data.date_Achado.descricaoAnimal}
-                                // value={data.date_Perdido.descricao}
+                                //placeholder={data.date_Achado.descricaoAnimal}
+                                value={data.descricaoAnimal}
                                 onChangeText={(val) => textInputChangeAnimal(val)}
                                 rowSpan={2}
                                 bordered

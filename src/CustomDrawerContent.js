@@ -50,7 +50,7 @@ export default class CustomDrawerContent extends Component {
 
             <TouchableOpacity
               style={{ marginTop: 30 }}
-              onPress={() => this.props.navigation.navigate('RegisterAnimal')}
+              onPress={() => this.props.navigation.navigate('FormRecommends')}
             >
               <Grid>
                 <Col size={12}>

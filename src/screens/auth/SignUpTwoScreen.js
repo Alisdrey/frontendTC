@@ -172,7 +172,7 @@ const SignUpTwoScreen = ({ route, navigation }) => {
                 <Text style={styles.text_header}>Boa! Agora vamos para seu endereço residencial. {"\n"}Conta para gente onde você mora.</Text>
             </View>
             <View style={{ alignItems: 'center' }}>
-                <Text style={styles.etapa}>2/3</Text>
+                <Text style={styles.etapa}>2/4</Text>
             </View>
 
             {/* ====== Rua ======= */}

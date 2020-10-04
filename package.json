@@ -39,6 +39,7 @@
     "react-native-responsive-image": "^2.3.1",
     "react-native-safe-area-context": "^3.1.1",
     "react-native-screens": "^2.9.0",
+    "react-native-sectioned-multi-select": "^0.7.7",
     "react-native-svg": "^12.1.0",
     "react-native-tab-view": "^2.15.1",
     "react-native-text-input-mask": "^2.0.0",

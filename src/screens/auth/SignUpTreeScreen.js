@@ -192,7 +192,7 @@ const SignUpTreeScreen = ({ route, navigation, props}) => {
                             "User",
                             JSON.stringify(responseJson)
                         ).then(() => {
-                            navigation.navigate("HomeAP");
+                            navigation.navigate("FormRecommends");
                         });
 
                     } else {
@@ -240,7 +240,7 @@ const SignUpTreeScreen = ({ route, navigation, props}) => {
                 <Text style={styles.text_header}> Falta pouco! {"\n"}Informe um login e senha para acesso ao aplicativo ;D</Text>
             </View>
             <View style={{ alignItems: 'center' }}>
-                <Text style={styles.etapa}>3/3</Text>
+                <Text style={styles.etapa}>3/4</Text>
             </View>
                 <Animatable.View
                     animation="fadeInUpBig"

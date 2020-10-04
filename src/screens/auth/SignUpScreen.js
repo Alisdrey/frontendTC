@@ -184,7 +184,7 @@ const SignUpScreen = ({ navigation }) => {
             </View>
 
             <View style={{ alignItems: 'center' }}>
-                <Text style={styles.etapa}>1/3</Text>
+                <Text style={styles.etapa}>1/4</Text>
             </View>
 
             {/* ====== Nome ======= */}

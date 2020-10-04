@@ -24,7 +24,8 @@ export default {
     API_DOADO_ID: "https://petworld.marinamendesacademy.com.br/doacao/",
     API_DOADO_EDITAR: "https://petworld.marinamendesacademy.com.br/doacao/editar",
     API_RECOMENDACAO_CONTEUDO: "https://petworld.marinamendesacademy.com.br/recomendacao/pessoal/",
-    API_RECOMENDACAO_COLABORATIVA: "https://petworld.marinamendesacademy.com.br/recomendacao/colaborativa/"
+    API_RECOMENDACAO_COLABORATIVA: "https://petworld.marinamendesacademy.com.br/recomendacao/colaborativa/",
+    API_RECOMENDACAO_GOSTO_POST: "http://petworld.marinamendesacademy.com.br/gosto/inserir"
 
 
 
