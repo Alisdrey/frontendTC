@@ -9,15 +9,11 @@ import {
     StatusBar,
     Alert,
     ScrollView,
-    PermissionsAndroid,
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
-import { Col, Row, Grid } from "react-native-easy-grid";
-import Geolocation from 'react-native-geolocation-service';
 import { useTheme } from 'react-native-paper';
 import Server from '../settings/Server';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -40,6 +36,7 @@ const SignUpTreeScreen = ({ route, navigation, props}) => {
 
 
     const [data, setData] = React.useState({
+        buttonDisable: true,
         nome: nome,
         sobrenome: sobrenome,
         sexo: sexo,
@@ -63,6 +60,20 @@ const SignUpTreeScreen = ({ route, navigation, props}) => {
     });
 
     const { colors } = useTheme()
+
+    useEffect(() => {
+        if (data.username.trim().length >= 4 && data.password.trim().length >= 8) {
+            setData({
+                ...data,
+                buttonDisable: false
+            });
+        } else {
+            setData({
+                ...data,
+                buttonDisable: true
+            });
+        }
+    }, [data.username, data.password]);
 
     const textInputChange = (val) => {
         if( val.trim().length >= 4 ) {
@@ -179,6 +190,10 @@ const SignUpTreeScreen = ({ route, navigation, props}) => {
     const _login = () => {
 
         if (data.username != "" && data.password != "") {
+            setData({
+                ...data,
+                buttonDisable: true
+            });
             const url = Server.API +
                 data.username +
                 "/" +
@@ -192,6 +207,7 @@ const SignUpTreeScreen = ({ route, navigation, props}) => {
                             "User",
                             JSON.stringify(responseJson)
                         ).then(() => {
+
                             navigation.navigate("FormRecommends");
                         });
 
@@ -335,11 +351,14 @@ const SignUpTreeScreen = ({ route, navigation, props}) => {
 
                     <View style={styles.button}>
                         <TouchableOpacity
+                            disabled={data.buttonDisable}
                             style={styles.signIn}
                             onPress={() => { loginHandle() }}
                         >
                             <LinearGradient
-                                colors={['#ff9517', '#ff9517']}
+                                  colors={data.buttonDisable ?
+                                    ['#8a92a8', '#8a92a8'] :
+                                    ['#ff9517', '#ff9517']}
                                 style={styles.signIn}
                             >
                                 <Text style={[styles.textSign, {

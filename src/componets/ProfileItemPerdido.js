@@ -1,9 +1,9 @@
 import React from 'react';
 import styles from '../screens/settings/styles';
 import { Text, View, TouchableOpacity } from 'react-native';
-import Icon from './Icon';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { Textarea } from "native-base";
+import Renderif from "../componets/RenderIf";
+
 
 const ProfileItem = ({
   age,
@@ -17,7 +17,9 @@ const ProfileItem = ({
   location,
   matches,
   name,
-  navigation
+  navigation,
+  iduser,
+  iduserPerdido
 }) => {
   return (
     <View style={styles.containerProfileItem}>
@@ -30,8 +32,10 @@ const ProfileItem = ({
       <TouchableOpacity
         onPress={() => navigation.navigate('updatePerdido', {
           date_Perdido: info7
-        })}><Text style={styles.name}>{name}  <FontAwesome name="edit" /></Text>
-      </TouchableOpacity> 
+        })}><Text style={styles.name}>{name}   <Renderif test={iduser == iduserPerdido}>
+          <FontAwesome name="edit" />
+        </Renderif> </Text>
+      </TouchableOpacity>
 
       <Text style={styles.descriptionProfileItem}>
         {age} - {location}

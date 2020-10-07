@@ -9,16 +9,12 @@ import {
     StatusBar,
     Alert,
     ScrollView,
-    PermissionsAndroid,
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
-import { Col, Row, Grid } from "react-native-easy-grid";
-import Geolocation from 'react-native-geolocation-service';
 import { useTheme } from 'react-native-paper';
+import { TextInputMask } from 'react-native-masked-text'
 
 const SignUpTwoScreen = ({ route, navigation }) => {
 
@@ -61,6 +57,46 @@ const SignUpTwoScreen = ({ route, navigation }) => {
     });
 
     const { colors } = useTheme()
+
+    const _enviar = () => {
+
+        if (data.nome && data.sobrenome && data.sexo &&
+            data.nascimento && data.telefone && data.rua &&
+            data.bairro && data.cidade && data.uf && data.cep ) {
+            navigation.navigate(
+                "SignUpTree"
+                , {
+                    nome: data.nome,
+                    sobrenome: data.sobrenome,
+                    sexo: sexo,
+                    nascimento: data.nascimento,
+                    telefone: data.telefone,
+
+                    rua: data.rua,
+                    numero: data.numero,
+                    bairro: data.bairro,
+                    cidade: data.cidade,
+                    uf: data.uf,
+                    cep: data.cep,
+                }
+
+            )
+        } else {
+            Alert.alert(
+                "",
+                "Preencha todos os campos e tente novamente. ",
+                [
+                    {
+                        text: "OK",
+                        onPress: () =>
+                            console.log("cancel"),
+                        style: "default"
+                    },
+                ],
+                { cancelable: false }
+            )
+        }
+    }
 
     const textInputChangeRua = (val) => {
 
@@ -176,7 +212,7 @@ const SignUpTwoScreen = ({ route, navigation }) => {
             </View>
 
             {/* ====== Rua ======= */}
-       
+
             <Animatable.View
                 animation="fadeInUpBig"
                 style={[styles.footer, {
@@ -189,11 +225,7 @@ const SignUpTwoScreen = ({ route, navigation }) => {
                         color: colors.text
                     }]}>Rua</Text>
                     <View style={styles.action}>
-                        <FontAwesome
-                            name="road"
-                            color={colors.text}
-                            size={20}
-                        />
+
                         <TextInput
                             placeholder="Informe sua rua"
                             placeholderTextColor="#666666"
@@ -202,7 +234,7 @@ const SignUpTwoScreen = ({ route, navigation }) => {
                             }]}
                             autoCapitalize="none"
                             onChangeText={(val) => textInputChangeRua(val)}
-                            //onEndEditing={(e) => handleValidNome(e.nativeEvent.text)}
+                        //onEndEditing={(e) => handleValidNome(e.nativeEvent.text)}
                         />
                         {data.check_Rua ?
                             <Animatable.View
@@ -229,12 +261,9 @@ const SignUpTwoScreen = ({ route, navigation }) => {
                         marginTop: 35
                     }]}>Número</Text>
                     <View style={styles.action}>
-                        <FontAwesome
-                            name="sort-numeric-asc"
-                            color={colors.text}
-                            size={20}
-                        />
+
                         <TextInput
+                            keyboardType="numeric"
                             placeholder="Informe o nº da sua residência"
                             placeholderTextColor="#666666"
                             style={[styles.textInput, {
@@ -242,7 +271,7 @@ const SignUpTwoScreen = ({ route, navigation }) => {
                             }]}
                             autoCapitalize="none"
                             onChangeText={(val) => textInputChangeNumero(val)}
-                            //onEndEditing={(e) => handleValidSobrenome(e.nativeEvent.text)}
+                        //onEndEditing={(e) => handleValidSobrenome(e.nativeEvent.text)}
                         />
                         {data.check_Numero ?
                             <Animatable.View
@@ -271,11 +300,7 @@ const SignUpTwoScreen = ({ route, navigation }) => {
                         marginTop: 35
                     }]}>Bairro</Text>
                     <View style={styles.action}>
-                        <FontAwesome
-                            name="road"
-                            color={colors.text}
-                            size={20}
-                        />
+
                         <TextInput
                             placeholder="Informe seu Bairro"
                             placeholderTextColor="#666666"
@@ -284,7 +309,7 @@ const SignUpTwoScreen = ({ route, navigation }) => {
                             }]}
                             autoCapitalize="none"
                             onChangeText={(val) => textInputChangeBairro(val)}
-                            //onEndEditing={(e) => handleValidTelefone(e.nativeEvent.text)}
+                        //onEndEditing={(e) => handleValidTelefone(e.nativeEvent.text)}
                         />
                         {data.check_Bairro ?
                             <Animatable.View
@@ -308,92 +333,16 @@ const SignUpTwoScreen = ({ route, navigation }) => {
                     <Text style={[styles.text_footer, {
                         color: colors.text,
                         marginTop: 35
-                    }]}>Cidade</Text>
-                    <View style={styles.action}>
-                        <MaterialIcons
-                            name="location-city"
-                            color={colors.text}
-                            size={20}
-                        />
-                        <TextInput
-                            placeholder="Informe sua Cidade"
-                            placeholderTextColor="#666666"
-                            style={[styles.textInput, {
-                                color: colors.text
-                            }]}
-                            autoCapitalize="none"
-                            onChangeText={(val) => textInputChangeCidade(val)}
-                            //onEndEditing={(e) => handleValidTelefone(e.nativeEvent.text)}
-                        />
-                        {data.check_Cidade ?
-                            <Animatable.View
-                                animation="bounceIn"
-                            >
-                                <Feather
-                                    name="check-circle"
-                                    color="green"
-                                    size={20}
-                                />
-                            </Animatable.View>
-                            : null}
-                    </View>
-
-                    {data.isValidCidade ? null :
-                        <Animatable.View animation="fadeInLeft" duration={500}>
-                            <Text style={styles.errorMsg}>Campo obrigatório.</Text>
-                        </Animatable.View>
-                    }
-
-                    <Text style={[styles.text_footer, {
-                        color: colors.text,
-                        marginTop: 35
-                    }]}>UF</Text>
-                    <View style={styles.action}>
-                        <MaterialIcons
-                            name="location-city"
-                            color={colors.text}
-                            size={20}
-                        />
-                        <TextInput
-                            placeholder="Informe seu Estado"
-                            placeholderTextColor="#666666"
-                            style={[styles.textInput, {
-                                color: colors.text
-                            }]}
-                            autoCapitalize="none"
-                            onChangeText={(val) => textInputChangeUf(val)}
-                            //onEndEditing={(e) => handleValidTelefone(e.nativeEvent.text)}
-                        />
-                        {data.check_Uf ?
-                            <Animatable.View
-                                animation="bounceIn"
-                            >
-                                <Feather
-                                    name="check-circle"
-                                    color="green"
-                                    size={20}
-                                />
-                            </Animatable.View>
-                            : null}
-                    </View>
-
-                    {data.isValidUf ? null :
-                        <Animatable.View animation="fadeInLeft" duration={500}>
-                            <Text style={styles.errorMsg}>Campo obrigatório.</Text>
-                        </Animatable.View>
-                    }
-
-                    <Text style={[styles.text_footer, {
-                        color: colors.text,
-                        marginTop: 35
                     }]}>Cep</Text>
                     <View style={styles.action}>
-                        <MaterialIcons
-                            name="location-city"
-                            color={colors.text}
-                            size={20}
-                        />
-                        <TextInput
+
+                        <TextInputMask
+                            keyboardType="numeric"
+                            type={'custom'}
+                            options={{
+                                mask: '99999-999'
+                            }}
+                            value={data.cep}
                             placeholder="Informe seu Cep"
                             placeholderTextColor="#666666"
                             style={[styles.textInput, {
@@ -401,7 +350,7 @@ const SignUpTwoScreen = ({ route, navigation }) => {
                             }]}
                             autoCapitalize="none"
                             onChangeText={(val) => textInputChangeCep(val)}
-                            //onEndEditing={(e) => handleValidTelefone(e.nativeEvent.text)}
+                        //onEndEditing={(e) => handleValidTelefone(e.nativeEvent.text)}
                         />
                         {data.check_Cep ?
                             <Animatable.View
@@ -422,29 +371,84 @@ const SignUpTwoScreen = ({ route, navigation }) => {
                         </Animatable.View>
                     }
 
-                
+                    <Text style={[styles.text_footer, {
+                        color: colors.text,
+                        marginTop: 35
+                    }]}>Cidade</Text>
+                    <View style={styles.action}>
+
+                        <TextInput
+                            placeholder="Informe sua Cidade"
+                            placeholderTextColor="#666666"
+                            style={[styles.textInput, {
+                                color: colors.text
+                            }]}
+                            autoCapitalize="none"
+                            onChangeText={(val) => textInputChangeCidade(val)}
+                        //onEndEditing={(e) => handleValidTelefone(e.nativeEvent.text)}
+                        />
+                        {data.check_Cidade ?
+                            <Animatable.View
+                                animation="bounceIn"
+                            >
+                                <Feather
+                                    name="check-circle"
+                                    color="green"
+                                    size={20}
+                                />
+                            </Animatable.View>
+                            : null}
+                    </View>
+
+                    {data.isValidCidade ? null :
+                        <Animatable.View animation="fadeInLeft" duration={500}>
+                            <Text style={styles.errorMsg}>Campo obrigatório.</Text>
+                        </Animatable.View>
+                    }
+
+
+                    <Text style={[styles.text_footer, {
+                        color: colors.text,
+                        marginTop: 35
+                    }]}>UF</Text>
+                    <View style={styles.action}>
+
+                        <TextInput
+                            placeholder="Informe seu Estado"
+                            placeholderTextColor="#666666"
+                            style={[styles.textInput, {
+                                color: colors.text
+                            }]}
+                            autoCapitalize="none"
+                            onChangeText={(val) => textInputChangeUf(val)}
+                        //onEndEditing={(e) => handleValidTelefone(e.nativeEvent.text)}
+                        />
+                        {data.check_Uf ?
+                            <Animatable.View
+                                animation="bounceIn"
+                            >
+                                <Feather
+                                    name="check-circle"
+                                    color="green"
+                                    size={20}
+                                />
+                            </Animatable.View>
+                            : null}
+                    </View>
+
+                    {data.isValidUf ? null :
+                        <Animatable.View animation="fadeInLeft" duration={500}>
+                            <Text style={styles.errorMsg}>Campo obrigatório.</Text>
+                        </Animatable.View>
+                    }
+
+
+
                     <View style={styles.button}>
 
                         <TouchableOpacity
                             style={styles.signIn}
-                            onPress={() =>
-                                navigation.navigate(
-                                    "SignUpTree"
-                                    ,{
-                                        nome: data.nome,
-                                        sobrenome:data.sobrenome,
-                                        sexo: sexo,
-                                        nascimento:data.nascimento,
-                                        telefone: data.telefone,
-
-                                        rua: data.rua,
-                                        numero:data.numero,
-                                        bairro: data.bairro,
-                                        cidade: data.cidade,
-                                        uf: data.uf,
-                                        cep: data.cep,
-                                    }
-                                )}
+                            onPress={() => _enviar()}
 
                         >
                             <LinearGradient
@@ -511,7 +515,7 @@ const styles = StyleSheet.create({
     textInput: {
         flex: 1,
         marginTop: Platform.OS === 'ios' ? 0 : -12,
-        paddingLeft: 10,
+        paddingLeft: 0,
         color: '#05375a',
     },
     errorMsg: {

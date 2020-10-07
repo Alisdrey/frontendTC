@@ -125,6 +125,8 @@ const editAnimalsPerdidoScreen = ({ route, navigation, props }) => {
                         info4={('Filhote: ') + (date.detailperdido.Animal.filhote == '1' ? 'Sim' : 'Não')}
                         info5={('Descrição do local: ') + (date.detailperdido.descricao)}
                         info7={date.detailperdido}
+                        iduser={date.detailperdido.idUsuario}
+                        iduserPerdido={user.idUsuario}
 
                     />
                 </Renderif>
@@ -139,6 +141,8 @@ const editAnimalsPerdidoScreen = ({ route, navigation, props }) => {
                         info3={'Cidade: ' + (user.cidade)}
                         info2={'Rua: ' + (user.rua) + ' - ' + (user.numero)}
                         info3={('Telefone: ') + (user.telefone)}
+                        iduser={date.detailperdido.idUsuario}
+                        iduserPerdido={user.idUsuario}
 
                     />
                 </Renderif>

@@ -3,28 +3,18 @@ import {
     View,
     Text,
     TouchableOpacity,
-    TextInput,
     Platform,
     StyleSheet,
     StatusBar,
     Alert,
     ScrollView,
-    PermissionsAndroid,
-    SafeAreaView,
     Dimensions,
     Image
 } from 'react-native';
-import {
-    Thumbnail
-} from "native-base";
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Feather from 'react-native-vector-icons/Feather';
-import { Col, Row, Grid } from "react-native-easy-grid";
 import AsyncStorage from '@react-native-community/async-storage';
 import { useTheme } from 'react-native-paper';
-import Renderif from "../../componets/RenderIf";
 import { Picker } from '@react-native-community/picker';
 import Server from '../settings/Server';
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
@@ -391,7 +381,7 @@ const FormRecommendsScreens = ({ route, navigation, props }) => {
             <StatusBar backgroundColor='#323a4e' barStyle="light-content" />
             <View style={styles.header}>
 
-                <Text style={styles.text_header}> Falta pouco! {"\n"}Informe seus gostos para sabermos melhor sobre você ;D</Text>
+                <Text style={styles.text_header}> Por fim {"\n"}Informe seus gostos para sabermos melhor sobre você ;D</Text>
                 <TouchableOpacity style={{ flexDirection: 'row', alignContent: 'center' }}
                     onPress={() => navigation.goBack()}>
                     <Image style={{ width: 25, height: 25, marginLeft: 5, bottom: 85 }}
@@ -414,7 +404,7 @@ const FormRecommendsScreens = ({ route, navigation, props }) => {
                     <Text style={[styles.text_footer, {
                         color: colors.text
                     }]}>Raça</Text>
-                    <View style={styles.action, { width: '100%' }}>
+                    <View style={styles.action, { width: '100%', }}>
 
                         <SectionedMultiSelect
                             showCancelButton={true}
@@ -430,7 +420,6 @@ const FormRecommendsScreens = ({ route, navigation, props }) => {
                             onSelectedItemsChange={textInputChangeRaca}
                             selectedItems={data.raca}
                             expandDropDowns={true}
-
 
                         />
 
@@ -518,7 +507,7 @@ const FormRecommendsScreens = ({ route, navigation, props }) => {
                     </View>
 
                     <Text style={[styles.text_footer, {
-                        color: colors.text, marginTop: 0
+                        color: colors.text, marginTop: 20
                     }]}>Porte</Text>
 
                     <View style={styles.action, { width: '100%' }}>
@@ -649,7 +638,8 @@ const styles = StyleSheet.create({
     },
     text_footer: {
         color: '#05375a',
-        fontSize: 18
+        fontSize: 18,
+        marginTop:20
     },
     action: {
         flexDirection: 'row',

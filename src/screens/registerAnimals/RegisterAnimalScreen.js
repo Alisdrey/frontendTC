@@ -27,6 +27,8 @@ import { useTheme } from 'react-native-paper';
 import Renderif from "../../componets/RenderIf";
 import { Picker } from '@react-native-community/picker';
 import Server from '../settings/Server';
+import SectionedMultiSelect from 'react-native-sectioned-multi-select';
+
 
 
 const RegisterAnimalScreen = ({ route, navigation }) => {
@@ -45,26 +47,48 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
         filhote: "",
 
         isValidNome: true,
-        check_Nome: false,
         isValidRaca: true,
-        check_Raca: false,
         isValidCor: true,
-        check_Cor: false,
         isValidSexo: true,
-        check_Sexo: false,
         isValidEspecie: true,
-        check_Especie: false,
         isValidPelo: true,
-        check_Pelo: false,
         isValidPorte: true,
-        check_Porte: false,
         isValidFilhote: true,
-        check_Filhote: false,
         isloading: true,
 
     });
 
     const { colors } = useTheme();
+
+
+    const itemsCor = [
+        {
+            name: 'Cor',
+            id: 0,
+            children: [
+                {
+                    name: 'Branco',
+                    id: 1,
+                },
+                {
+                    name: 'Preto',
+                    id: 2,
+                },
+                {
+                    name: 'Cinza',
+                    id: 3,
+                },
+                {
+                    name: 'Bege',
+                    id: 4,
+                },
+                {
+                    name: 'Marrom',
+                    id: 5,
+                },
+            ],
+        },
+    ];
 
     useEffect(() => {
         AsyncStorage.getItem("User").then(userText => {
@@ -80,6 +104,16 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
 
     const _enviar = () => {
 
+
+        let concatCor = '';
+
+        concatCor = concatCor.substr(0, concatCor.length - 1);
+        data.cor.forEach(item => {
+            concatCor += item + ';'
+        });
+
+        concatCor = concatCor.substr(0, concatCor.length - 1);
+
         if (data.nome != '' && data.raca != '' &&
             data.cor != '' && data.sexo != '' &&
             data.especie != '' && data.porte != '' &&
@@ -92,10 +126,12 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
             formdata.append('especie', data.especie)
             formdata.append('raca', data.raca)
             formdata.append('sexo', data.sexo)
-            formdata.append('cor', data.cor)
+            formdata.append('cor', concatCor)
             formdata.append('pelo', data.pelo)
             formdata.append('porte', data.porte)
             formdata.append('filhote', data.filhote)
+
+            console.log(concatCor)
 
             fetch(Server.API_INSERT_ANIMAL, {
                 method: "POST",
@@ -134,13 +170,11 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
             setData({
                 ...data,
                 nome: val,
-                check_Nome: true,
                 isValidNome: true
             });
         } else {
             setData({
                 ...data,
-                check_Nome: false,
                 isValidNome: false
             });
         }
@@ -152,31 +186,31 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
             setData({
                 ...data,
                 raca: val,
-                check_Raca: true,
                 isValidRaca: true
             });
         } else {
             setData({
                 ...data,
-                check_Raca: false,
                 isValidRaca: false
             });
         }
     }
 
     const textInputChangeCor = (val) => {
-        if (val.trim().length > 0) {
+        console.log(val)
+        if (val != "") {
             setData({
                 ...data,
                 cor: val,
-                check_Cor: true,
                 isValidCor: true
             });
+        
         } else {
+            console.log('val')
             setData({
                 ...data,
-                check_Cor: false,
-                isValidBairro: false
+                cor: "",
+                isValidCor: false
             });
         }
     }
@@ -185,12 +219,12 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
             setData({
                 ...data,
                 sexo: val,
-                isValidCidade: true
+                isValidSexo: true
             });
         } else {
             setData({
                 ...data,
-                isValidSexo: true
+                isValidSexo: false
             });
         }
     }
@@ -200,13 +234,11 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
             setData({
                 ...data,
                 especie: val,
-                check_Especie: true,
                 isValidUf: true
             });
         } else {
             setData({
                 ...data,
-                check_Especie: false,
                 isValidEspecie: false
             });
         }
@@ -217,14 +249,12 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
             setData({
                 ...data,
                 pelo: val,
-                check_Pelo: true,
                 isValidPelo: true
             });
         } else {
             setData({
                 ...data,
                 pelo: "",
-                check_Pelo: false,
                 isValidPelo: false
             });
         }
@@ -235,14 +265,12 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
             setData({
                 ...data,
                 porte: val,
-                check_Porte: true,
                 isValidPorte: true
             });
         } else {
             setData({
                 ...data,
                 porte: "",
-                check_Porte: false,
                 isValidPorte: false
             });
         }
@@ -253,14 +281,12 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
             setData({
                 ...data,
                 filhote: val,
-                check_Filhote: true,
                 isValidFilhote: true
             });
         } else {
             setData({
                 ...data,
                 filhote: "",
-                check_Filhote: false,
                 isValidFilhote: false
             });
         }
@@ -315,17 +341,7 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                             onChangeText={(val) => textInputChangeNome(val)}
                         //onEndEditing={(e) => handleValidNome(e.nativeEvent.text)}
                         />
-                        {data.check_Nome ?
-                            <Animatable.View
-                                animation="bounceIn"
-                            >
-                                <Feather
-                                    name="check-circle"
-                                    color="green"
-                                    size={20}
-                                />
-                            </Animatable.View>
-                            : null}
+                     
                     </View>
                     {data.isValidNome ? null :
                         <Animatable.View animation="fadeInLeft" duration={500}>
@@ -355,17 +371,7 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                             onChangeText={(val) => textInputChangeRaca(val)}
                         //onEndEditing={(e) => handleValidNome(e.nativeEvent.text)}
                         />
-                        {data.check_Raca ?
-                            <Animatable.View
-                                animation="bounceIn"
-                            >
-                                <Feather
-                                    name="check-circle"
-                                    color="green"
-                                    size={20}
-                                />
-                            </Animatable.View>
-                            : null}
+                       
                     </View>
                     {data.isValidRaca ? null :
                         <Animatable.View animation="fadeInLeft" duration={500}>
@@ -379,29 +385,25 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                     <Text style={[styles.text_footer, {
                         color: colors.text
                     }]}>Cor</Text>
-                    <View style={styles.action}>
+                    <View style={styles.action, { width: '100%' }}>
 
-                        <TextInput
-                            placeholder="Informe a cor do seu animal"
-                            placeholderTextColor="#666666"
-                            style={[styles.textInput, {
-                                color: colors.text
-                            }]}
-                            autoCapitalize="none"
-                            onChangeText={(val) => textInputChangeCor(val)}
-                        //onEndEditing={(e) => handleValidNome(e.nativeEvent.text)}
+                    <SectionedMultiSelect
+                            showCancelButton={true}
+                            items={itemsCor}
+                            uniqueKey="name"
+                            subKey="children"
+                            selectText="Selecione..."
+                            confirmText='Confirmar'
+                            selectedText='Selecionado'
+                            searchPlaceholderText='Pesquisar Categorias'
+                            showDropDowns={true}
+                            readOnlyHeadings={true}
+                            onSelectedItemsChange={textInputChangeCor}
+                            selectedItems={data.cor}
+                            expandDropDowns={true}
+
                         />
-                        {data.check_Cor ?
-                            <Animatable.View
-                                animation="bounceIn"
-                            >
-                                <Feather
-                                    name="check-circle"
-                                    color="green"
-                                    size={20}
-                                />
-                            </Animatable.View>
-                            : null}
+
                     </View>
                     {data.isValidCor ? null :
                         <Animatable.View animation="fadeInLeft" duration={500}>
@@ -435,18 +437,6 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                             </Col>
                         </Grid>
                     </View>
-
-                    {data.check_Sexo ?
-                        <Animatable.View
-                            animation="bounceIn"
-                        >
-                            <Feather
-                                name="check-circle"
-                                color="green"
-                                size={20}
-                            />
-                        </Animatable.View>
-                        : null}
 
                     {data.isValidSexo ? null :
                         <Animatable.View animation="fadeInLeft" duration={500}>
@@ -536,15 +526,6 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                                 onChangeText={(val) => textInputChangeEspecie(val)}
                             />
 
-                            {data.check_Especie ?
-                                <Animatable.View animation="bounceIn">
-                                    <Feather
-                                        name="check-circle"
-                                        color="green"
-                                        size={20}
-                                    />
-                                </Animatable.View>
-                                : null}
                         </View>
                         {data.isValidEspecie ? null :
                             <Animatable.View animation="fadeInLeft" duration={500}>
@@ -581,15 +562,6 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                             <Picker.Item label="Grande" value="Grande" />
                         </Picker>
 
-                        {data.check_Porte ?
-                            <Animatable.View animation="bounceIn">
-                                <Feather
-                                    name="check-circle"
-                                    color="green"
-                                    size={20}
-                                />
-                            </Animatable.View>
-                            : null}
                     </View>
                     {data.isValidPorte ? null :
                         <Animatable.View animation="fadeInLeft" duration={500}>
@@ -628,17 +600,6 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
 
                         </Picker>
 
-                        {data.check_Pelo ?
-                            <Animatable.View
-                                animation="bounceIn"
-                            >
-                                <Feather
-                                    name="check-circle"
-                                    color="green"
-                                    size={20}
-                                />
-                            </Animatable.View>
-                            : null}
                     </View>
                     {data.isValidPelo ? null :
                         <Animatable.View animation="fadeInLeft" duration={500}>
@@ -673,19 +634,8 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
 
                         </Picker>
 
-                        {data.check_Filhote ?
-                            <Animatable.View
-                                animation="bounceIn"
-                            >
-                                <Feather
-                                    name="check-circle"
-                                    color="green"
-                                    size={20}
-                                />
-                            </Animatable.View>
-                            : null}
                     </View>
-                    {data.isValidPelo ? null :
+                    {data.isValidFilhote ? null :
                         <Animatable.View animation="fadeInLeft" duration={500}>
                             <Text style={styles.errorMsg}>Campo obrigatório.</Text>
                         </Animatable.View>

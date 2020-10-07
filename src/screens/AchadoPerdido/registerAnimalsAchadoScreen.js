@@ -62,7 +62,13 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
     const { colors } = useTheme();
 
     useEffect(() => {
-        get()
+        if (data.user.cidade != "" ) {
+            setCidade(data.user.cidade);
+        }
+
+        if (data.user.estado != "") {
+            setEstado(data.user.estado);
+        }
     }, []);
 
     useEffect(() => {
@@ -88,18 +94,6 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
                 });
         });
     }, []);
-
-    
-    const get = () => {
-
-        if (data.user.cidade != "" ) {
-            setCidade(data.user.cidade);
-        }
-
-        if (data.user.estado != "") {
-            setEstado(data.user.estado);
-        }
-    }
 
 
     const textInputChangeAnimal = (val) => {

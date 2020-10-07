@@ -13,9 +13,9 @@ import {
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import { Col, Row, Grid } from "react-native-easy-grid";
+import { TextInputMask } from 'react-native-masked-text'
 
 import { useTheme } from 'react-native-paper';
 
@@ -43,6 +43,40 @@ const SignUpScreen = ({ navigation }) => {
     const [sexo, setSexo] = useState(0);
 
     const { colors } = useTheme();
+
+    const _enviar = () => {
+
+        if (data.nome &&
+            data.sobrenome &&
+            sexo &&
+            data.nascimento &&
+            data.telefone) {
+            navigation.navigate(
+                "SignUpTwo"
+                , {
+                    nome: data.nome,
+                    sobrenome: data.sobrenome,
+                    sexo: sexo,
+                    nascimento: data.nascimento,
+                    telefone: data.telefone
+                }
+            )
+        } else {
+            Alert.alert(
+                "",
+                "Preencha todos os campos e tente novamente. ",
+                [
+                    {
+                        text: "OK",
+                        onPress: () =>
+                            console.log("cancel"),
+                        style: "default"
+                    },
+                ],
+                { cancelable: false }
+            )
+        }
+    }
 
     const textInputChangeNome = (val) => {
 
@@ -190,23 +224,19 @@ const SignUpScreen = ({ navigation }) => {
             {/* ====== Nome ======= */}
 
 
-                <Animatable.View
-                    animation="fadeInUpBig"
-                    style={[styles.footer, {
-                        backgroundColor: colors.background
-                    }]}
-                >
-            <ScrollView style={{ width: "100%", marginBottom:-25}}>
+            <Animatable.View
+                animation="fadeInUpBig"
+                style={[styles.footer, {
+                    backgroundColor: colors.background
+                }]}
+            >
+                <ScrollView style={{ width: "100%", marginBottom: -25 }}>
 
                     <Text style={[styles.text_footer, {
                         color: colors.text
                     }]}>Nome</Text>
                     <View style={styles.action}>
-                        <MaterialIcons
-                            name="person"
-                            color={colors.text}
-                            size={20}
-                        />
+
                         <TextInput
                             placeholder="Informe seu nome"
                             placeholderTextColor="#666666"
@@ -242,11 +272,7 @@ const SignUpScreen = ({ navigation }) => {
                         marginTop: 35
                     }]}>Sobrenome</Text>
                     <View style={styles.action}>
-                        <MaterialIcons
-                            name="person"
-                            color={colors.text}
-                            size={20}
-                        />
+
                         <TextInput
                             placeholder="Informe seu sobrenome"
                             placeholderTextColor="#666666"
@@ -284,21 +310,25 @@ const SignUpScreen = ({ navigation }) => {
                         marginTop: 35
                     }]}>Telefone</Text>
                     <View style={styles.action}>
-                        <MaterialIcons
-                            name="local-phone"
-                            color={colors.text}
-                            size={20}
-                        />
-                        <TextInput
-                            placeholder="Informe seu telefone"
+
+                        <TextInputMask
+                            keyboardType="numeric"
+                            placeholder="Informe de Telefone"
                             placeholderTextColor="#666666"
+                            type={'custom'}
                             style={[styles.textInput, {
                                 color: colors.text
                             }]}
-                            autoCapitalize="none"
+                            options={{
+                                mask: '(99) 999999999'
+                            }}
+                            value={data.telefone}
                             onChangeText={(val) => textInputChangeTelefone(val)}
                             onEndEditing={(e) => handleValidTelefone(e.nativeEvent.text)}
+
                         />
+
+
                         {data.check_Telefone ?
                             <Animatable.View
                                 animation="bounceIn"
@@ -318,22 +348,20 @@ const SignUpScreen = ({ navigation }) => {
                         </Animatable.View>
                     }
 
-                    
+                    {/* =============== NASCIMENTO ======== */}
 
-
-                        {/* =============== NASCIMENTO ======== */}
-
-                        <Text style={[styles.text_footer, {
+                    <Text style={[styles.text_footer, {
                         color: colors.text,
                         marginTop: 35
                     }]}>Data de Nascimento</Text>
                     <View style={styles.action}>
-                        <MaterialIcons
-                            name="cake"
-                            color={colors.text}
-                            size={20}
-                        />
-                        <TextInput
+
+                        <TextInputMask
+                            type={'datetime'}
+                            options={{
+                                format: 'DD/MM/YYYY'
+                              }}
+                              value={data.nascimento}
                             placeholder="Informe seu Nascimento"
                             placeholderTextColor="#666666"
                             style={[styles.textInput, {
@@ -373,7 +401,7 @@ const SignUpScreen = ({ navigation }) => {
                         <Grid>
                             <Col style={{ left: 110 }}>
                                 <TouchableOpacity onPress={() => setSexo('M')}>
-                                    <FontAwesome name={"mars"} style={{ fontSize: 40}} color=
+                                    <FontAwesome name={"mars"} style={{ fontSize: 40 }} color=
                                         {sexo == "M" ? color = "#0101f7" : color = "#999"} />
                                     <Text style={styles.fontSexo}> M </Text>
                                 </TouchableOpacity>
@@ -408,40 +436,30 @@ const SignUpScreen = ({ navigation }) => {
                     }
 
                     <View style={styles.button}>
-                
-                    <TouchableOpacity
-                    style={styles.signIn}
-                    onPress={() => 
-                        navigation.navigate(
-                            "SignUpTwo"
-                            ,{
-                                nome: data.nome,
-                                sobrenome:data.sobrenome,
-                                sexo: sexo,
-                                nascimento:data.nascimento,
-                                telefone: data.telefone
-                            }
-                        )}
-                        
-                        
+
+                        <TouchableOpacity
+                            style={styles.signIn}
+                            onPress={() => _enviar()}
+
+
                         // {loginHandle( data.nome, 
                         //                          data.sobrenome,
                         //                          data.telefone,
                         //                          sexo )}}
-                >
-                <LinearGradient
-                     colors={['#ff9517', '#ff9517']}
-                    style={styles.signIn}
-                >
-                    <Text style={[styles.textSign, {
-                        color:'#fff'
-                    }]}>Próximo</Text>
-                </LinearGradient>
-                </TouchableOpacity>
+                        >
+                            <LinearGradient
+                                colors={['#ff9517', '#ff9517']}
+                                style={styles.signIn}
+                            >
+                                <Text style={[styles.textSign, {
+                                    color: '#fff'
+                                }]}>Próximo</Text>
+                            </LinearGradient>
+                        </TouchableOpacity>
                     </View>
-                    </ScrollView>
-                </Animatable.View>
-        
+                </ScrollView>
+            </Animatable.View>
+
         </View>
     );
 };
@@ -493,7 +511,7 @@ const styles = StyleSheet.create({
     textInput: {
         flex: 1,
         marginTop: Platform.OS === 'ios' ? 0 : -12,
-        paddingLeft: 10,
+        paddingLeft: 0,
         color: '#05375a',
     },
     errorMsg: {
@@ -503,7 +521,7 @@ const styles = StyleSheet.create({
     button: {
         alignItems: 'center',
         marginTop: 50,
-        marginBottom:20
+        marginBottom: 20
     },
     signIn: {
         width: '100%',
@@ -523,7 +541,7 @@ const styles = StyleSheet.create({
     },
 
     fontSexo: {
-        fontSize: 14, 
+        fontSize: 14,
         marginTop: 10
     }
 });

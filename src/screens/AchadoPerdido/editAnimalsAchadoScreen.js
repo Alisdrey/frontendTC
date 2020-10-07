@@ -54,7 +54,7 @@ const editAnimalsAchadoScreen = ({ route, navigation, props }) => {
     return (
 
         <ImageBackground
-            style={styles.bg, { backgroundColor: '#c9871e', height: "100%" }}
+            style={styles.bg, { backgroundColor:'#ebebeb', height: "100%" }}
         >
             <ScrollView style={styles.containerProfile}>
                 <ImageBackground source={{ uri: Server.API_PRINC + date.detailachado.url }} style={styles.photo}>
@@ -79,7 +79,7 @@ const editAnimalsAchadoScreen = ({ route, navigation, props }) => {
                         info2={('Descrição do animal: ') + (date.detailachado.descricaoAnimal)}
                         info3={date.detailachado}
                         iduser={date.detailachado.idUsuario}
-                        iduserPerdido={user.idUsuario}
+                        iduserAchado={user.idUsuario}
                     />
                 </Renderif>
                 <Renderif test={date.infDono}>
@@ -93,6 +93,8 @@ const editAnimalsAchadoScreen = ({ route, navigation, props }) => {
                         info2={'Cidade: ' + (user.cidade)}
                         info3={'Rua: ' + (user.rua) + ' - ' + (user.numero)}
                         info4={('Telefone: ') + (user.telefone)}
+                        iduser={date.detailachado.idUsuario}
+                        iduserAchado={user.idUsuario}
 
                     />
                 </Renderif>

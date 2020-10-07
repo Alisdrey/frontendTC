@@ -9,22 +9,15 @@ import {
     StatusBar,
     Alert,
     ScrollView,
-    PermissionsAndroid,
-    SafeAreaView,
     Dimensions,
     Image
 } from 'react-native';
-import {
-    Thumbnail, Textarea,
-} from "native-base";
+import {Textarea} from "native-base";
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
-import { Col, Row, Grid } from "react-native-easy-grid";
 import AsyncStorage from '@react-native-community/async-storage';
 import { useTheme } from 'react-native-paper';
-import Renderif from "../../componets/RenderIf";
 import { Picker } from '@react-native-community/picker';
 import Server from '../settings/Server';
 
@@ -42,13 +35,9 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
         selected: "key0",
 
         isValidAnimal: true,
-        check_Animal: false,
         isValidDescricao: true,
-        check_Descricao: false,
         isValidCidade: true,
-        check_Cidade: false,
         isValidEstado: true,
-        check_Estado: false,
         isloading: true,
 
     });
@@ -61,9 +50,15 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
     const { colors } = useTheme();
 
 
-    useEffect(() => {
-        get()
-    }, []);
+    // useEffect(() => {
+    //     if (data.user.cidade != "" ) {
+    //         setCidade(data.user.cidade);
+    //     }
+
+    //     if (data.user.estado != "") {
+    //         setEstado(data.user.estado);
+    //     }
+    // }, []);
 
     useEffect(() => {
 
@@ -81,6 +76,14 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                             animalusuario: responseJson,
                             user: user,
                         });
+
+                        if (user.cidade != "" ) {
+                            setCidade(user.cidade);
+                        }
+
+                        if (user.estado != "") {
+                            setEstado(user.estado);
+                        }
                     }
                 })
                 .catch(error => {
@@ -88,18 +91,6 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                 });
         });
     }, []);
-
-
-    const get = () => {
-
-        if (data.user.cidade != "" ) {
-            setCidade(data.user.cidade);
-        }
-
-        if (data.user.estado != "") {
-            setEstado(data.user.estado);
-        }
-    }
 
 
 
@@ -114,8 +105,8 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
 
             formdata.append('idusuario', data.user.idUsuario)
             formdata.append('idanimal', data.idanimal)
-            formdata.append('cidade', data.user.cidade)
-            formdata.append('estado', data.user.estado)
+            formdata.append('cidade', cidade)
+            formdata.append('estado', estado)
             formdata.append('descricao', data.descricao)
             console.log(formdata)
 
@@ -157,14 +148,12 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
             setData({
                 ...data,
                 idanimal: val,
-                check_Animal: true,
                 isValidAnimal: true
             });
         } else {
             setData({
                 ...data,
                 idanimal: '',
-                check_Animal: false,
                 isValidAnimal: false
             });
         }
@@ -177,13 +166,11 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
             setData({
                 ...data,
                 descricao: val,
-                check_Descricao: true,
                 isValidDescricao: true
             });
         } else {
             setData({
                 ...data,
-                check_Descricao: false,
                 isValidDescricao: false
             });
         }
@@ -195,8 +182,7 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
         } else {
             setData({
                 ...data,
-                check_Estado: false,
-                isValidEstado: false
+                isValidCidade: false
             });
         }
       
@@ -208,7 +194,6 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
         } else {
             setData({
                 ...data,
-                check_Estado: false,
                 isValidEstado: false
             });
         }
@@ -256,10 +241,10 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                             placeholder={"Selecione..."}
 
                         >
-                            <Picker.Item style={{ fontSize: 12 }} label="Selecione seu animal..." value="key0" />
+                            <Picker.Item style={{ fontSize: 12 }} label="Selecione seu animal..."  />
                             {
                                 data.animalusuario.map((item, index) =>
-                                    <Picker.Item key={item.nome} label={item.nome} value={item.idAnimal} />
+                                    <Picker.Item key={index} label={item.nome} value={item.idAnimal} />
                                 )
 
                             }
@@ -294,7 +279,7 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                                 size={20}
                             /> */}
                         <TextInput
-                            value={cidade}
+                            value={String(cidade || '')}
                             placeholder="Informe a cidade"
                             placeholderTextColor="#666666"
                             style={[styles.textInput, {
@@ -304,17 +289,7 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                             onChangeText={(val) => textInputChangeCidade(val)}
                         //onEndEditing={(e) => handleValidNome(e.nativeEvent.text)}
                         />
-                        {data.check_Cidade ?
-                            <Animatable.View
-                                animation="bounceIn"
-                            >
-                                <Feather
-                                    name="check-circle"
-                                    color="green"
-                                    size={20}
-                                />
-                            </Animatable.View>
-                            : null}
+                      
                     </View>
                     {data.isValidCidade ? null :
                         <Animatable.View animation="fadeInLeft" duration={500}>
@@ -329,13 +304,9 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                         color: colors.text
                     }]}>Estado</Text>
                     <View style={styles.action}>
-                        {/* <FontAwesome
-                                name="asterisk"
-                                color={colors.text}
-                                size={20}
-                            /> */}
+                    
                         <TextInput
-                            value={estado}
+                            value={String(estado || '')}
                             placeholder="Informe o estado"
                             placeholderTextColor="#666666"
                             style={[styles.textInput, {
@@ -343,19 +314,8 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                             }]}
                             autoCapitalize="none"
                             onChangeText={(val) => textInputChangeEstado(val)}
-                        //onEndEditing={(e) => handleValidNome(e.nativeEvent.text)}
                         />
-                        {data.check_Estado ?
-                            <Animatable.View
-                                animation="bounceIn"
-                            >
-                                <Feather
-                                    name="check-circle"
-                                    color="green"
-                                    size={20}
-                                />
-                            </Animatable.View>
-                            : null}
+                       
                     </View>
                     {data.isValidEstado ? null :
                         <Animatable.View animation="fadeInLeft" duration={500}>
@@ -384,18 +344,6 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                             />
                         </View>
 
-                        {data.check_Descricao ?
-                            <Animatable.View
-                                animation="bounceIn"
-                            >
-                                <Feather
-                                    name="check-circle"
-                                    color="green"
-                                    size={20}
-                                    style={{ padding: 5 }}
-                                />
-                            </Animatable.View>
-                            : null}
                     </View>
                     {data.isValidDescricao ? null :
                         <Animatable.View animation="fadeInLeft" duration={500}>

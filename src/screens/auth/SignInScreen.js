@@ -1,4 +1,4 @@
-import React, {useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
     View,
     Text,
@@ -14,7 +14,6 @@ import {
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -28,6 +27,7 @@ const SignInScreen = ({ navigation }) => {
         username: '',
         user: {},
         password: '',
+        buttonDisable: true,
         check_textInputChange: false,
         secureTextEntry: true,
         isValidUser: true,
@@ -35,6 +35,21 @@ const SignInScreen = ({ navigation }) => {
     });
 
     const { colors } = useTheme();
+
+
+    useEffect(() => {
+        if (data.username.trim().length >= 4 && data.password.trim().length >= 8) {
+            setData({
+                ...data,
+                buttonDisable: false
+            });
+        } else {
+            setData({
+                ...data,
+                buttonDisable: true
+            });
+        }
+    }, [data.username, data.password]);
 
     const textInputChange = (val) => {
         if (val.trim().length >= 4) {
@@ -49,7 +64,7 @@ const SignInScreen = ({ navigation }) => {
                 ...data,
                 username: val,
                 check_textInputChange: false,
-                isValidUser: false
+                isValidUser: false,
             });
         }
     }
@@ -65,7 +80,7 @@ const SignInScreen = ({ navigation }) => {
             setData({
                 ...data,
                 password: val,
-                isValidPassword: false
+                isValidPassword: false,
             });
         }
     }
@@ -94,6 +109,7 @@ const SignInScreen = ({ navigation }) => {
     const loginHandle = () => {
 
         if (data.username != "" && data.password != "") {
+
             const url = Server.API +
                 data.username +
                 "/" +
@@ -107,7 +123,14 @@ const SignInScreen = ({ navigation }) => {
                             "User",
                             JSON.stringify(responseJson)
                         ).then(() => {
+
+                            setData({
+                                ...data,
+                                buttonDisable: true
+                            });
+
                             navigation.navigate("HomeAP");
+
                         });
 
                     } else {
@@ -133,7 +156,7 @@ const SignInScreen = ({ navigation }) => {
         } else {
 
             Alert.alert(
-                "Nome ou senha vazios",
+                "",
                 "Preencha todos os campos e tente novamente. ",
                 [
                     {
@@ -153,14 +176,12 @@ const SignInScreen = ({ navigation }) => {
         <View style={styles.container}>
             <StatusBar backgroundColor='#323a4e' barStyle="light-content" />
             <View style={styles.header}>
-            <Animatable.Image 
-                animation="bounceIn"
-                duraton="1500"
-            source={require('../../source/logo.png')}
-            style={styles.logo}
-           // resizeMode="contain"
-            />
-                {/* <Text style={styles.text_header}>Bem-Vindo!</Text> */}
+                <Animatable.Image
+                    animation="bounceIn"
+                    duraton="1500"
+                    source={require('../../source/logo.png')}
+                    style={styles.logo}
+                />
             </View>
             <Animatable.View
                 animation="fadeInUpBig"
@@ -172,128 +193,129 @@ const SignInScreen = ({ navigation }) => {
                     <Text style={[styles.text_footer, {
                         color: colors.text
                     }]}>Usuário</Text>
-                <View style={styles.action}>
-                    <MaterialIcons
-                        name="person"
-                        color={colors.text}
-                        size={20}
-                    />
-                    <TextInput
-                        placeholder="Seu usuário"
-                        placeholderTextColor="#666666"
-                        style={[styles.textInput, {
-                            color: colors.text
-                        }]}
-                        autoCapitalize="none"
-                        onChangeText={(val) => textInputChange(val)}
-                        onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
-                    />
-                    {data.check_textInputChange ?
-                        <Animatable.View
-                            animation="bounceIn"
-                        >
-                            <Feather
-                                name="check-circle"
-                                color="green"
-                                size={20}
-                            />
+                    <View style={styles.action}>
+                        <MaterialIcons
+                            name="person"
+                            color={colors.text}
+                            size={20}
+                        />
+                        <TextInput
+                            placeholder="Seu usuário"
+                            placeholderTextColor="#666666"
+                            style={[styles.textInput, {
+                                color: colors.text
+                            }]}
+                            autoCapitalize="none"
+                            onChangeText={(val) => textInputChange(val)}
+                            onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
+                        />
+                        {data.check_textInputChange ?
+                            <Animatable.View
+                                animation="bounceIn"
+                            >
+                                <Feather
+                                    name="check-circle"
+                                    color="green"
+                                    size={20}
+                                />
+                            </Animatable.View>
+                            : null}
+                    </View>
+                    {data.isValidUser ? null :
+                        <Animatable.View animation="fadeInLeft" duration={500}>
+                            <Text style={styles.errorMsg}>O nome de usuário deve ter 4 caracteres.</Text>
                         </Animatable.View>
-                        : null}
-                </View>
-                {data.isValidUser ? null :
-                    <Animatable.View animation="fadeInLeft" duration={500}>
-                        <Text style={styles.errorMsg}>O nome de usuário deve ter 4 caracteres.</Text>
-                    </Animatable.View>
-                }
+                    }
 
 
-                <Text style={[styles.text_footer, {
-                    color: colors.text,
-                    marginTop: 35
-                }]}>Senha</Text>
-                <View style={styles.action}>
-                    <Feather
-                        name="lock"
-                        color={colors.text}
-                        size={20}
-                    />
-                    <TextInput
-                        placeholder="Sua senha"
-                        placeholderTextColor="#666666"
-                        secureTextEntry={data.secureTextEntry ? true : false}
-                        style={[styles.textInput, {
-                            color: colors.text
-                        }]}
-                        autoCapitalize="none"
-                        onChangeText={(val) => handlePasswordChange(val)}
-                    />
-                    <TouchableOpacity
-                        onPress={updateSecureTextEntry}
-                    >
-                        {data.secureTextEntry ?
-                            <Feather
-                                name="eye-off"
-                                color="grey"
-                                size={20}
-                            />
-                            :
-                            <Feather
-                                name="eye"
-                                color="grey"
-                                size={20}
-                            />
-                        }
+                    <Text style={[styles.text_footer, {
+                        color: colors.text,
+                        marginTop: 35
+                    }]}>Senha</Text>
+                    <View style={styles.action}>
+                        <Feather
+                            name="lock"
+                            color={colors.text}
+                            size={20}
+                        />
+                        <TextInput
+                            placeholder="Sua senha"
+                            placeholderTextColor="#666666"
+                            secureTextEntry={data.secureTextEntry ? true : false}
+                            style={[styles.textInput, {
+                                color: colors.text
+                            }]}
+                            autoCapitalize="none"
+                            onChangeText={(val) => handlePasswordChange(val)}
+                        />
+                        <TouchableOpacity
+                            onPress={updateSecureTextEntry}
+                        >
+                            {data.secureTextEntry ?
+                                <Feather
+                                    name="eye-off"
+                                    color="grey"
+                                    size={20}
+                                />
+                                :
+                                <Feather
+                                    name="eye"
+                                    color="grey"
+                                    size={20}
+                                />
+                            }
+                        </TouchableOpacity>
+                    </View>
+                    {data.isValidPassword ? null :
+                        <Animatable.View animation="fadeInLeft" duration={500}>
+                            <Text style={styles.errorMsg}>A senha deve conter pelo menos 8 caracteres.</Text>
+                        </Animatable.View>
+                    }
+
+
+                    <TouchableOpacity>
+                        <Text style={{ color: '#ff9517', marginTop: 15 }}>Esqueceu sua senha?</Text>
                     </TouchableOpacity>
-                </View>
-                {data.isValidPassword ? null :
-                    <Animatable.View animation="fadeInLeft" duration={500}>
-                        <Text style={styles.errorMsg}>A senha deve conter pelo menos 8 caracteres.</Text>
-                    </Animatable.View>
-                }
 
-
-                <TouchableOpacity>
-                    <Text style={{ color: '#ff9517', marginTop: 15 }}>Esqueceu sua senha?</Text>
-                </TouchableOpacity>
-                <View style={styles.button}>
-                    <TouchableOpacity
-                        style={styles.signIn}
-                        onPress={() => { loginHandle() }}
-                    >
-                        <LinearGradient
-                            colors={['#ff9517', '#ff9517']}
+                    <View style={styles.button}>
+                        <TouchableOpacity disabled={data.buttonDisable}
                             style={styles.signIn}
+                            onPress={() => { loginHandle() }}
+                        >
+                            <LinearGradient
+
+                                colors={data.buttonDisable ?
+                                    ['#8a92a8', '#8a92a8'] :
+                                    ['#ff9517', '#ff9517']}
+                                style={styles.signIn}
+                            >
+                                <Text style={[styles.textSign, {
+                                    color: '#fff'
+                                }]}>Entrar</Text>
+                            </LinearGradient>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate('SignUp')}
+                            style={[styles.signIn, {
+                                borderColor: '#ff9517',
+                                borderWidth: 1,
+                                marginTop: 15
+                            }]}
                         >
                             <Text style={[styles.textSign, {
-                                color: '#fff'
-                            }]}>Entrar</Text>
-                        </LinearGradient>
-                    </TouchableOpacity>
+                                color: '#ff9517'
+                            }]}>Cadastrar</Text>
+                        </TouchableOpacity>
 
-                    <TouchableOpacity
-                        onPress={() => navigation.navigate('SignUp')}
-                        style={[styles.signIn, {
-                            borderColor: '#ff9517',
-                            borderWidth: 1,
-                            marginTop: 15
-                        }]}
-                    >
-                        <Text style={[styles.textSign, {
-                            color: '#ff9517'
-                        }]}>Cadastrar</Text>
-                    </TouchableOpacity>
-
-                </View>
-            </ScrollView>
-        </Animatable.View>
-      </View >
+                    </View>
+                </ScrollView>
+            </Animatable.View>
+        </View >
     );
 };
 
 export default SignInScreen;
-
-const {height} = Dimensions.get("screen");
-const height_logo = height * 0.28;
 
 const styles = StyleSheet.create({
     container: {
@@ -306,7 +328,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingBottom: 50
     },
-    
+
     footer: {
         flex: 3,
         backgroundColor: '#fff',
@@ -363,9 +385,9 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold'
     },
-    logo:{
+    logo: {
         flex: 1,
-        top:30,
+        top: 30,
         width: null,
         height: null,
         resizeMode: 'contain'

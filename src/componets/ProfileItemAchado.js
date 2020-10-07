@@ -1,9 +1,7 @@
 import React from 'react';
 import styles from '../screens/settings/styles';
 import { Text, View, TouchableOpacity } from 'react-native';
-import Icon from './Icon';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { Textarea } from "native-base";
 import Renderif from "../componets/RenderIf";
 
 const ProfileItemAchado = ({
@@ -17,7 +15,7 @@ const ProfileItemAchado = ({
   name,
   navigation,
   iduser,
-  iduserPerdido
+  iduserAchado
 
 }) => {
   return (
@@ -33,7 +31,7 @@ const ProfileItemAchado = ({
             date_Achado: info3
           })}>
           <Text style={styles.name}>{name}  {'  '}    
-            <Renderif test={iduser == iduserPerdido }>
+            <Renderif test={iduser == iduserAchado }>
                 <FontAwesome name="edit" />
             </Renderif> 
           </Text>

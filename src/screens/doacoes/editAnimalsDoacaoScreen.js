@@ -43,26 +43,43 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
 
     const { date_Doacao } = route.params;
     const { user } = route.params;
+    const [load, setLoad] = useState(true)
 
     const [date, setData] = React.useState({
         detailDoacao: date_Doacao,
-        user: {},
+        user: user,
         infDono: false
     });
 
-    useEffect(() => {
-        AsyncStorage.getItem("User").then(userText => {
-            const user = JSON.parse(userText);
-            setData({
-                ...date,
-                user: user,
-            });
-        });
 
-    }, []);
+    useEffect(() => {
+        console.log(date.detailDoacao)
+
+        let formdata = new FormData();
+
+        formdata.append('idUsuario', date.user.idUsuario)
+        formdata.append('especie', date_Doacao.Animal.especie)
+        formdata.append('raca', date_Doacao.Animal.raca)
+        formdata.append('sexo', date_Doacao.Animal.sexo)
+        formdata.append('cor', date_Doacao.Animal.cor)
+        formdata.append('pelo', date_Doacao.Animal.pelo)
+        formdata.append('porte', date_Doacao.Animal.porte)
+        formdata.append('filhote', date_Doacao.Animal.filhote)
+        console.log(formdata)
+
+        fetch(Server.API_RECOMENDACAO_GOSTO_POST, {
+            method: "POST",
+            'Content-Type': 'multipart/form-data',
+            body: formdata
+        }).then(response => response.json())
+            .then(response => {
+
+            })
+
+     navigation.addListener('focus', () => setLoad(!load))
+    }, [load, navigation])
 
     const _enviar = () => {
-        console.log(date)
         Alert.alert(
             "Confirmação",
             "Este animal foi realmente doado? ",
@@ -92,11 +109,9 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
                             body: formdata
                         }).then(response => response.json())
                             .then(response => {
-                               console.log('teste', response)
+                                console.log('teste', response)
 
                             })
-
-
                     }
                 }
             ]);
@@ -107,7 +122,6 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
         <ImageBackground
             style={styles.bg, { backgroundColor: '#c9871e' }}
         >
-            {console.log(date.detailDoacao)}
             <ScrollView style={styles.containerProfile}>
                 <ImageBackground source={{ uri: Server.API_PRINC + date_Doacao.Animal.Galeria[0].url }} style={styles.photo}>
                     <View style={styles.top}>

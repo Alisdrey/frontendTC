@@ -42,7 +42,6 @@ const updatePerdidoScreen = ({ route, navigation, props }) => {
 
     });
 
-
     const { colors } = useTheme();
 
 
@@ -53,11 +52,7 @@ const updatePerdidoScreen = ({ route, navigation, props }) => {
 
 
     const _enviar = () => {
-        console.log(data)
-
-
-     
-
+    
             let formdata = new FormData();
         
             formdata.append('idAchado', data.date_Achado.idAchado)
@@ -97,14 +92,10 @@ const updatePerdidoScreen = ({ route, navigation, props }) => {
     }
 
     const textInputChangeAnimal = (val) => {
-
-      
-
-            setData({
-                ...data,
-                descricaoAnimal: val,
-            });
-    
+        setData({
+            ...data,
+            descricaoAnimal: val,
+        });
     }
 
   

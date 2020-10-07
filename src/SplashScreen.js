@@ -18,7 +18,6 @@ import AsyncStorage from '@react-native-community/async-storage';
 const SplashScreen = ({navigation, props}) => {
     const { colors } = useTheme();
 
-
     useEffect(() => {
         AsyncStorage.getItem("User").then(userText => {
             const user = JSON.parse(userText);
@@ -27,7 +26,7 @@ const SplashScreen = ({navigation, props}) => {
               
             } else {
                 setTimeout(() => {
-                    navigation.navigate("Splash");
+                    navigation.navigate("SignIn");
                 }, 3000);
             }
         });
