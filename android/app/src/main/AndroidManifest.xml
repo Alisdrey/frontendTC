@@ -4,6 +4,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-feature android:name="android.hardware.camera.front" android:required="false" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:requestLegacyExternalStorage="true" tools:node="replace" />
+    <uses-permission android:name="android.permission.CAMERA" android:requestLegacyExternalStorage="true"/>
 
     <application
       android:name=".MainApplication"

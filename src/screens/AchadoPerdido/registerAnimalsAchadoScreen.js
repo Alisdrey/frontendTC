@@ -37,7 +37,7 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
         descricaoanimal: "",
         estado: "",
         cidade: "",
-        acolhido: "",
+        acolhido: [],
         selected: "key0",
 
         isValidAnimal: true,
@@ -61,15 +61,6 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
 
     const { colors } = useTheme();
 
-    useEffect(() => {
-        if (data.user.cidade != "" ) {
-            setCidade(data.user.cidade);
-        }
-
-        if (data.user.estado != "") {
-            setEstado(data.user.estado);
-        }
-    }, []);
 
     useEffect(() => {
 
@@ -80,13 +71,31 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
             fetch(url)
                 .then(response => response.json())
                 .then(responseJson => {
-                    console.log(responseJson)
+                   
                     if (responseJson != null) {
                         setData({
                             ...data,
                             animalusuario: responseJson,
                             user: user,
                         });
+
+                        if (user.cidade != "") {
+                            setCidade(user.cidade);
+                            // setData({
+                            //     ...data,
+                            //     check_Cidade: true,
+                            //     isValidCidade: true
+                            // })
+                        }
+
+                        if (user.estado != "") {
+                            setEstado(user.estado);
+                            // setData({
+                            //     ...data,
+                            //     check_Estado: true,
+                            //     isValidEstado: true
+                            // })
+                        }
                     }
                 })
                 .catch(error => {
@@ -97,7 +106,6 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
 
 
     const textInputChangeAnimal = (val) => {
-        console.log(val)
         if (val.trim().length > 0) {
 
             setData({
@@ -137,23 +145,32 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
     const textInputChangeCidade = (val) => {
         if (val.trim().length >= 0) {
             setCidade(val);
+            setData({
+                ...data,
+                check_Cidade: true,
+                isValidCidade: true
+            })
         } else {
             setData({
                 ...data,
-                check_Estado: false,
-                isValidEstado: false
+                check_Cidade: false,
+                isValidCidade: false
             });
         }
-      
+
     }
 
     const textInputChangeEstado = (val) => {
         if (val.trim().length >= 0) {
-           setEstado(val);
+            setEstado(val);
+            setData({
+                ...data,
+                isValidEstado: true
+            })
+           
         } else {
             setData({
                 ...data,
-                check_Estado: false,
                 isValidEstado: false
             });
         }
@@ -164,309 +181,283 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
             setData({
                 ...data,
                 acolhido: val,
-                check_Estado: true,
-                isValidEstado: true
             });
         } else {
             setData({
                 ...data,
                 acolhido: '',
-                check_Estado: false,
-                isValidEstado: false
             });
         }
     }
 
+    const _enviar = () => {
+        console.log("data",data)
+        if (data.descricaolocal != '' && data.descricaoanimal != '' &&
+            cidade != '' && estado != '' && data.acolhido != '') {
+            navigation.navigate(
+                "registerPhotoAnimalsAchado"
+                , {
+                    idusuario: data.user.idUsuario,
+                    descricaolocal: data.descricaolocal,
+                    descricaoanimal: data.descricaoanimal,
+                    cidade: cidade,
+                    estado: estado,
+                    acolhido: data.acolhido
+                })
+        } else {
+            Alert.alert(
+                "Campos vazios",
+                "Preencha todos os campos e tente novamente. ",
+                [
+                    {
+                        text: "OK",
+                        onPress: () =>
+                            console.log("cancel"),
+                        style: "default"
+                    },
+                ],
+                { cancelable: false }
+            )
+        }
 
+        navigation.addListener ('focus', () =>{
+            setData({
+                ...data,
+                    descricaolocal: '',
+                    descricaoanimal: '',
+                    acolhido: []
+            })
+          });
+    }
 
     return (
 
         <View style={styles.container}>
-        <StatusBar backgroundColor='#323a4e' barStyle="light-content" />
-        <View style={styles.header}>
-            <Animatable.Image
-                animation="bounceIn"
-                duraton="1500"
-                source={require('../../source/logo.png')}
-                style={styles.logo}
+            <StatusBar backgroundColor='#323a4e' barStyle="light-content" />
+            <View style={styles.header}>
+                <Animatable.Image
+                    animation="bounceIn"
+                    duraton="1500"
+                    source={require('../../source/logo.png')}
+                    style={styles.logo}
+                />
+            </View>
 
-            // resizeMode="contain"
-            />
-            {/* <Text style={styles.text_header}>Bem-Vindo!</Text> */}
-        </View>
+            <Animatable.View
+                animation="fadeInUpBig"
+                style={[styles.footer, {
+                    backgroundColor: colors.background
+                }]}
+            >
+                <ScrollView style={{ width: "100%", marginBottom: -25 }} keyboardShouldPersistTaps={'handled'}>
 
+                    <Text style={[styles.text_footer, {
+                        color: colors.text
+                    }]}>Cidade</Text>
+                    <View style={styles.action}>
 
-
-                <Animatable.View
-                    animation="fadeInUpBig"
-                    style={[styles.footer, {
-                        backgroundColor: colors.background
-                    }]}
-                >
-                    <ScrollView style={{ width: "100%", marginBottom: -25 }}>
-
-                        <Text style={[styles.text_footer, {
-                            color: colors.text
-                        }]}>Cidade</Text>
-                        <View style={styles.action}>
-                            
-                            <TextInput
-                                value={cidade}
-                                placeholder="Informe a cidade"
-                                placeholderTextColor="#666666"
-                                style={[styles.textInput, {
-                                    color: colors.text
-                                }]}
-                                autoCapitalize="none"
-                                onChangeText={(val) => textInputChangeCidade(val)}
-                            //onEndEditing={(e) => handleValidNome(e.nativeEvent.text)}
-                            />
-                            {data.check_Cidade ?
-                                <Animatable.View
-                                    animation="bounceIn"
-                                >
-                                    <Feather
-                                        name="check-circle"
-                                        color="green"
-                                        size={20}
-                                    />
-                                </Animatable.View>
-                                : null}
-                        </View>
-                        {data.isValidCidade ? null :
-                            <Animatable.View animation="fadeInLeft" duration={500}>
-                                <Text style={styles.errorMsg}>Campo obrigatório.</Text>
-                            </Animatable.View>
-                        }
-
-                        {/* ========= Estado ========= */}
-
-
-                        <Text style={[styles.text_footer, {
-                            color: colors.text
-                        }]}>Estado</Text>
-                        <View style={styles.action}>
-                          
-                            <TextInput
-                                value={estado}
-                                placeholder="Informe o estado"
-                                placeholderTextColor="#666666"
-                                style={[styles.textInput, {
-                                    color: colors.text, marginBottom: 0
-                                }]}
-                                autoCapitalize="none"
-                                onChangeText={(val) => textInputChangeEstado(val)}
-                            //onEndEditing={(e) => handleValidNome(e.nativeEvent.text)}
-                            />
-                            {data.check_Estado ?
-                                <Animatable.View
-                                    animation="bounceIn"
-                                >
-                                    <Feather
-                                        name="check-circle"
-                                        color="green"
-                                        size={20}
-                                    />
-                                </Animatable.View>
-                                : null}
-                        </View>
-                        {data.isValidEstado ? null :
-                            <Animatable.View animation="fadeInLeft" duration={500}>
-                                <Text style={styles.errorMsg}>Campo obrigatório.</Text>
-                            </Animatable.View>
-                        }
-
-                        {/* ========= Descrição ========= */}
-
-                        <Text style={[styles.text_footer, {
-                            color: colors.text
-                        }]}>Descrição do Animal</Text>
-                         
-                        <View style={styles.action}>
-
-                            <Text></Text>
-                            <View style={{ flex: 1, flexDirection: 'column' }}>
-
-                                <Textarea style={{ height: 90, marginBottom: 10 }}
-                                    placeholder="Informe uma descrição detalhada do animal."
-                                    //value={this.state.descricao}
-                                    onChangeText={(val) => textInputChangeAnimal(val)}
-                                    rowSpan={2}
-                                    bordered
-                                />
-                            </View>
-
-                            {data.check_Animal ?
-                                <Animatable.View
-                                    animation="bounceIn"
-                                >
-                                    <Feather
-                                        name="check-circle"
-                                        color="green"
-                                        size={20}
-                                        style={{ padding: 5 }}
-                                    />
-                                </Animatable.View>
-                                : null}
-                        </View>
-                        {data.isValidAnimal ? null :
-                            <Animatable.View animation="fadeInLeft" duration={500}>
-                                <Text style={styles.errorMsg}>Campo obrigatório.</Text>
-                            </Animatable.View>
-                        }
-                      
-                        
-                        <Text style={[styles.text_footer, {
-                            color: colors.text, bottom: 2
-                        }]}>Descrição do Local</Text>
-                            
-
-                        <View style={styles.action}>
-
-                            <Text></Text>
-                            <View style={{ flex: 1, flexDirection: 'column' }}>
-
-                                <Textarea style={{ height: 90, }}
-                                    placeholder="Informe uma descrição detalhada de onde foi encontrado o animal."
-                                    //value={this.state.descricao}
-                                    onChangeText={(val) => textInputChangeLocal(val)}
-                                    rowSpan={2}
-                                    bordered
-                                />
-                            </View>
-
-                            {data.check_Local ?
-                                <Animatable.View
-                                    animation="bounceIn"
-                                >
-                                    <Feather
-                                        name="check-circle"
-                                        color="green"
-                                        size={20}
-                                        style={{ padding: 5 }}
-                                    />
-                                </Animatable.View>
-                                : null}
-                        </View>
-                        {data.isValidLocal ? null :
-                            <Animatable.View animation="fadeInLeft" duration={500}>
-                                <Text style={styles.errorMsg}>Campo obrigatório.</Text>
-                            </Animatable.View>
-                        }
-
-
-                        <Text style={[styles.text_footer, {
-                            color: colors.text, marginTop: 10
-                        }]}>Animal Acolhido</Text>
-                        <View style={styles.action}>
-                    
-                            <Picker
-                                note
-                                mode="dialog"
-                                style={{ width: "100%" }}
-                                selectedValue={data.acolhido}
-                                onValueChange={textInputChangeAcolhido.bind(this)}
-                                placeholder={"Selecione..."}
-
+                        <TextInput
+                            value={String(cidade || '')}
+                            placeholder="Informe a cidade"
+                            placeholderTextColor="#666666"
+                            style={[styles.textInput, {
+                                color: colors.text
+                            }]}
+                            autoCapitalize="none"
+                            onChangeText={(val) => textInputChangeCidade(val)}
+                        />
+                        {data.check_Cidade ?
+                            <Animatable.View
+                                animation="bounceIn"
                             >
-                                <Picker.Item label="Selecione..." value="Key0" />
-
-                                <Picker.Item label="Sim" value="1" />
-
-                                <Picker.Item label="Não" value="0" />
-
-                            </Picker>
-
-                            {data.check_Acolhido ?
-                                <Animatable.View
-                                    animation="bounceIn"
-                                >
-                                    <Feather
-                                        name="check-circle"
-                                        color="green"
-                                        size={20}
-                                    />
-                                </Animatable.View>
-                                : null}
-                        </View>
-                        {data.isValidAcolhido ? null :
-                            <Animatable.View animation="fadeInLeft" duration={500}>
-                                <Text style={styles.errorMsg}>Campo obrigatório.</Text>
-                            </Animatable.View>
-                        }
-
-
-
-
-                        {/* <Renderif test={data.outraEspecie}>
-                            <Text style={[styles.text_footer, {
-                                color: colors.text, marginTop: 30
-                            }]}>Outra Espécie</Text>
-                            <View style={styles.action}>
-                                <FontAwesome
-                                    name="asterisk"
-                                    color={colors.text}
+                                <Feather
+                                    name="check-circle"
+                                    color="green"
                                     size={20}
                                 />
-                                <TextInput
-                                    placeholder="Informe a espécie do seu animal"
-                                    placeholderTextColor="#666666"
-                                    style={[styles.textInput, {
-                                        color: colors.text
-                                    }]}
-                                    autoCapitalize="none"
-                                    onChangeText={(val) => textInputChangeEspecie(val)}
-                                />
+                            </Animatable.View>
+                            : null}
+                    </View>
+                    {data.isValidCidade ? null :
+                        <Animatable.View animation="fadeInLeft" duration={500}>
+                            <Text style={styles.errorMsg}>Campo obrigatório.</Text>
+                        </Animatable.View>
+                    }
 
-                                {data.check_Especie ?
-                                    <Animatable.View animation="bounceIn">
-                                        <Feather
-                                            name="check-circle"
-                                            color="green"
-                                            size={20}
-                                        />
-                                    </Animatable.View>
-                                    : null}
-                            </View>
-                            {data.isValidEspecie ? null :
-                                <Animatable.View animation="fadeInLeft" duration={500}>
-                                    <Text style={styles.errorMsg}>Campo obrigatório.</Text>
-                                </Animatable.View>
-                            }
-                        </Renderif> */}
+                    {/* ========= Estado ========= */}
 
 
-                        <View style={styles.button}>
+                    <Text style={[styles.text_footer, {
+                        color: colors.text
+                    }]}>Estado</Text>
+                    <View style={styles.action}>
 
-                            <TouchableOpacity
-                                style={styles.signIn}
-                                onPress={() => navigation.navigate(
-                                    "registerPhotoAnimalsAchado"
-                                    , {
-                                        idusuario: data.user.idUsuario,
-                                        descricaolocal: data.descricaolocal,
-                                        descricaoanimal: data.descricaoanimal,
-                                        cidade: data.user.cidade,
-                                        estado: data.user.estado,
-                                        acolhido: data.acolhido
-                                    }
-                                )}
-
+                        <TextInput
+                            value={String(estado || '')}
+                            placeholder="Informe o estado"
+                            placeholderTextColor="#666666"
+                            style={[styles.textInput, {
+                                color: colors.text, marginBottom: 0
+                            }]}
+                            autoCapitalize="none"
+                            onChangeText={(val) => textInputChangeEstado(val)}
+                        />
+                        {data.check_Estado ?
+                            <Animatable.View
+                                animation="bounceIn"
                             >
-                                <LinearGradient
-                                    colors={['#ff9517', '#ff9517']}
-                                    style={styles.signIn}
-                                >
-                                    <Text style={[styles.textSign, {
-                                        color: '#fff'
-                                    }]}>Próximo</Text>
-                                </LinearGradient>
-                            </TouchableOpacity>
-                        </View>
-                    </ScrollView>
-                </Animatable.View>
+                                <Feather
+                                    name="check-circle"
+                                    color="green"
+                                    size={20}
+                                />
+                            </Animatable.View>
+                            : null}
+                    </View>
+                    {data.isValidEstado ? null :
+                        <Animatable.View animation="fadeInLeft" duration={500}>
+                            <Text style={styles.errorMsg}>Campo obrigatório.</Text>
+                        </Animatable.View>
+                    }
 
-            </View>
+                    {/* ========= Descrição ========= */}
+
+                    <Text style={[styles.text_footer, {
+                        color: colors.text
+                    }]}>Descrição do Animal</Text>
+
+                    <View style={styles.action}>
+
+                        <Text></Text>
+                        <View style={{ flex: 1, flexDirection: 'column' }}>
+
+                            <Textarea style={{ height: 90, marginBottom: 10 }}
+                                placeholder="Informe uma descrição detalhada do animal."
+                                onChangeText={(val) => textInputChangeAnimal(val)}
+                                rowSpan={2}
+                                bordered
+                            />
+                        </View>
+
+                        {data.check_Animal ?
+                            <Animatable.View
+                                animation="bounceIn"
+                            >
+                                <Feather
+                                    name="check-circle"
+                                    color="green"
+                                    size={20}
+                                    style={{ padding: 5 }}
+                                />
+                            </Animatable.View>
+                            : null}
+                    </View>
+                    {data.isValidAnimal ? null :
+                        <Animatable.View animation="fadeInLeft" duration={500}>
+                            <Text style={styles.errorMsg}>Campo obrigatório.</Text>
+                        </Animatable.View>
+                    }
+
+
+                    <Text style={[styles.text_footer, {
+                        color: colors.text, bottom: 2
+                    }]}>Descrição do Local</Text>
+
+
+                    <View style={styles.action}>
+
+                        <Text></Text>
+                        <View style={{ flex: 1, flexDirection: 'column' }}>
+
+                            <Textarea style={{ height: 90, }}
+                                placeholder="Informe uma descrição detalhada de onde foi encontrado o animal."
+                                onChangeText={(val) => textInputChangeLocal(val)}
+                                rowSpan={2}
+                                bordered
+                            />
+                        </View>
+
+                        {data.check_Local ?
+                            <Animatable.View
+                                animation="bounceIn"
+                            >
+                                <Feather
+                                    name="check-circle"
+                                    color="green"
+                                    size={20}
+                                    style={{ padding: 5 }}
+                                />
+                            </Animatable.View>
+                            : null}
+                    </View>
+                    {data.isValidLocal ? null :
+                        <Animatable.View animation="fadeInLeft" duration={500}>
+                            <Text style={styles.errorMsg}>Campo obrigatório.</Text>
+                        </Animatable.View>
+                    }
+
+
+                    <Text style={[styles.text_footer, {
+                        color: colors.text, marginTop: 10
+                    }]}>Animal Acolhido</Text>
+                    <View style={styles.action}>
+
+                        <Picker
+                            note
+                            mode="dialog"
+                            style={{ width: "100%" }}
+                            selectedValue={data.acolhido}
+                            onValueChange={textInputChangeAcolhido.bind(this)}
+                            placeholder={"Selecione..."}
+
+                        >
+                            <Picker.Item label="Selecione..." value="Key0" />
+
+                            <Picker.Item label="Sim" value="1" />
+
+                            <Picker.Item label="Não" value="0" />
+
+                        </Picker>
+
+                        {data.check_Acolhido ?
+                            <Animatable.View
+                                animation="bounceIn"
+                            >
+                                <Feather
+                                    name="check-circle"
+                                    color="green"
+                                    size={20}
+                                />
+                            </Animatable.View>
+                            : null}
+                    </View>
+                    {data.isValidAcolhido ? null :
+                        <Animatable.View animation="fadeInLeft" duration={500}>
+                            <Text style={styles.errorMsg}>Campo obrigatório.</Text>
+                        </Animatable.View>
+                    }
+
+                    <View style={styles.button}>
+
+                        <TouchableOpacity
+                            style={styles.signIn}
+                            onPress={() => _enviar()}
+
+                        >
+                            <LinearGradient
+                                colors={['#ff9517', '#ff9517']}
+                                style={styles.signIn}
+                            >
+                                <Text style={[styles.textSign, {
+                                    color: '#fff'
+                                }]}>Próximo</Text>
+                            </LinearGradient>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
+            </Animatable.View>
+
+        </View>
     );
 };
 

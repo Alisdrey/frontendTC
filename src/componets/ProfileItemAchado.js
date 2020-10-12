@@ -15,7 +15,8 @@ const ProfileItemAchado = ({
   name,
   navigation,
   iduser,
-  iduserAchado
+  iduserAchado,
+  detailachado
 
 }) => {
   return (
@@ -28,7 +29,7 @@ const ProfileItemAchado = ({
    
         <TouchableOpacity
           onPress={() => navigation.navigate('updateAchado', {
-            date_Achado: info3
+            date_Achado: detailachado
           })}>
           <Text style={styles.name}>{name}  {'  '}    
             <Renderif test={iduser == iduserAchado }>
@@ -55,6 +56,15 @@ const ProfileItemAchado = ({
         </Text>
         <View style={styles.info,{width:'90%'}}>
           <Text style={styles.infoContent}>{info2}</Text>
+        </View>
+      </View>}
+
+      {info3 && <View style={styles.info}>
+        <Text style={styles.iconProfile}>
+          <FontAwesome name="hashtag" />
+        </Text>
+        <View style={styles.info,{width:'90%'}}>
+          <Text style={styles.infoContent}>{info3}</Text>
         </View>
       </View>}
 

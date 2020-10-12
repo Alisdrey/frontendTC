@@ -82,7 +82,7 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
     const _enviar = () => {
         Alert.alert(
             "Confirmação",
-            "Este animal foi realmente doado? ",
+            "Deseja realmente adotar este animal? ",
             [
                 {
                     text: "Não",
@@ -98,7 +98,7 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
 
                         formdata.append('idDoacao', date.detailDoacao.idDoacao)
                         formdata.append('idanimal', date.detailDoacao.Animal.idAnimal)
-                        formdata.append('idAntigoDono', date.user.Animal.idUsuario)
+                        formdata.append('idAntigoDono', date.detailDoacao.Animal.idUsuario)
                         formdata.append('idNovoDono', date.user.idUsuario)
                         formdata.append('DataDoacao', moment().format('YYYY-MM-DD hh:mm:ss'))
 
@@ -110,6 +110,19 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
                         }).then(response => response.json())
                             .then(response => {
                                 console.log('teste', response)
+                                Alert.alert(
+                                    "Parabéns",
+                                    "Você acabou de fazer uma ótima ação <3",
+                                    [
+                                        {
+                                            text: "OK",
+                                            onPress: () =>
+                                            navigation.navigate("HomeAP"),
+                                            style: "default"
+                                        },
+                                    ],
+                                    { cancelable: false }
+                                )
 
                             })
                     }
@@ -204,7 +217,7 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
                             >
                                 <Text style={[style.textSign, {
                                     color: '#fff'
-                                }]}>Animal Doado</Text>
+                                }]}>Adotar Animal</Text>
                             </LinearGradient>
                         </TouchableOpacity>
                     </View> : null

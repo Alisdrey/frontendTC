@@ -14,9 +14,9 @@ import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
-import { Col, Row, Grid } from "react-native-easy-grid";
+import { Col, Grid } from "react-native-easy-grid";
 import { TextInputMask } from 'react-native-masked-text'
-
+import moment from "moment/min/moment-with-locales";
 import { useTheme } from 'react-native-paper';
 
 const SignUpScreen = ({ navigation }) => {
@@ -41,23 +41,23 @@ const SignUpScreen = ({ navigation }) => {
     });
 
     const [sexo, setSexo] = useState(0);
-
     const { colors } = useTheme();
 
     const _enviar = () => {
+        let data_nascimento
 
-        if (data.nome &&
-            data.sobrenome &&
-            sexo &&
-            data.nascimento &&
-            data.telefone) {
+        if (data.nome && data.sobrenome && sexo &&
+            data.nascimento && data.telefone) {
+
+            data_nascimento = moment(new Date(data.nascimento)).format("YYYY-MM-DD");
+            console.log(sexo)
             navigation.navigate(
                 "SignUpTwo"
                 , {
                     nome: data.nome,
                     sobrenome: data.sobrenome,
                     sexo: sexo,
-                    nascimento: data.nascimento,
+                    nascimento: data_nascimento,
                     telefone: data.telefone
                 }
             )
@@ -127,6 +127,7 @@ const SignUpScreen = ({ navigation }) => {
         } else {
             setData({
                 ...data,
+                telefone: "",
                 isValidTelefone: true
             });
         }
@@ -144,6 +145,7 @@ const SignUpScreen = ({ navigation }) => {
         } else {
             setData({
                 ...data,
+                nascimento: "",
                 check_Nascimento: false,
                 isValidNascimento: false
             });
@@ -221,9 +223,6 @@ const SignUpScreen = ({ navigation }) => {
                 <Text style={styles.etapa}>1/4</Text>
             </View>
 
-            {/* ====== Nome ======= */}
-
-
             <Animatable.View
                 animation="fadeInUpBig"
                 style={[styles.footer, {
@@ -231,6 +230,8 @@ const SignUpScreen = ({ navigation }) => {
                 }]}
             >
                 <ScrollView style={{ width: "100%", marginBottom: -25 }}>
+
+                    {/* ====== Nome ======= */}
 
                     <Text style={[styles.text_footer, {
                         color: colors.text
@@ -312,8 +313,9 @@ const SignUpScreen = ({ navigation }) => {
                     <View style={styles.action}>
 
                         <TextInputMask
+                            autoCorrect={false}
                             keyboardType="numeric"
-                            placeholder="Informe de Telefone"
+                            placeholder="Informe seu Telefone"
                             placeholderTextColor="#666666"
                             type={'custom'}
                             style={[styles.textInput, {
@@ -327,7 +329,6 @@ const SignUpScreen = ({ navigation }) => {
                             onEndEditing={(e) => handleValidTelefone(e.nativeEvent.text)}
 
                         />
-
 
                         {data.check_Telefone ?
                             <Animatable.View
@@ -360,8 +361,8 @@ const SignUpScreen = ({ navigation }) => {
                             type={'datetime'}
                             options={{
                                 format: 'DD/MM/YYYY'
-                              }}
-                              value={data.nascimento}
+                            }}
+                            value={data.nascimento}
                             placeholder="Informe seu Nascimento"
                             placeholderTextColor="#666666"
                             style={[styles.textInput, {
@@ -441,11 +442,6 @@ const SignUpScreen = ({ navigation }) => {
                             style={styles.signIn}
                             onPress={() => _enviar()}
 
-
-                        // {loginHandle( data.nome, 
-                        //                          data.sobrenome,
-                        //                          data.telefone,
-                        //                          sexo )}}
                         >
                             <LinearGradient
                                 colors={['#ff9517', '#ff9517']}
@@ -459,7 +455,6 @@ const SignUpScreen = ({ navigation }) => {
                     </View>
                 </ScrollView>
             </Animatable.View>
-
         </View>
     );
 };

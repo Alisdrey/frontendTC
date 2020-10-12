@@ -125,7 +125,7 @@ const updatePerdidoScreen = ({ route, navigation, props }) => {
                         backgroundColor: colors.background
                     }]}
                 >
-                    <ScrollView style={{ width: "100%", marginBottom: -25 }}>
+                    <ScrollView style={{ width: "100%", marginBottom: -25 }} keyboardShouldPersistTaps={'handled'}>
 
                         {/* ========= Descrição ========= */}
 

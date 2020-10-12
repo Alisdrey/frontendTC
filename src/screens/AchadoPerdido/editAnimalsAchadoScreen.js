@@ -35,7 +35,6 @@ const editAnimalsAchadoScreen = ({ route, navigation, props }) => {
             .then(response => response.json())
             .then(responseJson => {
                 if (responseJson) {
-                    console.log(responseJson)
                     setData({
                         ...date,
                         detailachado: responseJson
@@ -56,6 +55,7 @@ const editAnimalsAchadoScreen = ({ route, navigation, props }) => {
         <ImageBackground
             style={styles.bg, { backgroundColor:'#ebebeb', height: "100%" }}
         >
+            {console.log("dare",user)}
             <ScrollView style={styles.containerProfile}>
                 <ImageBackground source={{ uri: Server.API_PRINC + date.detailachado.url }} style={styles.photo}>
                     <View style={styles.top}>
@@ -77,7 +77,7 @@ const editAnimalsAchadoScreen = ({ route, navigation, props }) => {
                         location={date.detailachado.cidade}
                         info1={('Descrição do local: ') + (date.detailachado.descricaoLocal)}
                         info2={('Descrição do animal: ') + (date.detailachado.descricaoAnimal)}
-                        info3={date.detailachado}
+                        detailachado={date.detailachado}
                         iduser={date.detailachado.idUsuario}
                         iduserAchado={user.idUsuario}
                     />
@@ -91,10 +91,11 @@ const editAnimalsAchadoScreen = ({ route, navigation, props }) => {
                         location={user.cidade}
                         info1={'Cep: ' + (user.cep)}
                         info2={'Cidade: ' + (user.cidade)}
-                        info3={'Rua: ' + (user.rua) + ' - ' + (user.numero)}
+                        info3={'Rua: ' + (user.rua) + ' - nº ' + (user.numero)}
                         info4={('Telefone: ') + (user.telefone)}
                         iduser={date.detailachado.idUsuario}
                         iduserAchado={user.idUsuario}
+                        detailachado={date.detailachado}
 
                     />
                 </Renderif>

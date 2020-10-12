@@ -34,7 +34,7 @@ const updatePerdidoScreen = ({ route, navigation, props }) => {
     const { date_Perdido } = route.params;
     const [data, setData] = React.useState({
         date_Perdido: date_Perdido,
-        descricao: "",
+        descricao: date_Perdido.descricao,
         isValidDescricao: true,
         check_Descricao: false,
         isloading: true,
@@ -141,7 +141,7 @@ const updatePerdidoScreen = ({ route, navigation, props }) => {
                         backgroundColor: colors.background
                     }]}
                 >
-                    <ScrollView style={{ width: "100%", marginBottom: -25 }}>
+                    <ScrollView style={{ width: "100%", marginBottom: -25 }} keyboardShouldPersistTaps={'handled'}>
 
                         {/* ========= Descrição ========= */}
 
@@ -156,8 +156,7 @@ const updatePerdidoScreen = ({ route, navigation, props }) => {
                             <View style={{ flex: 1, flexDirection: 'column' }}>
 
                                 <Textarea style={{ height: 90 }}
-                                    placeholder={data.date_Perdido.descricao}
-                                    // value={data.date_Perdido.descricao}
+                                    value={data.descricao}
                                     onChangeText={(val) => textInputChangeDescricao(val)}
                                     rowSpan={2}
                                     bordered

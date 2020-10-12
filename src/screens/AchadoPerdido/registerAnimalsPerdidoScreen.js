@@ -33,6 +33,7 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
         cidade: "",
         descricao: "",
         selected: "key0",
+        nameButton: 'Cadastrar',
 
         isValidAnimal: true,
         isValidDescricao: true,
@@ -48,17 +49,6 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
 
 
     const { colors } = useTheme();
-
-
-    // useEffect(() => {
-    //     if (data.user.cidade != "" ) {
-    //         setCidade(data.user.cidade);
-    //     }
-
-    //     if (data.user.estado != "") {
-    //         setEstado(data.user.estado);
-    //     }
-    // }, []);
 
     useEffect(() => {
 
@@ -94,12 +84,15 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
 
 
 
-    const _enviar = () => {
-        console.log(data)
-
+    const _enviar = () => {       
 
         if (data.idanimal != '' && data.descricao != '' &&
-            data.cor != '') {
+            data.cor != '' && cidade != '' && estado != '' ) {
+
+            setData({
+                ...data,
+                nameButton:'Cadastrando...'
+            })
 
             let formdata = new FormData();
 
@@ -122,7 +115,6 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
 
                 })
 
-
         } else {
             Alert.alert(
                 "Campos vazios",
@@ -138,7 +130,6 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                 { cancelable: false }
             )
         }
-
     }
 
     const textInputChangeAnimal = (val) => {
@@ -226,10 +217,10 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                     backgroundColor: colors.background
                 }]}
             >
-                <ScrollView style={{ width: "100%", marginBottom: -25 }}>
+                <ScrollView style={{ width: "100%", marginBottom: -25 }} keyboardShouldPersistTaps={'handled'}>
 
                     <Text style={[styles.text_footer, {
-                        color: colors.text, marginTop: 30
+                        color: colors.text, marginTop: 10
                     }]}>Escolha seu animal</Text>
                     <View style={styles.action}>
                         <Picker
@@ -273,11 +264,6 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                         color: colors.text
                     }]}>Cidade</Text>
                     <View style={styles.action}>
-                        {/* <FontAwesome
-                                name="asterisk"
-                                color={colors.text}
-                                size={20}
-                            /> */}
                         <TextInput
                             value={String(cidade || '')}
                             placeholder="Informe a cidade"
@@ -298,7 +284,6 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                     }
 
                     {/* ========= Estado ========= */}
-
 
                     <Text style={[styles.text_footer, {
                         color: colors.text
@@ -351,52 +336,11 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                         </Animatable.View>
                     }
 
-
-
-
-                    {/* <Renderif test={data.outraEspecie}>
-                            <Text style={[styles.text_footer, {
-                                color: colors.text, marginTop: 30
-                            }]}>Outra Espécie</Text>
-                            <View style={styles.action}>
-                                <FontAwesome
-                                    name="asterisk"
-                                    color={colors.text}
-                                    size={20}
-                                />
-                                <TextInput
-                                    placeholder="Informe a espécie do seu animal"
-                                    placeholderTextColor="#666666"
-                                    style={[styles.textInput, {
-                                        color: colors.text
-                                    }]}
-                                    autoCapitalize="none"
-                                    onChangeText={(val) => textInputChangeEspecie(val)}
-                                />
-
-                                {data.check_Especie ?
-                                    <Animatable.View animation="bounceIn">
-                                        <Feather
-                                            name="check-circle"
-                                            color="green"
-                                            size={20}
-                                        />
-                                    </Animatable.View>
-                                    : null}
-                            </View>
-                            {data.isValidEspecie ? null :
-                                <Animatable.View animation="fadeInLeft" duration={500}>
-                                    <Text style={styles.errorMsg}>Campo obrigatório.</Text>
-                                </Animatable.View>
-                            }
-                        </Renderif> */}
-
-
                     <View style={styles.button}>
 
                         <TouchableOpacity
                             style={styles.signIn}
-                            onPress={() => { _enviar() }}
+                            onPress={() =>  _enviar() }
 
                         >
                             <LinearGradient
@@ -405,7 +349,7 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                             >
                                 <Text style={[styles.textSign, {
                                     color: '#fff'
-                                }]}>Cadastrar</Text>
+                                }]}>{data.nameButton}</Text>
                             </LinearGradient>
                         </TouchableOpacity>
                     </View>
@@ -447,7 +391,7 @@ const styles = StyleSheet.create({
     text_footer: {
         color: '#05375a',
         fontSize: 18,
-        marginTop: 30
+        marginTop: 10
     },
     action: {
         flexDirection: 'row',

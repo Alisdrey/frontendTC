@@ -62,7 +62,7 @@ const SignUpTwoScreen = ({ route, navigation }) => {
 
         if (data.nome && data.sobrenome && data.sexo &&
             data.nascimento && data.telefone && data.rua &&
-            data.bairro && data.cidade && data.uf && data.cep ) {
+            data.bairro && data.cidade && data.uf && data.cep) {
             navigation.navigate(
                 "SignUpTree"
                 , {
@@ -98,6 +98,38 @@ const SignUpTwoScreen = ({ route, navigation }) => {
         }
     }
 
+    const viacep = (val) => {
+        const url = 'https://viacep.com.br/ws/' + val + '/json'
+        fetch(url)
+            .then(response => response.json())
+            .then(responseJson => {
+                if (responseJson) {
+                    setData({
+                        ...data,
+                        cep: responseJson.cep,
+                        cidade: responseJson.localidade,
+                        uf: responseJson.uf,
+                        bairro: responseJson.bairro,
+                        rua: responseJson.logradouro,
+                        check_Cep:true,
+                        isValidCep: true,
+                        check_Cidade:true,
+                        isValidCidade:true,
+                        check_Uf:true,
+                        isValidUf:true,
+                        check_Rua: true,
+                        isValidRua: true,
+                        check_Bairro: true,
+                        isValidBairro: true,
+
+                    });
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
+
     const textInputChangeRua = (val) => {
 
         if (val.trim().length > 0) {
@@ -111,6 +143,7 @@ const SignUpTwoScreen = ({ route, navigation }) => {
         } else {
             setData({
                 ...data,
+                rua: "",
                 check_Rua: false,
                 isValidRua: false
             });
@@ -146,7 +179,7 @@ const SignUpTwoScreen = ({ route, navigation }) => {
         } else {
             setData({
                 ...data,
-                bairro: val,
+                bairro: "",
                 isValidBairro: true
             });
         }
@@ -189,8 +222,11 @@ const SignUpTwoScreen = ({ route, navigation }) => {
             setData({
                 ...data,
                 cep: val,
-                isValidCep: true
             });
+            if (val.trim().length > 8) {
+                viacep(val)
+            }
+
         } else {
             setData({
                 ...data,
@@ -220,115 +256,6 @@ const SignUpTwoScreen = ({ route, navigation }) => {
                 }]}
             >
                 <ScrollView style={{ width: "100%", marginBottom: -25 }}>
-
-                    <Text style={[styles.text_footer, {
-                        color: colors.text
-                    }]}>Rua</Text>
-                    <View style={styles.action}>
-
-                        <TextInput
-                            placeholder="Informe sua rua"
-                            placeholderTextColor="#666666"
-                            style={[styles.textInput, {
-                                color: colors.text
-                            }]}
-                            autoCapitalize="none"
-                            onChangeText={(val) => textInputChangeRua(val)}
-                        //onEndEditing={(e) => handleValidNome(e.nativeEvent.text)}
-                        />
-                        {data.check_Rua ?
-                            <Animatable.View
-                                animation="bounceIn"
-                            >
-                                <Feather
-                                    name="check-circle"
-                                    color="green"
-                                    size={20}
-                                />
-                            </Animatable.View>
-                            : null}
-                    </View>
-                    {data.isValidRua ? null :
-                        <Animatable.View animation="fadeInLeft" duration={500}>
-                            <Text style={styles.errorMsg}>Campo obrigatório.</Text>
-                        </Animatable.View>
-                    }
-
-                    {/* ========= Número ========= */}
-
-                    <Text style={[styles.text_footer, {
-                        color: colors.text,
-                        marginTop: 35
-                    }]}>Número</Text>
-                    <View style={styles.action}>
-
-                        <TextInput
-                            keyboardType="numeric"
-                            placeholder="Informe o nº da sua residência"
-                            placeholderTextColor="#666666"
-                            style={[styles.textInput, {
-                                color: colors.text
-                            }]}
-                            autoCapitalize="none"
-                            onChangeText={(val) => textInputChangeNumero(val)}
-                        //onEndEditing={(e) => handleValidSobrenome(e.nativeEvent.text)}
-                        />
-                        {data.check_Numero ?
-                            <Animatable.View
-                                animation="bounceIn"
-                            >
-                                <Feather
-                                    name="check-circle"
-                                    color="green"
-                                    size={20}
-                                />
-                            </Animatable.View>
-                            : null}
-                    </View>
-
-                    {data.isValidNumero ? null :
-                        <Animatable.View animation="fadeInLeft" duration={500}>
-                            <Text style={styles.errorMsg}>Campo obrigatório.</Text>
-                        </Animatable.View>
-                    }
-
-
-                    {/* =========== Bairro ========== */}
-
-                    <Text style={[styles.text_footer, {
-                        color: colors.text,
-                        marginTop: 35
-                    }]}>Bairro</Text>
-                    <View style={styles.action}>
-
-                        <TextInput
-                            placeholder="Informe seu Bairro"
-                            placeholderTextColor="#666666"
-                            style={[styles.textInput, {
-                                color: colors.text
-                            }]}
-                            autoCapitalize="none"
-                            onChangeText={(val) => textInputChangeBairro(val)}
-                        //onEndEditing={(e) => handleValidTelefone(e.nativeEvent.text)}
-                        />
-                        {data.check_Bairro ?
-                            <Animatable.View
-                                animation="bounceIn"
-                            >
-                                <Feather
-                                    name="check-circle"
-                                    color="green"
-                                    size={20}
-                                />
-                            </Animatable.View>
-                            : null}
-                    </View>
-
-                    {data.isValidBairro ? null :
-                        <Animatable.View animation="fadeInLeft" duration={500}>
-                            <Text style={styles.errorMsg}>Campo obrigatório.</Text>
-                        </Animatable.View>
-                    }
 
                     <Text style={[styles.text_footer, {
                         color: colors.text,
@@ -373,11 +300,12 @@ const SignUpTwoScreen = ({ route, navigation }) => {
 
                     <Text style={[styles.text_footer, {
                         color: colors.text,
-                        marginTop: 35
+                        marginTop: 10
                     }]}>Cidade</Text>
                     <View style={styles.action}>
 
                         <TextInput
+                            value={data.cidade}
                             placeholder="Informe sua Cidade"
                             placeholderTextColor="#666666"
                             style={[styles.textInput, {
@@ -409,11 +337,12 @@ const SignUpTwoScreen = ({ route, navigation }) => {
 
                     <Text style={[styles.text_footer, {
                         color: colors.text,
-                        marginTop: 35
+                        marginTop: 10
                     }]}>UF</Text>
                     <View style={styles.action}>
 
                         <TextInput
+                            value={data.uf}
                             placeholder="Informe seu Estado"
                             placeholderTextColor="#666666"
                             style={[styles.textInput, {
@@ -442,7 +371,116 @@ const SignUpTwoScreen = ({ route, navigation }) => {
                         </Animatable.View>
                     }
 
+                    <Text style={[styles.text_footer, {
+                        color: colors.text
+                    }]}>Rua</Text>
+                    <View style={styles.action}>
 
+                        <TextInput
+                            value={data.rua}
+                            placeholder="Informe sua rua"
+                            placeholderTextColor="#666666"
+                            style={[styles.textInput, {
+                                color: colors.text
+                            }]}
+                            autoCapitalize="none"
+                            onChangeText={(val) => textInputChangeRua(val)}
+                        //onEndEditing={(e) => handleValidNome(e.nativeEvent.text)}
+                        />
+                        {data.check_Rua ?
+                            <Animatable.View
+                                animation="bounceIn"
+                            >
+                                <Feather
+                                    name="check-circle"
+                                    color="green"
+                                    size={20}
+                                />
+                            </Animatable.View>
+                            : null}
+                    </View>
+                    {data.isValidRua ? null :
+                        <Animatable.View animation="fadeInLeft" duration={500}>
+                            <Text style={styles.errorMsg}>Campo obrigatório.</Text>
+                        </Animatable.View>
+                    }
+
+                    {/* ========= Número ========= */}
+
+                    <Text style={[styles.text_footer, {
+                        color: colors.text,
+                        marginTop: 10
+                    }]}>Número</Text>
+                    <View style={styles.action}>
+
+                        <TextInput
+                            keyboardType="numeric"
+                            placeholder="Informe o nº da sua residência"
+                            placeholderTextColor="#666666"
+                            style={[styles.textInput, {
+                                color: colors.text
+                            }]}
+                            autoCapitalize="none"
+                            onChangeText={(val) => textInputChangeNumero(val)}
+                        //onEndEditing={(e) => handleValidSobrenome(e.nativeEvent.text)}
+                        />
+                        {data.check_Numero ?
+                            <Animatable.View
+                                animation="bounceIn"
+                            >
+                                <Feather
+                                    name="check-circle"
+                                    color="green"
+                                    size={20}
+                                />
+                            </Animatable.View>
+                            : null}
+                    </View>
+
+                    {data.isValidNumero ? null :
+                        <Animatable.View animation="fadeInLeft" duration={500}>
+                            <Text style={styles.errorMsg}>Campo obrigatório.</Text>
+                        </Animatable.View>
+                    }
+
+
+                    {/* =========== Bairro ========== */}
+
+                    <Text style={[styles.text_footer, {
+                        color: colors.text,
+                        marginTop: 10
+                    }]}>Bairro</Text>
+                    <View style={styles.action}>
+
+                        <TextInput
+                            value={data.bairro}
+                            placeholder="Informe seu Bairro"
+                            placeholderTextColor="#666666"
+                            style={[styles.textInput, {
+                                color: colors.text
+                            }]}
+                            autoCapitalize="none"
+                            onChangeText={(val) => textInputChangeBairro(val)}
+                        //onEndEditing={(e) => handleValidTelefone(e.nativeEvent.text)}
+                        />
+                        {data.check_Bairro ?
+                            <Animatable.View
+                                animation="bounceIn"
+                            >
+                                <Feather
+                                    name="check-circle"
+                                    color="green"
+                                    size={20}
+                                />
+                            </Animatable.View>
+                            : null}
+                    </View>
+
+                    {data.isValidBairro ? null :
+                        <Animatable.View animation="fadeInLeft" duration={500}>
+                            <Text style={styles.errorMsg}>Campo obrigatório.</Text>
+                        </Animatable.View>
+                    }
 
                     <View style={styles.button}>
 

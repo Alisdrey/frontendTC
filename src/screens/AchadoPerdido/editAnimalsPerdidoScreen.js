@@ -141,6 +141,7 @@ const editAnimalsPerdidoScreen = ({ route, navigation, props }) => {
                         info3={'Cidade: ' + (user.cidade)}
                         info2={'Rua: ' + (user.rua) + ' - ' + (user.numero)}
                         info3={('Telefone: ') + (user.telefone)}
+                        info7={date.detailperdido}
                         iduser={date.detailperdido.idUsuario}
                         iduserPerdido={user.idUsuario}
 

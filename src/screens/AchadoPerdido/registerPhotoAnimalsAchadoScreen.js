@@ -3,33 +3,18 @@ import {
     View,
     Text,
     TouchableOpacity,
-    TextInput,
-    Platform,
-    StyleSheet,
-    StatusBar,
     Alert,
-    ScrollView,
     PermissionsAndroid,
-    SafeAreaView,
     Image,
     Dimensions
 
 } from 'react-native';
 import { Root, ActionSheet } from 'native-base'
-import * as Animatable from 'react-native-animatable';
-import LinearGradient from 'react-native-linear-gradient';
-import Feather from 'react-native-vector-icons/Feather';
-import { Col, Row, Grid } from "react-native-easy-grid";
-import Geolocation from 'react-native-geolocation-service';
-import { useTheme } from 'react-native-paper';
-import Renderif from "../../componets/RenderIf";
-import { Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
 import ImagePicker from 'react-native-image-crop-picker';
-import { Picker } from '@react-native-community/picker';
-import ResponsiveImage from 'react-native-responsive-image';
 import styles from '../settings/styles';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Server from '../settings/Server';
+import { useIsFocused } from "@react-navigation/native"
 
 const registerPhotoAnimalsAchadoScreen = ({ route, navigation, props }) => {
 
@@ -49,7 +34,7 @@ const registerPhotoAnimalsAchadoScreen = ({ route, navigation, props }) => {
         cidade: cidade,
         estado: estado,
         acolhido: acolhido,
-        imagem: "",
+        imagem: [],
         variant: '',
         haveimg: false
 
@@ -74,61 +59,87 @@ const registerPhotoAnimalsAchadoScreen = ({ route, navigation, props }) => {
         }
     ];
 
+    const isFocused = useIsFocused();
+
     useEffect(() => {
-            console.log(date)
-    }, []);
+        console.log(date)
+    }, [isFocused]);
 
 
     const _enviar = () => {
+        console.log(date.imagem)
         if (date.imagem.length != 0) {
             sendToServer().then(() => {
-                date.imagem.forEach(element => {
-                    console.log("element", element)
-                });
+                console.log('cadastrado')
             })
+        } else {
+            Alert.alert(
+                "[Sem imagem]",
+                "Ops, parece que você não inseriu nenhuma imagem :( ",
+                [
+                    {
+                        text: "OK",
+                        onPress: () =>
+                            console.log("cancel"),
+                        style: "default"
+                    },
+                ],
+                { cancelable: false }
+            )
         }
     }
 
 
 
     const sendToServer = async () => {
+        console.log("entrou", date.imagem)
         try {
             let formdata_img = new FormData();
 
-            date.imagem.forEach(item => {
+            const fileURL = date.imagem.path;
+            const fileName = fileURL.split("/").pop();
+            const ext = fileURL.split(".").pop();
 
-                const fileURL = item.imagem.path;
-                const fileName = fileURL.split("/").pop();
-                const ext = fileURL.split(".").pop();
+            formdata_img.append("file", {
+                type: "image/" + ext,
+                uri: fileURL,
+                name: fileName,
 
-                formdata_img.append("file", {
-                    type: "image/" + ext,
-                    uri: fileURL,
-                    name: fileName,
+            });
 
-                });
+            formdata_img.append("idusuario", date.idusuario);
+            formdata_img.append("descricaolocal", date.descricaolocal);
+            formdata_img.append("descricaoanimal", date.descricaoanimal);
+            formdata_img.append("cidade", date.cidade);
+            formdata_img.append("estado", date.estado);
+            formdata_img.append("acolhido", date.acolhido);
 
-                formdata_img.append("idusuario", date.idusuario);
-                formdata_img.append("descricaolocal", date.descricaolocal);
-                formdata_img.append("descricaoanimal", date.descricaoanimal);
-                formdata_img.append("cidade", date.cidade);
-                formdata_img.append("estado", date.estado);
-                formdata_img.append("acolhido", date.acolhido);
+            console.log(formdata_img)
 
-                console.log(formdata_img)
+            fetch(Server.API_INSERIR_IMAGEM_ACHADO, {
+                method: "POST",
+                'Content-Type': 'multipart/form-data',
+                body: formdata_img
+            }).then(response => response.json())
+                .then(response => {
 
-                fetch(Server.API_INSERIR_IMAGEM_ACHADO, {
-                    method: "POST",
-                    'Content-Type': 'multipart/form-data',
-                    body: formdata_img
-                }).then(response => response.json())
-                    .then(response => {
-                        navigation.navigate("HomeAP")
+                    navigation.addListener ('focus', () =>{
+                        setData({
+                            ...date,
+                                descricaolocal: '',
+                                descricaoanimal: '',
+                                acolhido: [],
+                                imagem: [],
+                                haveimg: false
+                        })
+                      });
 
-                    }).catch(error => {
-                        console.log(error);
-                    })
-            })
+                    navigation.navigate("HomeAP")
+
+                }).catch(error => {
+                    console.log(error);
+                })
+
         } catch (err) {
             console.log(err);
         }
@@ -136,35 +147,36 @@ const registerPhotoAnimalsAchadoScreen = ({ route, navigation, props }) => {
 
 
     const _handleActionSheetButton = (btnIndex) => {
-        { console.log(date) }
+      
         switch (btnIndex) {
-            case 0:
-                ImagePicker.openCamera({
-                    width: 800,
-                    height: 800,
-                    includeBase64: true,
-                    cropping: true,
-                    compressImageQuality: 0.4,
-                    compressImageMaxWidth: 800,
-                    compressImageMaxHeight: 800,
-                    cropperChooseText: "Confirmar",
-                    cropperCancelText: "Cancelar",
-                    loadingLabelText: "Carregando",
-                    cropperStatusBarColor: "#E76801",
-                    cropperToolbarColor: "#E76801",
-                    cropperActiveWidgetColor: "#E76801",
-                    cropperTintColor: "#E76801",
-                })
-                    .then(imagem => {
-                        console.log(imagem)
-                        const dados = {
-                            imagem: imagem
-                        }
-                    })
-                    .catch(error => {
-                        console.log(error);
-                    })
-                break;
+
+            // case 0:
+            //     ImagePicker.openCamera({
+            //         width: 800,
+            //         height: 800,
+            //         includeBase64: true,
+            //         cropping: true,
+            //         compressImageQuality: 0.4,
+            //         compressImageMaxWidth: 800,
+            //         compressImageMaxHeight: 800,
+            //         cropperChooseText: "Confirmar",
+            //         cropperCancelText: "Cancelar",
+            //         loadingLabelText: "Carregando",
+            //         cropperStatusBarColor: "#E76801",
+            //         cropperToolbarColor: "#E76801",
+            //         cropperActiveWidgetColor: "#E76801",
+            //         cropperTintColor: "#E76801",
+            //     })
+            //         .then(imagem => {
+            //             console.log(imagem)
+            //             const dados = {
+            //                 imagem: imagem
+            //             }
+            //         })
+            //         .catch(error => {
+            //             console.log(error);
+            //         })
+            //     break;
 
             case 1:
                 ImagePicker.openPicker({
@@ -184,12 +196,12 @@ const registerPhotoAnimalsAchadoScreen = ({ route, navigation, props }) => {
                     cropperActiveWidgetColor: "#E76801",
                     cropperTintColor: "#E76801",
                 })
-                    .then(imagem => {
-                        setData(prevState => ({
+                    .then(img => {
+                        setData({
                             ...date,
-                            imagem: [...prevState.imagem, { "imagem": imagem[0] }],
+                            imagem: img[0],
                             haveimg: true
-                        }))
+                        })
                     })
                 break;
 
@@ -213,9 +225,10 @@ const registerPhotoAnimalsAchadoScreen = ({ route, navigation, props }) => {
     return (
         <Root>
             <View style={styles.containerCardItem}>
+                {console.log(date)}
                 <TouchableOpacity
                     style={{ padding: 15, }}
-                    onPress={() => { _handleChooseImage() }}
+                    onPress={() => { _handleActionSheetButton(1) }}
                 >
                     {
                         !date.haveimg ?
@@ -225,7 +238,7 @@ const registerPhotoAnimalsAchadoScreen = ({ route, navigation, props }) => {
                             <Image source={{
                                 uri:
                                     "data:image/jpeg;base64," +
-                                    date.imagem[0].imagem.data
+                                    date.imagem.data
                             }} style={imageStyle} />
 
                     }
@@ -245,14 +258,14 @@ const registerPhotoAnimalsAchadoScreen = ({ route, navigation, props }) => {
 
                 <View style={styles.actionsCardItem}>
 
-                <TouchableOpacity
-                       style={{ padding: 20 }}
+                    <TouchableOpacity
+                        style={{ padding: 20 }}
                         onPress={() =>
                             navigation.goBack()} >
                         <View style={styles.matchesCardItem}>
                             <Text style={styles.matchesTextGoBack}>
-                                <FontAwesome style={{fontSize:15}} name="arrow-left" />
-                            {/* <Text>{'\n'}voltar </Text> */}
+                                <FontAwesome style={{ fontSize: 15 }} name="arrow-left" />
+                                {/* <Text>{'\n'}voltar </Text> */}
                             </Text>
                         </View>
                     </TouchableOpacity>
@@ -260,7 +273,7 @@ const registerPhotoAnimalsAchadoScreen = ({ route, navigation, props }) => {
                     <TouchableOpacity style={{ padding: 20 }} onPress={() => _enviar()}>
                         <View style={styles.matchesCardItem}>
                             <Text style={styles.matchesTextConfirm}>
-                                <FontAwesome style={{fontSize:40}} name="check" />
+                                <FontAwesome style={{ fontSize: 40 }} name="check" />
                                 {/* <Text>{'\n'} confirmar </Text> */}
                             </Text>
                         </View>

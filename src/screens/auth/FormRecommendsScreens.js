@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
     View,
     Text,
@@ -54,28 +54,62 @@ const FormRecommendsScreens = ({ route, navigation, props }) => {
 
     const itemsRaca = [
         {
-            name: 'Raça',
+            name: 'Cachorro',
             id: 0,
             children: [
                 {
-                    name: 'Raça1',
+                    name: 'Pug',
                     id: 1,
                 },
                 {
-                    name: 'Raça2',
+                    name: 'Maltês',
                     id: 2,
                 },
                 {
-                    name: 'Raça3',
+                    name: 'Buldogue',
                     id: 3,
                 },
                 {
-                    name: 'Raça4',
+                    name: 'PitBull',
                     id: 4,
                 },
                 {
-                    name: 'Raça5',
+                    name: 'Spitz Alemão',
                     id: 5,
+                },
+                {
+                    name: 'Raça Indefinida',
+                    id: 6,
+                },
+            ],
+        },
+        {
+            name: 'Gato',
+            id: 1,
+            children: [
+                {
+                    name: 'Persa',
+                    id: 1,
+                },
+                {
+                    name: 'Siamês',
+                    id: 2,
+                },
+                {
+                    name: 'Maine Coon',
+                    id: 3,
+                },
+                {
+                    name: 'Ragdoll',
+                    id: 4,
+                },
+                {
+                    name: 'Sphynx',
+                    id: 5,
+                },
+                {
+                    name: 'Raça Indefinida',
+                    id: 6,
                 },
             ],
         },
@@ -87,24 +121,12 @@ const FormRecommendsScreens = ({ route, navigation, props }) => {
             id: 0,
             children: [
                 {
-                    name: 'Espécie1',
+                    name: 'Cão',
                     id: 1,
                 },
                 {
-                    name: 'Espécie2',
+                    name: 'Gato',
                     id: 2,
-                },
-                {
-                    name: 'Espécie3',
-                    id: 3,
-                },
-                {
-                    name: 'Espécie4',
-                    id: 4,
-                },
-                {
-                    name: 'Espécie5',
-                    id: 5,
                 },
             ],
         },
@@ -177,13 +199,12 @@ const FormRecommendsScreens = ({ route, navigation, props }) => {
     const [data, setData] = React.useState({
 
         user: {},
-        raca: "",
-        cor: "",
-        sexo: "",
-        especie: "",
-        outraEspecie: "",
-        pelo: "",
-        porte: "",
+        raca: [],
+        cor: [],
+        sexo: [],
+        especie: [],
+        pelo: [],
+        porte: [],
         filhote: "",
 
     });
@@ -398,8 +419,34 @@ const FormRecommendsScreens = ({ route, navigation, props }) => {
             >
                 <ScrollView style={{ width: "100%", marginBottom: -25 }}>
 
-                    {/* ========= Raça ========= */}
+                      {/* ========= Especie ========= */}
+                      <Text style={[styles.text_footer, {
+                        color: colors.text,
+                        marginTop: 35
+                    }]}>Espécie</Text>
+                    <View style={styles.action, { width: '100%' }}>
 
+                        <SectionedMultiSelect
+                            showCancelButton={true}
+                            items={itemsEspecie}
+                            uniqueKey="name"
+                            subKey="children"
+                            selectText="Selecione..."
+                            confirmText='Confirmar'
+                            selectedText='Selecionado'
+                            searchPlaceholderText='Pesquisar Categorias'
+                            showDropDowns={true}
+                            readOnlyHeadings={true}
+                            onSelectedItemsChange={textInputChangeEspecie}
+                            selectedItems={data.especie}
+                            expandDropDowns={true}
+
+                        />
+
+                    </View>
+
+
+                    {/* ========= Raça ========= */}
 
                     <Text style={[styles.text_footer, {
                         color: colors.text
@@ -479,33 +526,7 @@ const FormRecommendsScreens = ({ route, navigation, props }) => {
                         />
 
                     </View>
-                    {/* ========= Especie ========= */}
-                    <Text style={[styles.text_footer, {
-                        color: colors.text,
-                        marginTop: 35
-                    }]}>Espécie</Text>
-                    <View style={styles.action, { width: '100%' }}>
-
-                        <SectionedMultiSelect
-                            showCancelButton={true}
-                            items={itemsEspecie}
-                            uniqueKey="name"
-                            subKey="children"
-                            selectText="Selecione..."
-                            confirmText='Confirmar'
-                            selectedText='Selecionado'
-                            searchPlaceholderText='Pesquisar Categorias'
-                            showDropDowns={true}
-                            readOnlyHeadings={true}
-                            onSelectedItemsChange={textInputChangeEspecie}
-                            selectedItems={data.especie}
-                            expandDropDowns={true}
-
-
-                        />
-
-                    </View>
-
+                  
                     <Text style={[styles.text_footer, {
                         color: colors.text, marginTop: 20
                     }]}>Porte</Text>
@@ -592,7 +613,7 @@ const FormRecommendsScreens = ({ route, navigation, props }) => {
                             >
                                 <Text style={[styles.textSign, {
                                     color: '#fff'
-                                }]}>Próximo</Text>
+                                }]}>Finalizar</Text>
                             </LinearGradient>
                         </TouchableOpacity>
                     </View>

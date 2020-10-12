@@ -38,10 +38,9 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
         user: {},
         nome: "",
         raca: "",
-        cor: "",
+        cor: [],
         sexo: "",
         especie: "",
-        outraEspecie: "",
         pelo: "",
         porte: "",
         filhote: "",
@@ -59,6 +58,61 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
     });
 
     const { colors } = useTheme();
+
+
+    const racaCao = [
+
+        {
+            name: 'Pug',
+            id: 1,
+        },
+        {
+            name: 'Maltês',
+            id: 2,
+        },
+        {
+            name: 'Buldogue',
+            id: 3,
+        },
+        {
+            name: 'PitBull',
+            id: 4,
+        },
+        {
+            name: 'Spitz Alemão',
+            id: 5,
+        },
+    ];
+
+    const racaGato = [
+
+        {
+            name: 'Persa',
+            id: 1,
+        },
+        {
+            name: 'Siamês',
+            id: 2,
+        },
+        {
+            name: 'Maine Coon',
+            id: 3,
+        },
+        {
+            name: 'Ragdoll',
+            id: 4,
+        },
+        {
+            name: 'Sphynx',
+            id: 5,
+        },
+        {
+            name: 'Raça Indefinida',
+            id: 6,
+        },
+
+
+    ];
 
 
     const itemsCor = [
@@ -181,8 +235,8 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
     }
 
     const textInputChangeRaca = (val) => {
-
-        if (val.trim().length > 0) {
+        console.log(val)
+        if (val) {
             setData({
                 ...data,
                 raca: val,
@@ -197,34 +251,19 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
     }
 
     const textInputChangeCor = (val) => {
-        console.log(val)
         if (val != "") {
             setData({
                 ...data,
                 cor: val,
                 isValidCor: true
             });
-        
+
         } else {
             console.log('val')
             setData({
                 ...data,
                 cor: "",
                 isValidCor: false
-            });
-        }
-    }
-    const textInputChangeSexo = (val) => {
-        if (val.trim().length > 0) {
-            setData({
-                ...data,
-                sexo: val,
-                isValidSexo: true
-            });
-        } else {
-            setData({
-                ...data,
-                isValidSexo: false
             });
         }
     }
@@ -292,7 +331,6 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
         }
     }
 
-
     return (
 
         <View style={styles.container}>
@@ -330,7 +368,7 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                         color: colors.text
                     }]}>Nome</Text>
                     <View style={styles.action}>
-                        
+
                         <TextInput
                             placeholder="Informe o nome do seu animal"
                             placeholderTextColor="#666666"
@@ -339,15 +377,62 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                             }]}
                             autoCapitalize="none"
                             onChangeText={(val) => textInputChangeNome(val)}
-                        //onEndEditing={(e) => handleValidNome(e.nativeEvent.text)}
                         />
-                     
+
                     </View>
                     {data.isValidNome ? null :
                         <Animatable.View animation="fadeInLeft" duration={500}>
                             <Text style={styles.errorMsg}>Campo obrigatório.</Text>
                         </Animatable.View>
                     }
+
+                    {/* ========= Especie ========= */}
+                    <Text style={[styles.text_footer, {
+                        color: colors.text,
+                        marginTop: 35
+                    }]}>Espécie</Text>
+                    <View style={styles.action}>
+                        <Grid>
+                            <Col style={{ left: 60 }}>
+                                <TouchableOpacity
+
+                                    onPress={() =>
+                                        setData({ ...data, especie: 'Cão' })
+
+                                    }
+                                >
+                                    {data.especie == "Cão" ?
+                                        <Image style={{ width: 30, height: 30, marginLeft: 20, bottom: 1 }}
+                                            source={require('../../source/dog-escuro.png')}
+                                        /> :
+                                        <Image style={{ width: 30, height: 30, marginLeft: 20, bottom: 1 }}
+                                            source={require('../../source/dog.png')}
+                                        />}
+
+
+                                </TouchableOpacity>
+                            </Col>
+                            <Col style={{ left: 20 }}>
+                                <TouchableOpacity
+
+                                    onPress={() =>
+                                        setData({ ...data, especie: 'Gato' })
+
+                                    }
+                                >
+
+                                    {data.especie == "Gato" ?
+                                        <Image style={{ width: 30, height: 30, marginLeft: 20, bottom: 1 }}
+                                            source={require('../../source/gato-preto.png')}
+                                        /> :
+                                        <Image style={{ width: 30, height: 30, marginLeft: 20, bottom: 1 }}
+                                            source={require('../../source/gato.png')}
+                                        />}
+
+                                </TouchableOpacity>
+                            </Col>
+                        </Grid>
+                    </View>
 
                     {/* ========= Raça ========= */}
 
@@ -356,22 +441,29 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                         color: colors.text
                     }]}>Raça</Text>
                     <View style={styles.action}>
-                        {/* <FontAwesome
-                            name="asterisk"
-                            color={colors.text}
-                            size={20}
-                        /> */}
-                        <TextInput
-                            placeholder="Informe a raça do seu animal"
-                            placeholderTextColor="#666666"
-                            style={[styles.textInput, {
-                                color: colors.text
-                            }]}
-                            autoCapitalize="none"
-                            onChangeText={(val) => textInputChangeRaca(val)}
-                        //onEndEditing={(e) => handleValidNome(e.nativeEvent.text)}
-                        />
-                       
+                        <Picker
+                            note
+                            mode="dialog"
+                            style={{ width: "100%" }}
+                            selectedValue={data.raca}
+                            onValueChange={textInputChangeRaca.bind(this)}
+                            placeholder={"Selecione..."}
+
+                        >
+                            <Picker.Item label="Selecione..." value="Key0" />
+
+                            {
+                                data.especie == 'Cão' ? racaCao.map((item, index) =>
+                                    <Picker.Item key={index} label={item.name} value={item.name} />
+                                )
+                                    :
+                                    data.especie === 'Gato' ? racaGato.map((item, index) =>
+                                        <Picker.Item key={index} label={item.name} value={item.name} />
+                                    )
+                                        : <Picker.Item label="Selecione uma espécie" value="Key0" />
+                            }
+                        </Picker>
+
                     </View>
                     {data.isValidRaca ? null :
                         <Animatable.View animation="fadeInLeft" duration={500}>
@@ -381,13 +473,12 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
 
                     {/* ========= Cor ========= */}
 
-
                     <Text style={[styles.text_footer, {
                         color: colors.text
                     }]}>Cor</Text>
                     <View style={styles.action, { width: '100%' }}>
 
-                    <SectionedMultiSelect
+                        <SectionedMultiSelect
                             showCancelButton={true}
                             items={itemsCor}
                             uniqueKey="name"
@@ -444,106 +535,11 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                         </Animatable.View>
                     }
 
-                    {/* ========= Especie ========= */}
-                    <Text style={[styles.text_footer, {
-                        color: colors.text,
-                        marginTop: 35
-                    }]}>Espécie</Text>
-                    <View style={styles.action}>
-                        <Grid>
-                            <Col style={{ left: 60 }}>
-                                <TouchableOpacity
-
-                                    onPress={() =>
-                                        setData({ ...data, especie: 'Cão', outraEspecie: false })
-
-                                    }
-                                >
-                                    {data.especie == "Cão" ?
-                                        <Image style={{ width: 30, height: 30, marginLeft: 20, bottom: 1 }}
-                                            source={require('../../source/dog-escuro.png')}
-                                        /> :
-                                        <Image style={{ width: 30, height: 30, marginLeft: 20, bottom: 1 }}
-                                            source={require('../../source/dog.png')}
-                                        />}
-
-
-                                </TouchableOpacity>
-                            </Col>
-                            <Col style={{ left: 20 }}>
-                                <TouchableOpacity
-
-
-                                    onPress={() =>
-                                        setData({ ...data, especie: 'Gato', outraEspecie: false })
-
-                                    }
-                                >
-
-                                    {data.especie == "Gato" ?
-                                        <Image style={{ width: 30, height: 30, marginLeft: 20, bottom: 1 }}
-                                            source={require('../../source/gato-preto.png')}
-                                        /> :
-                                        <Image style={{ width: 30, height: 30, marginLeft: 20, bottom: 1 }}
-                                            source={require('../../source/gato.png')}
-                                        />}
-
-                                </TouchableOpacity>
-                            </Col>
-
-                            <Col style={{ right: 5, bottom: 5 }}>
-                                <TouchableOpacity
-
-
-                                    onPress={() =>
-                                        setData({ ...data, outraEspecie: true, especie: "" })
-                                    }>
-
-
-                                    <FontAwesome name={"question"} style={{ fontSize: 37 }} color=
-                                        {data.outraEspecie ? color = "#E76801" : color = "#999"} />
-
-                                </TouchableOpacity>
-                            </Col>
-                        </Grid>
-                    </View>
-
-
-
-                    <Renderif test={data.outraEspecie}>
-                        <Text style={[styles.text_footer, {
-                            color: colors.text, marginTop: 30
-                        }]}>Outra Espécie</Text>
-                        <View style={styles.action}>
-
-                            <TextInput
-                                placeholder="Informe a espécie do seu animal"
-                                placeholderTextColor="#666666"
-                                style={[styles.textInput, {
-                                    color: colors.text
-                                }]}
-                                autoCapitalize="none"
-                                onChangeText={(val) => textInputChangeEspecie(val)}
-                            />
-
-                        </View>
-                        {data.isValidEspecie ? null :
-                            <Animatable.View animation="fadeInLeft" duration={500}>
-                                <Text style={styles.errorMsg}>Campo obrigatório.</Text>
-                            </Animatable.View>
-                        }
-                    </Renderif>
-
                     <Text style={[styles.text_footer, {
                         color: colors.text, marginTop: 0
                     }]}>Porte</Text>
 
                     <View style={styles.action}>
-                        {/* <FontAwesome
-                            name="asterisk"
-                            color={colors.text}
-                            size={20}
-                        /> */}
                         <Picker
                             note
                             mode="dialog"
@@ -574,11 +570,6 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                         color: colors.text, marginTop: 30
                     }]}>Pelagem</Text>
                     <View style={styles.action}>
-                        {/* <FontAwesome
-                            name="asterisk"
-                            color={colors.text}
-                            size={20}
-                        /> */}
                         <Picker
                             note
                             mode="dialog"
@@ -612,11 +603,6 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                         color: colors.text, marginTop: 30
                     }]}>Filhote</Text>
                     <View style={styles.action}>
-                        {/* <FontAwesome
-                            name="asterisk"
-                            color={colors.text}
-                            size={20}
-                        /> */}
                         <Picker
                             note
                             mode="dialog"
