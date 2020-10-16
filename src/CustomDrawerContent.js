@@ -1,15 +1,27 @@
-import React, { Component } from 'react';
-import { Text, View, SafeAreaView, TouchableOpacity, Image, ScrollView, ImageBackground, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Text, SafeAreaView, TouchableOpacity, Image, ScrollView, ImageBackground, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import LinearGradient from 'react-native-linear-gradient';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { Col, Row, Grid } from "react-native-easy-grid";
+import { Col, Grid } from "react-native-easy-grid";
 
 
-export default class CustomDrawerContent extends Component {
 
+  const CustomDrawerContent = ({ props, navigation }) => {
 
-  render(props) {
+    const [data, setData] = React.useState({
+      user: {}
+    });
+
+    if(data.user == null){
+        AsyncStorage.getItem("User").then(userText => {
+          const user = JSON.parse(userText);
+          setData({
+            ...data,
+            user: user,
+          });
+        });
+    }
+   
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: '#323a4e' }}>
         <ImageBackground
@@ -20,15 +32,14 @@ export default class CustomDrawerContent extends Component {
           source={require("./source/fundotc.jpg")}
           style={{ width: undefined, flex: 1, padding: 16 }}
         >
-          {/* <View style={{height:150, alignItems: 'center', justifyContent: 'center'}}> */}
           <Image source={require('./source/logoapp.png')} style={styles.profile} />
-          <Text style={styles.name}>Alisson Andrey</Text>
+          <Text style={styles.name}>{data.user ? data.user.nome : ''}</Text>
 
           {/* </View> */}
           <ScrollView style={{ marginLeft: -10, padding: 0 }}>
             <TouchableOpacity
               style={{ marginTop: 20 }}
-              onPress={() => this.props.navigation.navigate('HomeAP')}
+              onPress={() => navigation.navigate('HomeAP')}
             >
 
               <Grid>
@@ -50,7 +61,7 @@ export default class CustomDrawerContent extends Component {
 
             <TouchableOpacity
               style={{ marginTop: 30 }}
-              onPress={() => this.props.navigation.navigate('RegisterAnimal')}
+              onPress={() => navigation.navigate('RegisterAnimal')}
             >
               <Grid>
                 <Col size={12}>
@@ -71,7 +82,7 @@ export default class CustomDrawerContent extends Component {
 
             <TouchableOpacity
               style={{ marginTop: 30 }}
-              onPress={() => this.props.navigation.navigate('RegisterAnimalsPerdido')}
+              onPress={() => navigation.navigate('RegisterAnimalsPerdido')}
             >
               <Grid>
                 <Col size={12}>
@@ -92,7 +103,7 @@ export default class CustomDrawerContent extends Component {
 
             <TouchableOpacity
               style={{ marginTop: 30 }}
-              onPress={() => this.props.navigation.navigate('RegisterAnimalsAchado')}
+              onPress={() => navigation.navigate('RegisterAnimalsAchado')}
             >
               <Grid>
                 <Col size={12}>
@@ -112,7 +123,7 @@ export default class CustomDrawerContent extends Component {
 
             <TouchableOpacity
               style={{ marginTop: 30 }}
-              onPress={() => this.props.navigation.navigate('RegisterDoacao')}
+              onPress={() => navigation.navigate('RegisterDoacao')}
             >
               <Grid>
                 <Col size={12}>
@@ -132,7 +143,7 @@ export default class CustomDrawerContent extends Component {
 
             <TouchableOpacity
               style={{ marginTop: 30 }}
-              onPress={() => this.props.navigation.navigate('minhaspublicacoes')}
+              onPress={() => navigation.navigate('minhaspublicacoes')}
             >
               <Grid>
                 <Col size={12}>
@@ -155,7 +166,7 @@ export default class CustomDrawerContent extends Component {
             <TouchableOpacity
               style={{ marginTop: 30 }}
               onPress={() => AsyncStorage.clear().then(() => {
-                this.props.navigation.navigate("Splash");
+                navigation.navigate("Splash");
               })}
             >
               <Grid>
@@ -180,7 +191,8 @@ export default class CustomDrawerContent extends Component {
 
     )
   }
-}
+
+export default CustomDrawerContent;
 
 const styles = StyleSheet.create({
 

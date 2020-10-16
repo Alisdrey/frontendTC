@@ -5,24 +5,20 @@ import {
     Tabs,
     ScrollableTab,
     TabHeading,
+    Spinner
 } from 'native-base';
 import {
-    ScrollView,
     View,
     Text,
     TouchableOpacity,
-    ImageBackground,
     FlatList,
     Dimensions,
     Image,
     SafeAreaView,
-    StyleSheet
 } from 'react-native';
 import { CustomHeader } from '../../index';
 import AsyncStorage from '@react-native-community/async-storage';
 import Server from '../settings/Server';
-import { Col, Row, Grid } from "react-native-easy-grid";
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import moment from "moment/min/moment-with-locales";
 moment.updateLocale("pt-br", {
     months: [
@@ -52,7 +48,11 @@ const minhaspublicacoesScreen = ({ navigation, props }) => {
 
     const [feed, setFeed] = useState([]);
     const [feedPerdido, setFeedPerdido] = useState([]);
+    const [loadingPerdido, setLoadingPerdido] = useState(false);
     const [feedAchado, setFeedAchado] = useState([]);
+    const [loadingAchado, setLoadingAchado] = useState(false);
+    const [feedDoado, setFeedDoado] = useState([]);
+    const [loadingDoado, setLoadingDoado] = useState(false);
     const [user, setUser] = useState([]);
 
 
@@ -70,7 +70,8 @@ const minhaspublicacoesScreen = ({ navigation, props }) => {
         {
             textAlign: 'center',
             color: '#363636',
-            fontSize: data.variant ? 15 : 20
+            fontSize: data.variant ? 15 : 20,
+            marginBottom:10
         }
     ];
 
@@ -79,7 +80,27 @@ const minhaspublicacoesScreen = ({ navigation, props }) => {
             const user = JSON.parse(userText);
             setUser(user)
         });
-    
+
+    }, []);
+
+    useEffect(() => {
+
+        AsyncStorage.getItem("User").then(userText => {
+            const user = JSON.parse(userText);
+
+            let url = Server.API_DOADO_USER + user.idUsuario
+            fetch(url)
+                .then(response => response.json())
+                .then(responseJson => {
+                    if (responseJson != null) {
+                        setFeedDoado(responseJson)
+                        setLoadingDoado(true)
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        });
     }, []);
 
     useEffect(() => {
@@ -91,11 +112,9 @@ const minhaspublicacoesScreen = ({ navigation, props }) => {
             fetch(url)
                 .then(response => response.json())
                 .then(responseJson => {
-                    console.log("ola", responseJson)
                     if (responseJson != null) {
-
                         setFeedAchado(responseJson)
-
+                        setLoadingAchado(true)
                     }
                 })
                 .catch(error => {
@@ -115,8 +134,8 @@ const minhaspublicacoesScreen = ({ navigation, props }) => {
                 .then(responseJson => {
                     console.log(responseJson)
                     if (responseJson != null) {
-
                         setFeedPerdido(responseJson)
+                        setLoadingPerdido(true)
                     }
                 })
                 .catch(error => {
@@ -125,26 +144,7 @@ const minhaspublicacoesScreen = ({ navigation, props }) => {
         });
     }, []);
 
-    useEffect(() => {
 
-        AsyncStorage.getItem("User").then(userText => {
-            const user = JSON.parse(userText);
-
-            let url = Server.API_PERDIDO_USER + user.idUsuario
-            fetch(url)
-                .then(response => response.json())
-                .then(responseJson => {
-                    console.log(responseJson)
-                    if (responseJson != null) {
-
-                        setFeedPerdido(responseJson)
-                    }
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-        });
-    }, []);
 
 
 
@@ -192,6 +192,28 @@ const minhaspublicacoesScreen = ({ navigation, props }) => {
         );
     }
 
+    function renderItemDoado({ item: feed }) {
+        return (
+            <View style={styles.containerCardItem}>
+                <View>
+                    <Text style={{ fontSize: 12, paddingTop: 12 }}>
+                        {moment(feed.dataRegistro).locale('pt-br').startOf('hour ').fromNow()}
+                    </Text>
+                </View>
+                <TouchableOpacity style={styles.action}
+                    onPress={() => navigation.navigate('editAnimalDoacao', {
+                        date_Doacao: feed,
+                        user: user
+                    })}>
+                    <Image source={{ uri: Server.API_PRINC + feed.Animal.Galeria[0].url }} style={imageStyle} />
+                    <Text style={nameStyle}>{'fdfd'}</Text>
+                </TouchableOpacity>
+
+
+            </View>
+        );
+    }
+
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#f4f4f4' }}>
@@ -213,13 +235,15 @@ const minhaspublicacoesScreen = ({ navigation, props }) => {
                     </TabHeading>
                 }>
                     <View style={styles.containerMatches}>
-
-                        <FlatList
-                            numColumns={2}
-                            data={feedPerdido}
-                            keyExtractor={(item, index) => index.toString()}
-                            renderItem={renderItemPerdido}
-                        />
+                        {feedPerdido.length > 0 ?
+                            <FlatList
+                                numColumns={2}
+                                data={feedPerdido}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={renderItemPerdido}
+                            />
+                            : !loadingPerdido ? <Spinner color='#ff9517' />
+                            : <Text style={{ textAlign: 'center', padding:10 }}>Nenhum registro encontrado!</Text>}
                     </View>
                 </Tab>
 
@@ -235,19 +259,42 @@ const minhaspublicacoesScreen = ({ navigation, props }) => {
                     </TabHeading>
                 }>
                     <View style={styles.containerMatches}>
-                        <FlatList
-                            numColumns={2}
-                            data={feedAchado}
-                            keyExtractor={(item, index) => index.toString()}
-                            renderItem={renderItemAchado}
-                        />
+                        {feedAchado.length > 0 ?
+                            <FlatList
+                                numColumns={2}
+                                data={feedAchado}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={renderItemAchado}
+                            />
+                            : !loadingAchado ? <Spinner color='#ff9517' />
+                            : <Text style={{ textAlign: 'center', padding:10}}>Nenhum registro encontrado!</Text>}
                     </View>
                 </Tab>
 
+                <Tab heading={
+                    <TabHeading
+                        style={{
+                            backgroundColor: '#323a4e'
+                        }}
+                    >
+                        <Text style={{ color: "white" }}>
+                            Doações
+                            </Text>
+                    </TabHeading>
+                }>
+                    <View style={styles.containerMatches}>
+                        {feedDoado.length > 0 ?
+                            <FlatList
+                                numColumns={2}
+                                data={feedDoado}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={renderItemDoado}
+                            />
+                            : !loadingDoado ? <Spinner color='#ff9517' />
+                            : <Text style={{ textAlign: 'center', padding:10 }}>Nenhum registro encontrado!</Text>}
+                    </View>
+                </Tab>
             </Tabs>
-
-
-
         </SafeAreaView>
 
     );

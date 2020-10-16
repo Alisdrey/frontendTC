@@ -3,29 +3,17 @@ import {
     View,
     Text,
     TouchableOpacity,
-    TextInput,
     Platform,
     StyleSheet,
     StatusBar,
-    Alert,
     ScrollView,
-    PermissionsAndroid,
-    SafeAreaView,
     Dimensions,
     Image
 } from 'react-native';
-import {
-    Thumbnail, Textarea,
-} from "native-base";
+import {Textarea} from "native-base";
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Feather from 'react-native-vector-icons/Feather';
-import { Col, Row, Grid } from "react-native-easy-grid";
-import AsyncStorage from '@react-native-community/async-storage';
 import { useTheme } from 'react-native-paper';
-import Renderif from "../../componets/RenderIf";
-import { Picker } from '@react-native-community/picker';
 import Server from '../settings/Server';
 
 
@@ -39,56 +27,57 @@ const updatePerdidoScreen = ({ route, navigation, props }) => {
         isValidDescricao: true,
         check_Descricao: false,
         isloading: true,
+        nameButton: 'Editar',
+        disabledButton: false,
 
     });
 
     const { colors } = useTheme();
 
-
-    useEffect(() => {
-        console.log('dada',date_Achado)
-    }, []);
-
-
-
     const _enviar = () => {
-    
-            let formdata = new FormData();
-        
-            formdata.append('idAchado', data.date_Achado.idAchado)
-            formdata.append('idusuario', data.date_Achado.idUsuario)
-            formdata.append('descricaoLocal', data.descricaoLocal)
-            formdata.append('descricaoAnimal', data.descricaoAnimal)
-            formdata.append('estado', data.date_Achado.estado)
-            formdata.append('cidade', data.date_Achado.cidade)
-            formdata.append('acolhido', data.date_Achado.acolhido)
-            formdata.append('status', data.date_Achado.status)
-            formdata.append('file', null)
 
-            fetch(Server.API_EDITAR_ACHADO, {
-                method: "POST",
-                'Content-Type': 'multipart/form-data',
-                body: formdata
-            }).then(response => response.json())
-                .then(response => {
-                    console.log("erro", response)
-                    navigation.navigate("editAnimalAchado",{
-                        date_Achado: date_Achado
-                    })
+        setData({
+            ...data,
+            nameButton: 'Editando...',
+            disabledButton: true
+        })
+
+        let formdata = new FormData();
+
+        formdata.append('idAchado', data.date_Achado.idAchado)
+        formdata.append('idusuario', data.date_Achado.idUsuario)
+        formdata.append('descricaoLocal', data.descricaoLocal)
+        formdata.append('descricaoAnimal', data.descricaoAnimal)
+        formdata.append('estado', data.date_Achado.estado)
+        formdata.append('cidade', data.date_Achado.cidade)
+        formdata.append('acolhido', data.date_Achado.acolhido)
+        formdata.append('status', data.date_Achado.status)
+        formdata.append('file', null)
+
+        fetch(Server.API_EDITAR_ACHADO, {
+            method: "POST",
+            'Content-Type': 'multipart/form-data',
+            body: formdata
+        }).then(response => response.json())
+            .then(response => {
+                setData({
+                    ...data,
+                    nameButton: 'Editar',
+                    disabledButton: false
                 })
+                navigation.navigate("editAnimalAchado", {
+                    date_Achado: date_Achado
+                })
+            })
+            
     }
 
 
     const textInputChangeDescricaoLocal = (val) => {
-       
-        //data.date_Achado.descricaoLocal = val
-       
-
-            setData({
-                ...data,
-                descricaoLocal: val,
-            });
-       
+        setData({
+            ...data,
+            descricaoLocal: val,
+        });
     }
 
     const textInputChangeAnimal = (val) => {
@@ -98,64 +87,63 @@ const updatePerdidoScreen = ({ route, navigation, props }) => {
         });
     }
 
-  
-
     return (
 
-        <SafeAreaView style={{ flex: 1 }}>
-            <View style={styles.container}>
-          
-                {/* <StatusBar backgroundColor='#009387' barStyle="light-content" /> */}
-                <View style={{ flexDirection: 'row', height: 50,}}>
-                    <TouchableOpacity style={{ flexDirection: 'row', alignContent: 'center' }}
+        <View style={styles.container}>
+            <StatusBar backgroundColor='#323a4e' barStyle="light-content" />
+            <View style={styles.header}>
+                <Animatable.Image
+                    animation="bounceIn"
+                    duraton="1500"
+                    source={require('../../source/logo.png')}
+                    style={styles.logo}
+                />
+                <TouchableOpacity style={{ alignContent: 'center', bottom: 85 }}
                     onPress={() => navigation.goBack()}>
-                        <Image style={{ width: 40, height: 25, marginLeft: 10, bottom: 0 }}
+                    <Image style={{ width: 40, height: 25, marginLeft: 5 }}
                         source={require('../../source/arrow.png')}
                         resizeMode='contain' />
-                    </TouchableOpacity>
-                    </View>
-                <View style={styles.header}>
-                    <Text style={styles.text_header}>Editar animal achado.</Text>
-                </View>
+                </TouchableOpacity>
+            </View>
 
 
-                <Animatable.View
-                    animation="fadeInUpBig"
-                    style={[styles.footer, {
-                        backgroundColor: colors.background
-                    }]}
-                >
-                    <ScrollView style={{ width: "100%", marginBottom: -25 }} keyboardShouldPersistTaps={'handled'}>
+            <Animatable.View
+                animation="fadeInUpBig"
+                style={[styles.footer, {
+                    backgroundColor: colors.background
+                }]}
+            >
+                <ScrollView style={{ width: "100%", marginBottom: -25 }} keyboardShouldPersistTaps={'handled'}>
 
-                        {/* ========= Descrição ========= */}
+                    {/* ========= Descrição ========= */}
 
-                     
-                        <Text style={[styles.text_footer, {
-                            color: colors.text, marginTop: 0
-                        }]}>Descrição do Local</Text>
-                          
-                        <View style={styles.action}>
+                    <Text style={styles.text_title}>Editar Achado</Text>
+                    <Text style={[styles.text_footer, {
+                        color: colors.text, marginTop: 0
+                    }]}>Descrição do Local</Text>
 
-                            <Text></Text>
-                            <View style={{ flex: 1, flexDirection: 'column' }}>
+                    <View style={styles.action}>
 
-                                <Textarea style={{ height: 90 }}
-                                    //placeholder={data.date_Achado.descricaoLocal}
-                                    value={data.descricaoLocal}
-                                    onChangeText={(val) => textInputChangeDescricaoLocal(val)}
-                                    rowSpan={2}
-                                    bordered
-                                />
-                            </View>
+                        <Text></Text>
+                        <View style={{ flex: 1, flexDirection: 'column' }}>
 
+                            <Textarea style={{ height: 90 }}
+                                //placeholder={data.date_Achado.descricaoLocal}
+                                value={data.descricaoLocal}
+                                onChangeText={(val) => textInputChangeDescricaoLocal(val)}
+                                rowSpan={2}
+                                bordered
+                            />
                         </View>
 
+                    </View>
 
-                        <Text style={[styles.text_footer, {
-                            color: colors.text, marginTop: 20
-                        }]}>Descrição do Animal</Text>
 
-                        <View style={styles.action}>
+                    <Text style={[styles.text_footer, {
+                        color: colors.text, marginTop: 20
+                    }]}>Descrição do Animal</Text>
+
+                    <View style={styles.action}>
 
                         <Text></Text>
                         <View style={{ flex: 1, flexDirection: 'column' }}>
@@ -169,31 +157,30 @@ const updatePerdidoScreen = ({ route, navigation, props }) => {
                             />
                         </View>
 
-                        </View>
-                        
+                    </View>
 
-                        <View style={styles.button}>
 
-                            <TouchableOpacity
+                    <View style={styles.button}>
+
+                        <TouchableOpacity
+                            disabled={!data.disabledButton ? false : true}
+                            style={styles.signIn}
+                            onPress={() => { _enviar() }}
+
+                        >
+                            <LinearGradient
+                                colors={['#ff9517', '#ff9517']}
                                 style={styles.signIn}
-                                onPress={() => { _enviar() }}
-
                             >
-                                <LinearGradient
-                                    colors={['#08d4c4', '#01ab9d']}
-                                    style={styles.signIn}
-                                >
-                                    <Text style={[styles.textSign, {
-                                        color: '#fff'
-                                    }]}>Editar</Text>
-                                </LinearGradient>
-                            </TouchableOpacity>
-                        </View>
-                    </ScrollView>
-                </Animatable.View>
-
-            </View>
-        </SafeAreaView>
+                                <Text style={[styles.textSign, {
+                                    color: '#fff'
+                                }]}>{data.nameButton}</Text>
+                            </LinearGradient>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
+            </Animatable.View>
+        </View>
     );
 };
 
@@ -205,7 +192,7 @@ const height_logo = height * 0.28;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#009387'
+        backgroundColor: '#323a4e'
     },
     header: {
         flex: 1,
@@ -244,6 +231,12 @@ const styles = StyleSheet.create({
         borderBottomColor: '#FF0000',
         paddingBottom: 5
     },
+    text_title: {
+        color: 'black', 
+        textAlign: 'center',
+        fontSize:20,
+        marginBottom:20
+    },
     textInput: {
         flex: 1,
         marginTop: Platform.OS === 'ios' ? 0 : -12,
@@ -281,17 +274,13 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
 
+
     logo: {
-        width: height_logo,
-        height: height_logo,
-        borderRadius: 55,
-        borderWidth: 2,
-        height: 85,
-        width: 90,
-        position: "absolute",
-        marginLeft: 130,
-        justifyContent: 'center',
-        alignItems: 'center',
+        flex: 1,
+        top: 10,
+        width: null,
+        height: null,
+        resizeMode: 'contain'
     },
 
 });

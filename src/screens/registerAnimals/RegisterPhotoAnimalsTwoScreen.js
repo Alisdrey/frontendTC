@@ -3,39 +3,17 @@ import {
     View,
     Text,
     TouchableOpacity,
-    TextInput,
-    Platform,
-    StyleSheet,
-    StatusBar,
     Alert,
-    ScrollView,
-    PermissionsAndroid,
-    SafeAreaView,
     Image,
     Dimensions
 
 } from 'react-native';
-import { Root, ActionSheet } from 'native-base'
-import * as Animatable from 'react-native-animatable';
-import LinearGradient from 'react-native-linear-gradient';
-import Feather from 'react-native-vector-icons/Feather';
-import { Col, Row, Grid } from "react-native-easy-grid";
-import Geolocation from 'react-native-geolocation-service';
-import { useTheme } from 'react-native-paper';
-import Renderif from "../../componets/RenderIf";
-import { Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
+import { Root } from 'native-base'
 import ImagePicker from 'react-native-image-crop-picker';
-import { Picker } from '@react-native-community/picker';
-import ResponsiveImage from 'react-native-responsive-image';
 import styles from '../settings/styles';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Server from '../settings/Server';
-
-
-
-
-
-const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
+import { useIsFocused } from "@react-navigation/native"
 
 const RegisterPhotoAnimalsTwo = ({ route, navigation, props }) => {
 
@@ -44,14 +22,11 @@ const RegisterPhotoAnimalsTwo = ({ route, navigation, props }) => {
 
     const [date, setData] = React.useState({
         idanimal: idanimal,
-        imagem: imagem,
-        user: {},
+        imagemone: imagem,
+        imagemtwo: [],
         variant: '',
         haveimg: false
-
-
     });
-
 
     const fullWidth = Dimensions.get('window').width;
     const imageStyle = [
@@ -70,13 +45,24 @@ const RegisterPhotoAnimalsTwo = ({ route, navigation, props }) => {
         }
     ];
 
+    
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        console.log(date)
+        date.idanimal = idanimal,
+        date.imagemtwo = []
+        date.variant = ''
+        date.haveimg = false
+    }, [isFocused]);
+
 
     const _enviar = () => {
-        if (date.imagem.length != 0) {
+    
+        if (date.imagem != "") {
+
             sendToServer().then(() => {
-                date.imagem.forEach(element => {
-                    console.log("element", element)
-                });
+                console.log("sucesso")
             })
         } else {
             Alert.alert(
@@ -97,11 +83,16 @@ const RegisterPhotoAnimalsTwo = ({ route, navigation, props }) => {
 
 
     const sendToServer = async () => {
+
+        let imagem = []
+
+        imagem = [date.imagemone,date.imagemtwo];
+
         try {
 
             let formdata_img = new FormData();
 
-            date.imagem.forEach(item => {
+            imagem.forEach(item => {
 
                 const fileURL = item.imagem.path;
                 const fileName = fileURL.split("/").pop();
@@ -156,22 +147,24 @@ const RegisterPhotoAnimalsTwo = ({ route, navigation, props }) => {
             cropperTintColor: "#E76801",
         })
             .then(imagem => {
-                setData(prevState => ({
+                setData({
                     ...date,
-                    imagem: [...prevState.imagem, { "imagem": imagem[0] }],
+                    imagemtwo: {"imagem": imagem[0]},
                     haveimg: true
-                }))
+                })
             })
 
     }
 
 
     const _navigation = () => {
-        if (date.imagem.length != 0) {
+       console.log(date)
+        if (date.imagemtwo != "") {
             navigation.navigate(
                 "RegisterPhotoAnimalsTree"
                 , {
-                    imagem: date.imagem,
+                    imagemone: date.imagemone,
+                    imagemtwo: date.imagemtwo,
                     idanimal: date.idanimal
                 }
             )
@@ -208,20 +201,12 @@ const RegisterPhotoAnimalsTwo = ({ route, navigation, props }) => {
                             <Image source={{
                                 uri:
                                     "data:image/jpeg;base64," +
-                                    date.imagem[1].imagem.data
+                                    date.imagemtwo.imagem.data
                             }} style={imageStyle} />
 
                     }
 
                 </TouchableOpacity>
-
-                {/* <View style={styles.matchesCardItem}>
-                    <Text style={styles.matchesTextCardItem}>
-                        <FontAwesome name="heart" />
-                    </Text>
-                </View> */}
-
-                {/* <Text style={nameStyle}>olá</Text> */}
 
 
                 <Text style={styles.descriptionCardItem, nameStyle}>2/3</Text>

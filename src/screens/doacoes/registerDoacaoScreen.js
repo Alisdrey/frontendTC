@@ -9,27 +9,25 @@ import {
     StatusBar,
     Alert,
     ScrollView,
-    PermissionsAndroid,
-    SafeAreaView,
-    Dimensions
+    Image
 } from 'react-native';
 import {
-    Thumbnail, Textarea,
+    Spinner
 } from "native-base";
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
-import { Col, Row, Grid } from "react-native-easy-grid";
+import { Col,  Grid } from "react-native-easy-grid";
 import AsyncStorage from '@react-native-community/async-storage';
 import { useTheme } from 'react-native-paper';
 import Renderif from "../../componets/RenderIf";
 import { Picker } from '@react-native-community/picker';
 import Server from '../settings/Server';
+import { useIsFocused } from "@react-navigation/native"
 
 
 const registerDoadoScreen = ({ route, navigation }) => {
-
 
     const [data, setData] = React.useState({
         user: {},
@@ -37,28 +35,14 @@ const registerDoadoScreen = ({ route, navigation }) => {
         animalSelect: [],
         idanimal: "",
         selected: "key0",
-
+        nameButton: 'Doar',
+        disabledButton: false,
         isValidAnimal: true,
         check_Animal: false,
-        // isValidLocal: true,
-        // check_Local: false,
-        // isValidCidade: true,
-        // check_Cidade: false,
-        // isValidEstado: true,
-        // check_Estado: false,
-        // isValidAcolhido: true,
-        // check_Acolhido: false,
-        // isloading: true,
-
+        loading: false
     });
 
-
     const { colors } = useTheme();
-
-
-    useEffect(() => {
-
-    }, []);
 
     useEffect(() => {
 
@@ -69,7 +53,6 @@ const registerDoadoScreen = ({ route, navigation }) => {
             fetch(url)
                 .then(response => response.json())
                 .then(responseJson => {
-                    console.log(responseJson)
                     if (responseJson != null) {
                         setData({
                             ...data,
@@ -91,11 +74,29 @@ const registerDoadoScreen = ({ route, navigation }) => {
             setData({
                 ...data,
                 idanimal: val,
+                loading: true
 
             });
             getAnimal(val)
         }
     }
+
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        setData({
+            ...data,
+            user: {},
+            animalSelect: [],
+            idanimal: "",
+            selected: "key0",
+            nameButton: 'Doar',
+            disabledButton: false,
+            isValidAnimal: true,
+            check_Animal: false,
+        })
+    }, [isFocused]);
+
 
 
     const getAnimal = (value) => {
@@ -107,10 +108,11 @@ const registerDoadoScreen = ({ route, navigation }) => {
             .then(response => response.json())
             .then(responseJson => {
                 if (responseJson != null) {
-                    console.log(responseJson)
+                    
                     setData({
                         ...data,
                         animalSelect: responseJson,
+                        loading: false
                     });
                 }
             })
@@ -121,6 +123,11 @@ const registerDoadoScreen = ({ route, navigation }) => {
 
 
     const _enviar = () => {
+        setData({
+            ...data,
+            nameButton: 'Aguarde...',
+            disabledButton: true
+        })
 
         if (data.animalSelect != '') {
 
@@ -139,6 +146,11 @@ const registerDoadoScreen = ({ route, navigation }) => {
                 })
 
         } else {
+            setData({
+                ...data,
+                nameButton: 'Doar',
+                disabledButton: false
+            })
             Alert.alert(
                 "Campos vazios",
                 "Preencha todos os campos e tente novamente. ",
@@ -167,14 +179,15 @@ const registerDoadoScreen = ({ route, navigation }) => {
                     duraton="1500"
                     source={require('../../source/logo.png')}
                     style={styles.logo}
-
-                // resizeMode="contain"
                 />
-                {/* <Text style={styles.text_header}>Bem-Vindo!</Text> */}
+                 <TouchableOpacity style={{ alignContent: 'center',  bottom: 85  }}
+                    onPress={() => navigation.goBack()}>
+                    <Image style={{ width: 40, height: 25, marginLeft:5}}
+                        source={require('../../source/arrow.png')}
+                        resizeMode='contain' />
+                </TouchableOpacity>
             </View>
-
-
-
+            
 
             <Animatable.View
                 animation="fadeInUpBig"
@@ -183,7 +196,7 @@ const registerDoadoScreen = ({ route, navigation }) => {
                 }]}
             >
                 <ScrollView style={{ width: "100%", marginBottom: -25 }}>
-
+                    <Text style={styles.text_title}>Doar Animal</Text>
 
                     <Text style={[styles.text_footer, {
                         color: colors.text, marginTop: 30
@@ -193,7 +206,7 @@ const registerDoadoScreen = ({ route, navigation }) => {
                         <Picker
                             note
                             mode="dialog"
-                            style={{ width: "100%", right:7 }}
+                            style={{ width: "100%", right: 7 }}
                             selectedValue={data.animalSelect.idAnimal}
                             onValueChange={textInputChangeAnimal.bind(this)}
                             placeholder={"Selecione..."}
@@ -204,7 +217,6 @@ const registerDoadoScreen = ({ route, navigation }) => {
                                 data.animalusuario.map((item, index) =>
                                     <Picker.Item key={item.nome} label={item.nome} value={item.idAnimal} />
                                 )
-
                             }
 
                         </Picker>
@@ -227,145 +239,147 @@ const registerDoadoScreen = ({ route, navigation }) => {
                         </Animatable.View>
                     }
 
-                    <Renderif test={data.animalSelect != ""}>
-                        <Text style={[styles.text_footer, {
-                            color: colors.text
-                        }]}>Nome</Text>
-                        <View style={styles.action}>
+                    {!data.loading ?
+                        <Renderif test={data.animalSelect != ""}>
+                            <Text style={[styles.text_footer, {
+                                color: colors.text
+                            }]}>Nome</Text>
+                            <View style={styles.action}>
 
-                            <TextInput
-                                editable={false}
-                                value={data.animalSelect.nome}
-                                placeholderTextColor="#666666"
-                                style={[styles.textInput, {
-                                    color: colors.text
-                                }]}
-                                autoCapitalize="none"
-
-                            //onEndEditing={(e) => handleValidNome(e.nativeEvent.text)}
-                            />
-
-                            <Animatable.View
-                                animation="bounceIn"
-                            >
-                                <Feather
-                                    name="check-circle"
-                                    color="green"
-                                    size={20}
+                                <TextInput
+                                    editable={false}
+                                    value={data.animalSelect.nome}
+                                    placeholderTextColor="#666666"
+                                    style={[styles.textInput, {
+                                        color: colors.text
+                                    }]}
+                                    autoCapitalize="none"
+                              
                                 />
-                            </Animatable.View>
 
-                        </View>
-
-
-                        {/* ========= Raça ========= */}
-
-
-                        <Text style={[styles.text_footer, {
-                            color: colors.text
-                        }]}>Raça</Text>
-                        <View style={styles.action}>
-
-                            <TextInput
-                                editable={false}
-                                value={data.animalSelect.raca}
-                                placeholderTextColor="#666666"
-                                style={[styles.textInput, {
-                                    color: colors.text
-                                }]}
-                                autoCapitalize="none"
-
-                            //onEndEditing={(e) => handleValidNome(e.nativeEvent.text)}
-                            />
-
-                            <Animatable.View
-                                animation="bounceIn"
-                            >
-                                <Feather
-                                    name="check-circle"
-                                    color="green"
-                                    size={20}
-                                />
-                            </Animatable.View>
-
-                        </View>
-
-                        {/* ========= Especie ========= */}
-
-
-
-                        <Text style={[styles.text_footer, {
-                            color: colors.text
-                        }]}>Espécie</Text>
-                        <View style={styles.action}>
-
-                            <TextInput
-                                editable={false}
-                                value={data.animalSelect.especie}
-                                placeholderTextColor="#666666"
-                                style={[styles.textInput, {
-                                    color: colors.text
-                                }]}
-                                autoCapitalize="none"
-                            />
-
-                            <Animatable.View
-                                animation="bounceIn"
-                            >
-                                <Feather
-                                    name="check-circle"
-                                    color="green"
-                                    size={20}
-                                />
-                            </Animatable.View>
-
-                        </View>
-
-                        {/* ===============  SEXO ============= */}
-
-                        <Text style={[styles.text_footer, {
-                            color: colors.text,
-                            marginTop: 35
-                        }]}>Sexo</Text>
-
-                        <View style={styles.action}>
-                            <Grid>
-                                <Col style={{ left: 110 }}>
-                                    <TouchableOpacity>
-                                        <FontAwesome name={"mars"} style={{ fontSize: 40 }} color=
-                                            {data.animalSelect.sexo == "M" ? color = "#0101f7" : color = "#999"} />
-                                        <Text style={styles.fontSexo}> M </Text>
-                                    </TouchableOpacity>
-                                </Col>
-
-                                <Col>
-                                    <TouchableOpacity>
-                                        <FontAwesome name={"venus"} style={{ fontSize: 40 }} color=
-                                            {data.animalSelect.sexo == "F" ? color = "#f702a5" : color = "#999"} />
-                                        <Text style={styles.fontSexo}>  F </Text>
-                                    </TouchableOpacity>
-                                </Col>
-                            </Grid>
-                        </View>
-
-                        <View style={styles.button}>
-
-                            <TouchableOpacity
-                                style={styles.signIn}
-                                onPress={() => _enviar()}
-
-                            >
-                                <LinearGradient
-                                    colors={['#ff9517', '#ff9517']}
-                                    style={styles.signIn}
+                                <Animatable.View
+                                    animation="bounceIn"
                                 >
-                                    <Text style={[styles.textSign, {
-                                        color: '#fff'
-                                    }]}>Doar</Text>
-                                </LinearGradient>
-                            </TouchableOpacity>
-                        </View>
-                    </Renderif>
+                                    <Feather
+                                        name="check-circle"
+                                        color="green"
+                                        size={20}
+                                    />
+                                </Animatable.View>
+
+                            </View>
+
+
+                            {/* ========= Raça ========= */}
+
+
+                            <Text style={[styles.text_footer, {
+                                color: colors.text
+                            }]}>Raça</Text>
+                            <View style={styles.action}>
+
+                                <TextInput
+                                    editable={false}
+                                    value={data.animalSelect.raca}
+                                    placeholderTextColor="#666666"
+                                    style={[styles.textInput, {
+                                        color: colors.text
+                                    }]}
+                                    autoCapitalize="none"
+
+                                //onEndEditing={(e) => handleValidNome(e.nativeEvent.text)}
+                                />
+
+                                <Animatable.View
+                                    animation="bounceIn"
+                                >
+                                    <Feather
+                                        name="check-circle"
+                                        color="green"
+                                        size={20}
+                                    />
+                                </Animatable.View>
+
+                            </View>
+
+                            {/* ========= Especie ========= */}
+
+
+
+                            <Text style={[styles.text_footer, {
+                                color: colors.text
+                            }]}>Espécie</Text>
+                            <View style={styles.action}>
+
+                                <TextInput
+                                    editable={false}
+                                    value={data.animalSelect.especie}
+                                    placeholderTextColor="#666666"
+                                    style={[styles.textInput, {
+                                        color: colors.text
+                                    }]}
+                                    autoCapitalize="none"
+                                />
+
+                                <Animatable.View
+                                    animation="bounceIn"
+                                >
+                                    <Feather
+                                        name="check-circle"
+                                        color="green"
+                                        size={20}
+                                    />
+                                </Animatable.View>
+
+                            </View>
+
+                            {/* ===============  SEXO ============= */}
+
+                            <Text style={[styles.text_footer, {
+                                color: colors.text,
+                                marginTop: 35
+                            }]}>Sexo</Text>
+
+                            <View style={styles.action}>
+                                <Grid>
+                                    <Col style={{ left: 110 }}>
+                                        <TouchableOpacity>
+                                            <FontAwesome name={"mars"} style={{ fontSize: 40 }} color=
+                                                {data.animalSelect.sexo == "M" ? color = "#0101f7" : color = "#999"} />
+                                            <Text style={styles.fontSexo}> M </Text>
+                                        </TouchableOpacity>
+                                    </Col>
+
+                                    <Col>
+                                        <TouchableOpacity>
+                                            <FontAwesome name={"venus"} style={{ fontSize: 40 }} color=
+                                                {data.animalSelect.sexo == "F" ? color = "#f702a5" : color = "#999"} />
+                                            <Text style={styles.fontSexo}>  F </Text>
+                                        </TouchableOpacity>
+                                    </Col>
+                                </Grid>
+                            </View>
+
+                            <View style={styles.button}>
+
+                                <TouchableOpacity
+                                    disabled={!data.disabledButton ? false : true}
+                                    style={styles.signIn}
+                                    onPress={() => _enviar()}
+
+                                >
+                                    <LinearGradient
+                                        colors={['#ff9517', '#ff9517']}
+                                        style={styles.signIn}
+                                    >
+                                        <Text style={[styles.textSign, {
+                                            color: '#fff'
+                                        }]}>{data.nameButton}</Text>
+                                    </LinearGradient>
+                                </TouchableOpacity>
+                            </View>
+                        </Renderif>
+                        : <Spinner color='#ff9517' />}
                 </ScrollView>
             </Animatable.View>
 
@@ -375,8 +389,6 @@ const registerDoadoScreen = ({ route, navigation }) => {
 
 export default registerDoadoScreen;
 
-const { height } = Dimensions.get("screen");
-const height_logo = height * 0.28;
 
 const styles = StyleSheet.create({
     container: {
@@ -407,6 +419,12 @@ const styles = StyleSheet.create({
         fontSize: 18,
         marginTop: 20
 
+    },
+    text_title: {
+        color: 'black', 
+        textAlign: 'center',
+        fontSize:20,
+        marginBottom:20
     },
     action: {
         flexDirection: 'row',

@@ -7,7 +7,10 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  BackHandler,
+  ToastAndroid
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   Tab,
   Tabs,
@@ -17,13 +20,14 @@ import {
   Spinner
 } from 'native-base';
 import AsyncStorage from '@react-native-community/async-storage';
-
 import { CustomHeader } from '../../index';
 import { Col, Grid } from "react-native-easy-grid";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Server from '../settings/Server';
-import { Header, Avatar, Name, Title, Cover } from './styles';
+import { Header, Avatar, Name, Cover } from './styles';
 import moment from "moment/min/moment-with-locales";
+import Renderif from "../../componets/RenderIf";
+
 moment.updateLocale("pt-br", {
   months: [
     "Janeiro",
@@ -56,24 +60,32 @@ const HomeAPScreen = ({ navigation, props }) => {
   const [user, setUser] = useState([]);
   const [load, setLoad] = useState(true)
 
-  // const backAction = () => {
-  //   Alert.alert("Espere!", "Tem certeza que deseja sair?", [
-  //     {
-  //       text: "Não",
-  //       onPress: () => null,
-  //       style: "cancel"
-  //     },
-  //     { text: "Sim", onPress: () => BackHandler.exitApp() }
-  //   ]);
-  //   return true;
-  // };
+  const [numberClick, setNumberClick] = useState(0);
 
-  // useEffect(() => {
-  //   BackHandler.addEventListener("hardwareBackPress", backAction);
+  const backHandler = useCallback(() => {
+    if (numberClick === 1) {
+      BackHandler.exitApp();
+    }
+    setNumberClick(2);
+    ToastAndroid.show(
+      'Pressione novamente para sair do aplicativo',
+      ToastAndroid.SHORT,
+    );
+    setTimeout(() => {
+      setNumberClick(1);
+    }, 1000);
+    return true;
+  }, [numberClick]);
 
-  //   return () => 
-  //     BackHandler.removeEventListener("hardwareBackPress", backAction);
-  // }, []);
+  useFocusEffect(
+    useCallback(() => {
+      BackHandler.addEventListener('hardwareBackPress', backHandler);
+      return () => {
+        BackHandler.removeEventListener('hardwareBackPress', backHandler);
+      };
+    }, [backHandler]),
+  );
+
 
   useEffect(() => {
     const url = Server.API_GET_DOADO
@@ -166,7 +178,6 @@ const HomeAPScreen = ({ navigation, props }) => {
       });
   }
 
-
   function renderItemRecomendacaoCounteudo({ item: feed }) {
     return (
       <>
@@ -174,7 +185,7 @@ const HomeAPScreen = ({ navigation, props }) => {
           <TouchableOpacity
             key={feed.idDoacao}
             activeOpacity={0.6}
-            onPress={() => navigation.navigate('editAnimalDoacao', { date_Doacao: feed, user: user })}
+            onPress={() => navigation.navigate('editAnimalDoacao', { date_Doacao: feedDoacao[0], user: user })}
           >
             <Cover source={{ uri: Server.API_PRINC + feed.Animal.Galeria[0].url }} />
           </TouchableOpacity>
@@ -186,18 +197,18 @@ const HomeAPScreen = ({ navigation, props }) => {
 
   function renderItemRecomendacaoColaborativa({ item: feed }) {
     return (
-        <View style={{ padding: 10 }}>
-          <TouchableOpacity
-            key={feed.idDoacao}
-            activeOpacity={0.6}
-            onPress={() => navigation.navigate('editAnimalDoacao', { date_Doacao: feed, user: user })}
+      <View style={{ padding: 10 }}>
+        <TouchableOpacity
+          key={feed.idDoacao}
+          activeOpacity={0.6}
+          onPress={() => navigation.navigate('editAnimalDoacao', { date_Doacao: feedDoacao[0], user: user })}
 
-          >
-            <Cover source={{ uri: Server.API_PRINC + feed.Animal.Galeria[0].url }} />
-          </TouchableOpacity>
+        >
+          <Cover source={{ uri: Server.API_PRINC + feed.Animal.Galeria[0].url }} />
+        </TouchableOpacity>
 
 
-        </View>
+      </View>
     );
   }
 
@@ -208,13 +219,11 @@ const HomeAPScreen = ({ navigation, props }) => {
 
           <View style={styles.postHeader}>
             <View style={styles.userInfo}>
-              {/* <Text style={styles.author}>{post.author}</Text>
-            <Text style={styles.place}>{post.place}</Text> */}
             </View>
 
             <View style={styles.postOptions}>
               <TouchableOpacity>
-                {/* <Image source={options} /> */}
+
               </TouchableOpacity>
             </View>
           </View>
@@ -278,13 +287,10 @@ const HomeAPScreen = ({ navigation, props }) => {
           <View >
             <View style={styles.postHeader}>
               <View style={styles.userInfo}>
-                {/* <Text style={styles.author}>{post.author}</Text>
-            <Text style={styles.place}>{post.place}</Text> */}
               </View>
 
               <View style={styles.postOptions}>
                 <TouchableOpacity>
-                  {/* <Image source={options} /> */}
                 </TouchableOpacity>
               </View>
             </View>
@@ -325,7 +331,6 @@ const HomeAPScreen = ({ navigation, props }) => {
                         <View style={{ alignSelf: 'flex-end', flexDirection: 'row-reverse', marginBottom: 30 }}>
                           <MaterialIcons
                             name="call-made"
-                            //color={colors.text}
                             size={20}
                           />
                         </View>
@@ -347,12 +352,9 @@ const HomeAPScreen = ({ navigation, props }) => {
       <>
         {loadingPerdido ?
           <View style={styles.boxwhite}>
-
             <View >
               <View style={styles.postHeader}>
                 <View style={styles.userInfo}>
-                  {/* <Text style={styles.author}>{post.author}</Text>
-            <Text style={styles.place}>{post.place}</Text> */}
                 </View>
 
                 <View style={styles.postOptions}>
@@ -409,129 +411,126 @@ const HomeAPScreen = ({ navigation, props }) => {
                 </View>
               </View>
             </View>
-          </View> : <Spinner color='green' />}
+          </View> : <Spinner color='#ff9517' />}
       </>
     );
   }
 
   return (
+    <>
 
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#323a4e' }}>
-      <CustomHeader title="Home" isHome={true} navigation={navigation} />
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#323a4e' }}>
+        <CustomHeader title="Home" isHome={true} navigation={navigation} />
 
-      <Tabs locked={true} style={{ backgroundColor: '#323a4e' }}
-        tabBarBackgroundColor={'#323a4e'}
-        tabBarUnderlineStyle={{ backgroundColor: "white" }}
-        renderTabBar={() => <ScrollableTab />}>
+        <Tabs locked={true} style={{ backgroundColor: '#323a4e' }}
+          tabBarBackgroundColor={'#323a4e'}
+          tabBarUnderlineStyle={{ backgroundColor: "white" }}
+        >
 
-        <Tab heading={
-          <TabHeading
-            style={{
-              backgroundColor: '#323a4e'
-            }}
-          >
-            <Text style={{ color: "white" }}>
-              Perdidos
+          <Tab heading={
+            <TabHeading
+              style={{
+                backgroundColor: '#323a4e'
+              }}
+            >
+              <Text style={{ color: "white" }}>
+                Perdidos
             </Text>
-          </TabHeading>
-        }>
+            </TabHeading>
+          }>
 
-          <Content padder style={{ backgroundColor: '#f0f0f0' }}>
-            {feedPerdido.length > 0 ?
-              <FlatList
-                horizontal={false}
-                data={feedPerdido}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={renderItemPerdido}
-              />
-              : !loadingPerdido ? <Spinner color='#ff9517' />
-                : <Text style={{ textAlign: 'center' }}>Nenhum registro encontrado!</Text>}
-          </Content>
-        </Tab>
-
-        <Tab heading={
-          <TabHeading
-            style={{
-              backgroundColor: '#323a4e'
-            }}
-          >
-            <Text style={{ color: "white" }}>Achados </Text>
-          </TabHeading>
-        }>
-          <Content padder style={{ backgroundColor: '#f0f0f0' }}>
-            {feedAchado.length > 0 ?
-              <FlatList
-                data={feedAchado}
-                horizontal={false}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={renderItemAchado}
-              />
-              : !loadingAchado ? <Spinner color='#ff9517' />
-                : <Text style={{ textAlign: 'center' }}>Nenhum registro encontrado!</Text>}
-          </Content>
-        </Tab>
-
-        <Tab heading={
-          <TabHeading
-            style={{
-              backgroundColor: '#323a4e'
-            }}
-          >
-            <Text style={{ color: "white" }}>
-              Doações
-            </Text>
-          </TabHeading>
-        }>
-
-          {feedDoacao.length > 0 ?
             <Content padder style={{ backgroundColor: '#f0f0f0' }}>
+              {feedPerdido.length > 0 ?
+                <FlatList
+                  horizontal={false}
+                  data={feedPerdido}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={renderItemPerdido}
+                />
+                : !loadingPerdido ? <Spinner color='#ff9517' />
+                  : <Text style={{ textAlign: 'center' }}>Nenhum registro encontrado!</Text>}
+            </Content>
+          </Tab>
+
+          <Tab heading={
+            <TabHeading
+              style={{
+                backgroundColor: '#323a4e'
+              }}
+            >
+              <Text style={{ color: "white" }}>Achados </Text>
+            </TabHeading>
+          }>
+            <Content padder style={{ backgroundColor: '#f0f0f0' }}>
+              {feedAchado.length > 0 ?
+                <FlatList
+                  data={feedAchado}
+                  horizontal={false}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={renderItemAchado}
+                />
+                : !loadingAchado ? <Spinner color='#ff9517' />
+                  : <Text style={{ textAlign: 'center' }}>Nenhum registro encontrado!</Text>}
+            </Content>
+          </Tab>
+
+          <Tab heading={
+            <TabHeading
+              style={{
+                backgroundColor: '#323a4e'
+              }}
+            >
+              <Text style={{ color: "white" }}>
+                Doações
+            </Text>
+            </TabHeading>
+          }>
+
+            {feedDoacao.length > 0 ?
+              <Content padder style={{ backgroundColor: '#f0f0f0' }}>
+
+                <Renderif test={feedColaborativo != ''}>
+
+                  <Text style={{ fontWeight: 'bold', padding: 5 }}>Outras pessoas gostaram</Text>
+
+                  <FlatList
+                    horizontal={true}
+                    data={feedColaborativo}
+                    keyExtractor={(feedColaborativo, index) => index.toString()}
+                    renderItem={renderItemRecomendacaoColaborativa}
+                  />
 
 
-              {/* {feedColaborativo != '' || feedConteudo != '' ?
-                <Text style={{ paddingLeft: 10 }}>Recomendamos para você</Text>
-                : ''}  */}
-              <Text style={{ fontWeight: 'bold', padding: 5 }}>Outras pessoas gostaram</Text>
+                </Renderif>
 
-              {feedColaborativo != '' ?
+                <Renderif test={feedConteudo != ''}>
+
+                  <Text style={{ fontWeight: 'bold', padding: 5 }}>Recomendados para você</Text>
+
+                  <FlatList
+                    horizontal={true}
+                    data={feedConteudo}
+                    keyExtractor={(feedConteudo, index) => index.toString()}
+                    renderItem={renderItemRecomendacaoCounteudo}
+                  />
+
+                </Renderif>
 
                 <FlatList
-                  horizontal={true}
-                  data={feedColaborativo}
-                  keyExtractor={(feedColaborativo, index) => index.toString()}
-                  renderItem={renderItemRecomendacaoColaborativa}
-                /> : null
-
-              }
-              <Text style={{ fontWeight: 'bold', padding: 5 }}>Recomendados para você</Text>
-
-              {feedConteudo != '' ?
-
-
-                <FlatList
-                  horizontal={true}
-                  data={feedConteudo}
-                  keyExtractor={(feedConteudo, index) => index.toString()}
-                  renderItem={renderItemRecomendacaoCounteudo}
+                  data={feedDoacao}
+                  horizontal={false}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={renderItemDoacao}
                 />
 
-                : null}
+              </Content>
+              : !loadingDoado ? <Spinner color='#ff9517' />
+                : <Text style={{ textAlign: 'center', padding: 10 }}>Nenhum registro encontrado!</Text>}
 
-              <FlatList
-                data={feedDoacao}
-                horizontal={false}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={renderItemDoacao}
-              />
-
-            </Content>
-            : !loadingDoado ? <Spinner color='#ff9517' />
-              : <Text style={{ textAlign: 'center', padding: 10 }}>Nenhum registro encontrado!</Text>}
-
-
-
-        </Tab>
-      </Tabs>
-    </SafeAreaView>
+          </Tab>
+        </Tabs>
+      </SafeAreaView>
+    </>
   );
 }
 
@@ -574,8 +573,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15
   },
   actions: {
-    // flexDirection: 'row',
-    //justifyContent: 'space-between',
     paddingVertical: 15
   },
   action: {

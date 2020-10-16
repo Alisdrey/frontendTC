@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
     View,
     Text,
@@ -9,6 +9,7 @@ import {
     StatusBar,
     Alert,
     ScrollView,
+    Image
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
@@ -111,16 +112,18 @@ const SignUpTwoScreen = ({ route, navigation }) => {
                         uf: responseJson.uf,
                         bairro: responseJson.bairro,
                         rua: responseJson.logradouro,
-                        check_Cep:true,
+                        check_Cep: true,
                         isValidCep: true,
-                        check_Cidade:true,
-                        isValidCidade:true,
-                        check_Uf:true,
-                        isValidUf:true,
-                        check_Rua: true,
-                        isValidRua: true,
-                        check_Bairro: true,
-                        isValidBairro: true,
+                        check_Cidade: true,
+                        isValidCidade: true,
+                        check_Uf: true,
+                        isValidUf: true,
+                        check_Rua: responseJson.logradouro ? true : false,
+                        isValidRua: responseJson.logradouro ? true : false,
+                        check_Bairro: responseJson.bairro ? true : false,
+                        isValidBairro: responseJson.bairro ? true : false,
+                        check_Numero: false,
+                        isValidNumero: false,
 
                     });
                 }
@@ -168,19 +171,20 @@ const SignUpTwoScreen = ({ route, navigation }) => {
         }
     }
 
-
     const textInputChangeBairro = (val) => {
         if (val.trim().length > 0) {
             setData({
                 ...data,
                 bairro: val,
+                check_Bairro: true,
                 isValidBairro: true
             });
         } else {
             setData({
                 ...data,
                 bairro: "",
-                isValidBairro: true
+                check_Bairro: false,
+                isValidBairro: false
             });
         }
     }
@@ -241,6 +245,12 @@ const SignUpTwoScreen = ({ route, navigation }) => {
         <View style={styles.container}>
             <StatusBar backgroundColor='#323a4e' barStyle="light-content" />
             <View style={styles.header}>
+                <TouchableOpacity style={{ alignContent: 'center', bottom: 5 }}
+                    onPress={() => navigation.goBack()}>
+                    <Image style={{ width: 25, height: 25, marginLeft: 5 }}
+                        source={require('../../source/arrow.png')}
+                        resizeMode='contain' />
+                </TouchableOpacity>
                 <Text style={styles.text_header}>Boa! Agora vamos para seu endereço residencial. {"\n"}Conta para gente onde você mora.</Text>
             </View>
             <View style={{ alignItems: 'center' }}>
@@ -255,7 +265,7 @@ const SignUpTwoScreen = ({ route, navigation }) => {
                     backgroundColor: colors.background
                 }]}
             >
-                <ScrollView style={{ width: "100%", marginBottom: -25 }}>
+                <ScrollView style={{ width: "100%", marginBottom: -25 }} keyboardShouldPersistTaps={'handled'}>
 
                     <Text style={[styles.text_footer, {
                         color: colors.text,

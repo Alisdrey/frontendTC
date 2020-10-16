@@ -8,7 +8,8 @@ import {
     StyleSheet,
     StatusBar,
     Alert,
-    ScrollView
+    ScrollView,
+    Image
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
@@ -27,6 +28,8 @@ const SignUpScreen = ({ navigation }) => {
         sexo: "",
         nascimento: "",
         telefone: "",
+        nameButton: 'Próximo',
+        disabledButton: false,
         isValidNome: true,
         check_Nome: false,
         isValidSobrenome: true,
@@ -44,13 +47,20 @@ const SignUpScreen = ({ navigation }) => {
     const { colors } = useTheme();
 
     const _enviar = () => {
+
+        setData({
+            ...data,
+            nameButton: 'Aguarde...',
+            disabledButton: true
+        })
+
         let data_nascimento
 
         if (data.nome && data.sobrenome && sexo &&
             data.nascimento && data.telefone) {
 
             data_nascimento = moment(new Date(data.nascimento)).format("YYYY-MM-DD");
-            console.log(sexo)
+
             navigation.navigate(
                 "SignUpTwo"
                 , {
@@ -62,6 +72,11 @@ const SignUpScreen = ({ navigation }) => {
                 }
             )
         } else {
+            setData({
+                ...data,
+                nameButton: 'Próximo...',
+                disabledButton: false
+            })
             Alert.alert(
                 "",
                 "Preencha todos os campos e tente novamente. ",
@@ -115,7 +130,6 @@ const SignUpScreen = ({ navigation }) => {
         }
     }
 
-
     const textInputChangeTelefone = (val) => {
         if (val.trim().length > 0) {
             setData({
@@ -152,7 +166,6 @@ const SignUpScreen = ({ navigation }) => {
         }
     }
 
-
     const handleValidNome = (val) => {
         if (val.trim().length > 0) {
             setData({
@@ -166,7 +179,6 @@ const SignUpScreen = ({ navigation }) => {
             });
         }
     }
-
 
     const handleValidSobrenome = (val) => {
         if (val.trim().length > 1) {
@@ -210,13 +222,18 @@ const SignUpScreen = ({ navigation }) => {
         }
     }
 
-
     return (
         <View style={styles.container}>
             <StatusBar backgroundColor='#323a4e' barStyle="light-content" />
             <View style={styles.header}>
+                <TouchableOpacity style={{ alignContent: 'center', bottom: 5 }}
+                    onPress={() => navigation.goBack()}>
+                    <Image style={{ width: 25, height: 25, marginLeft: 5 }}
+                        source={require('../../source/arrow.png')}
+                        resizeMode='contain' />
+                </TouchableOpacity>
                 <Text style={styles.text_header}>Comece sua experiência no PetWord ;)
-            {"\n"}Agora vamos pedir algumas informações para fazermos seu cadastro.</Text>
+            {"\n"}Agora vamos pedir algumas informações para realizarmos seu cadastro.</Text>
             </View>
 
             <View style={{ alignItems: 'center' }}>
@@ -229,7 +246,7 @@ const SignUpScreen = ({ navigation }) => {
                     backgroundColor: colors.background
                 }]}
             >
-                <ScrollView style={{ width: "100%", marginBottom: -25 }}>
+                <ScrollView style={{ width: "100%", marginBottom: -25 }} keyboardShouldPersistTaps={'handled'}>
 
                     {/* ====== Nome ======= */}
 

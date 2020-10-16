@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
     View,
     Text,
@@ -9,30 +9,21 @@ import {
     StatusBar,
     Alert,
     ScrollView,
-    PermissionsAndroid,
-    SafeAreaView,
     Dimensions,
     Image
 } from 'react-native';
-import {
-    Thumbnail
-} from "native-base";
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Feather from 'react-native-vector-icons/Feather';
-import { Col, Row, Grid } from "react-native-easy-grid";
+import { Col, Grid } from "react-native-easy-grid";
 import AsyncStorage from '@react-native-community/async-storage';
 import { useTheme } from 'react-native-paper';
-import Renderif from "../../componets/RenderIf";
 import { Picker } from '@react-native-community/picker';
 import Server from '../settings/Server';
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
-
-
+import { useIsFocused } from "@react-navigation/native"
 
 const RegisterAnimalScreen = ({ route, navigation }) => {
-
 
     const [data, setData] = React.useState({
         user: {},
@@ -44,6 +35,8 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
         pelo: "",
         porte: "",
         filhote: "",
+        nameButton: 'Próximo',
+        disabledButton: false,
 
         isValidNome: true,
         isValidRaca: true,
@@ -114,7 +107,6 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
 
     ];
 
-
     const itemsCor = [
         {
             name: 'Cor',
@@ -155,9 +147,31 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
 
     }, []);
 
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        setData({
+            ...data,
+            nome: "",
+            raca: "",
+            cor: [],
+            sexo: "",
+            especie: "",
+            pelo: "",
+            porte: "",
+            filhote: "",
+            nameButton: 'Próximo',
+            disabledButton: false,
+        })
+    }, [isFocused]);
 
     const _enviar = () => {
 
+        setData({
+            ...data,
+            nameButton: 'Aguarde...',
+            disabledButton: true
+        })
 
         let concatCor = '';
 
@@ -185,21 +199,25 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
             formdata.append('porte', data.porte)
             formdata.append('filhote', data.filhote)
 
-            console.log(concatCor)
-
             fetch(Server.API_INSERT_ANIMAL, {
                 method: "POST",
                 'Content-Type': 'multipart/form-data',
                 body: formdata
             }).then(response => response.json())
                 .then(response => {
+
                     navigation.navigate("RegisterPhotoAnimals", {
                         idanimal: response.idAnimal
                     })
-
                 })
 
         } else {
+            setData({
+                ...data,
+                nameButton: 'Próximo',
+                disabledButton: false
+            })
+
             Alert.alert(
                 "Campos vazios",
                 "Preencha todos os campos e tente novamente. ",
@@ -214,7 +232,6 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                 { cancelable: false }
             )
         }
-
     }
 
     const textInputChangeNome = (val) => {
@@ -229,7 +246,8 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
         } else {
             setData({
                 ...data,
-                isValidNome: false
+                isValidNome: false,
+                nome: '',
             });
         }
     }
@@ -264,21 +282,6 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                 ...data,
                 cor: "",
                 isValidCor: false
-            });
-        }
-    }
-
-    const textInputChangeEspecie = (val) => {
-        if (val.trim().length > 0) {
-            setData({
-                ...data,
-                especie: val,
-                isValidUf: true
-            });
-        } else {
-            setData({
-                ...data,
-                isValidEspecie: false
             });
         }
     }
@@ -342,12 +345,11 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                     duraton="1500"
                     source={require('../../source/logo.png')}
                     style={styles.logo}
-
-                // resizeMode="contain"
                 />
-                <TouchableOpacity style={{ flexDirection: 'row', alignContent: 'center' }}
+
+                <TouchableOpacity style={{ alignContent: 'center', bottom: 85 }}
                     onPress={() => navigation.goBack()}>
-                    <Image style={{ width: 25, height: 25, marginLeft: 5, bottom: 85 }}
+                    <Image style={{ width: 25, height: 25, marginLeft: 5 }}
                         source={require('../../source/arrow.png')}
                         resizeMode='contain' />
                 </TouchableOpacity>
@@ -362,14 +364,15 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                     backgroundColor: colors.background
                 }]}
             >
-                <ScrollView style={{ width: "100%", marginBottom: -25 }}>
-
+                <ScrollView style={{ width: "100%", marginBottom: -25 }} keyboardShouldPersistTaps={'handled'}>
+                    <Text style={styles.text_title}>Cadastrar Animal</Text>
                     <Text style={[styles.text_footer, {
                         color: colors.text
                     }]}>Nome</Text>
                     <View style={styles.action}>
 
                         <TextInput
+                            value={data.nome}
                             placeholder="Informe o nome do seu animal"
                             placeholderTextColor="#666666"
                             style={[styles.textInput, {
@@ -630,6 +633,7 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                     <View style={styles.button}>
 
                         <TouchableOpacity
+                            disabled={!data.disabledButton ? false : true}
                             style={styles.signIn}
                             onPress={() => { _enviar() }}
 
@@ -640,7 +644,7 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
                             >
                                 <Text style={[styles.textSign, {
                                     color: '#fff'
-                                }]}>Próximo</Text>
+                                }]}>{data.nameButton}</Text>
                             </LinearGradient>
                         </TouchableOpacity>
                     </View>
@@ -674,6 +678,12 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 30,
         paddingHorizontal: 20,
         paddingVertical: 30
+    },
+    text_title: {
+        color: 'black',
+        textAlign: 'center',
+        fontSize: 20,
+        marginBottom: 20
     },
     text_header: {
         color: "white",

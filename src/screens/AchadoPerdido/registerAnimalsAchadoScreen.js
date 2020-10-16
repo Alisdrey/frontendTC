@@ -9,21 +9,15 @@ import {
     StatusBar,
     Alert,
     ScrollView,
-    PermissionsAndroid,
-    SafeAreaView,
-    Dimensions
+    Dimensions,
+    Image
 } from 'react-native';
-import {
-    Thumbnail, Textarea,
-} from "native-base";
+import {Textarea} from "native-base";
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
-import { Col, Row, Grid } from "react-native-easy-grid";
 import AsyncStorage from '@react-native-community/async-storage';
 import { useTheme } from 'react-native-paper';
-import Renderif from "../../componets/RenderIf";
 import { Picker } from '@react-native-community/picker';
 import Server from '../settings/Server';
 
@@ -61,6 +55,19 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
 
     const { colors } = useTheme();
 
+    const _clear = () => {
+    setData({
+        ...data,
+        user: {},
+        descricaolocal: "",
+        descricaoanimal: "",
+        estado: "",
+        cidade: "",
+        acolhido: [],
+        selected: "key0",
+        nameButton: 'Cadastrar',
+        disabledButton: false
+    })};
 
     useEffect(() => {
 
@@ -81,20 +88,10 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
 
                         if (user.cidade != "") {
                             setCidade(user.cidade);
-                            // setData({
-                            //     ...data,
-                            //     check_Cidade: true,
-                            //     isValidCidade: true
-                            // })
                         }
 
                         if (user.estado != "") {
                             setEstado(user.estado);
-                            // setData({
-                            //     ...data,
-                            //     check_Estado: true,
-                            //     isValidEstado: true
-                            // })
                         }
                     }
                 })
@@ -219,15 +216,7 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
                 { cancelable: false }
             )
         }
-
-        navigation.addListener ('focus', () =>{
-            setData({
-                ...data,
-                    descricaolocal: '',
-                    descricaoanimal: '',
-                    acolhido: []
-            })
-          });
+        _clear()
     }
 
     return (
@@ -241,6 +230,12 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
                     source={require('../../source/logo.png')}
                     style={styles.logo}
                 />
+            <TouchableOpacity style={{ alignContent: 'center',  bottom: 85  }}
+                onPress={() => navigation.goBack()}>
+                <Image style={{ width: 40, height: 25, marginLeft:5}}
+                    source={require('../../source/arrow.png')}
+                    resizeMode='contain' />
+            </TouchableOpacity>
             </View>
 
             <Animatable.View
@@ -250,7 +245,7 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
                 }]}
             >
                 <ScrollView style={{ width: "100%", marginBottom: -25 }} keyboardShouldPersistTaps={'handled'}>
-
+                    <Text style={styles.text_title}>Animal Encontrado</Text>
                     <Text style={[styles.text_footer, {
                         color: colors.text
                     }]}>Cidade</Text>
@@ -332,6 +327,7 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
                         <View style={{ flex: 1, flexDirection: 'column' }}>
 
                             <Textarea style={{ height: 90, marginBottom: 10 }}
+                                value={data.descricaoanimal}
                                 placeholder="Informe uma descrição detalhada do animal."
                                 onChangeText={(val) => textInputChangeAnimal(val)}
                                 rowSpan={2}
@@ -370,6 +366,7 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
                         <View style={{ flex: 1, flexDirection: 'column' }}>
 
                             <Textarea style={{ height: 90, }}
+                                value={data.descricaolocal}
                                 placeholder="Informe uma descrição detalhada de onde foi encontrado o animal."
                                 onChangeText={(val) => textInputChangeLocal(val)}
                                 rowSpan={2}
@@ -494,6 +491,12 @@ const styles = StyleSheet.create({
         color: '#05375a',
         fontSize: 18,
 
+    },
+    text_title: {
+        color: 'black', 
+        textAlign: 'center',
+        fontSize:20,
+        marginBottom:20
     },
     action: {
         flexDirection: 'row',

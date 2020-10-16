@@ -205,7 +205,7 @@ export default StyleSheet.create({
 	matchesProfileItemAchado: {
 		width: 180,
 		marginTop: -15,
-		backgroundColor: PRIMARY_COLOR,
+		backgroundColor: '#b5b5b5',
 		paddingVertical: 7,
 		paddingHorizontal: 20,
 		borderRadius: 20,
@@ -216,7 +216,7 @@ export default StyleSheet.create({
 	matchesProfileItemPerdido: {
 		width: 180,
 		marginTop: -15,
-		backgroundColor: PRIMARY_COLOR,
+		backgroundColor: '#b5b5b5',
 		paddingVertical: 7,
 		paddingHorizontal: 20,
 		borderRadius: 20,
@@ -225,12 +225,12 @@ export default StyleSheet.create({
 	},
 
 	matchesProfileItemInfDono: {
-		width: 210,
+		width: 'auto',
 		marginTop: -15,
 		backgroundColor: PRIMARY_COLOR,
 		paddingVertical: 7,
 		paddingHorizontal: 20,
-		borderRadius: 20,
+		borderRadius: 5,
 		textAlign: "center",
 		alignSelf: "center",
 	},

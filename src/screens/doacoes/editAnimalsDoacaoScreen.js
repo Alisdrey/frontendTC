@@ -48,13 +48,16 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
     const [date, setData] = React.useState({
         detailDoacao: date_Doacao,
         user: user,
-        infDono: false
+        infDono: false,
+        nameButton: 'Adotar Animal',
+        disabledButton: false,
+        userPet: {},
     });
 
 
     useEffect(() => {
-        console.log(date.detailDoacao)
-
+        getUserPet();
+        console.log('date_Doacao',date_Doacao)
         let formdata = new FormData();
 
         formdata.append('idUsuario', date.user.idUsuario)
@@ -65,8 +68,7 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
         formdata.append('pelo', date_Doacao.Animal.pelo)
         formdata.append('porte', date_Doacao.Animal.porte)
         formdata.append('filhote', date_Doacao.Animal.filhote)
-        console.log(formdata)
-
+      
         fetch(Server.API_RECOMENDACAO_GOSTO_POST, {
             method: "POST",
             'Content-Type': 'multipart/form-data',
@@ -76,8 +78,25 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
 
             })
 
-     navigation.addListener('focus', () => setLoad(!load))
+        navigation.addListener('focus', () => setLoad(!load))
     }, [load, navigation])
+
+    const getUserPet = () => {
+        const url = Server.API_PET_DO_USUARIO + date_Doacao.idAntigoDono
+        fetch(url)
+            .then(response => response.json())
+            .then(responseJson => {
+                if (responseJson) {
+                    setData({
+                        ...date,
+                        userPet: responseJson
+                    })
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
 
     const _enviar = () => {
         Alert.alert(
@@ -91,9 +110,11 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
                 },
                 {
                     text: "Sim", onPress: () => {
-
-                        console.log(date)
-                        console.log(moment().format('YYYY-MM-DD'))
+                        setData({
+                            ...date,
+                            nameButton: 'Aguarde...',
+                            disabledButton: true
+                        })
                         let formdata = new FormData();
 
                         formdata.append('idDoacao', date.detailDoacao.idDoacao)
@@ -109,15 +130,14 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
                             body: formdata
                         }).then(response => response.json())
                             .then(response => {
-                                console.log('teste', response)
                                 Alert.alert(
-                                    "Parabéns",
+                                    "Parabéns!",
                                     "Você acabou de fazer uma ótima ação <3",
                                     [
                                         {
                                             text: "OK",
                                             onPress: () =>
-                                            navigation.navigate("HomeAP"),
+                                                navigation.navigate("HomeAP"),
                                             style: "default"
                                         },
                                     ],
@@ -133,7 +153,7 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
     return (
 
         <ImageBackground
-            style={styles.bg, { backgroundColor: '#c9871e' }}
+            style={styles.bg, { backgroundColor: '#ebebeb', height: "100%" }}
         >
             <ScrollView style={styles.containerProfile}>
                 <ImageBackground source={{ uri: Server.API_PRINC + date_Doacao.Animal.Galeria[0].url }} style={styles.photo}>
@@ -165,19 +185,19 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
                     <ProfileItem
                         navigation={navigation}
                         matches={'Dados do usuário'}
-                        name={(user.nome.toUpperCase()) + (user.sobrenome.toUpperCase())}
-                        age={user.estado}
-                        location={user.cidade}
-                        info1={'Cep: ' + (user.cep)}
-                        info2={'Cidade: ' + (user.cidade)}
-                        info3={'Rua: ' + (user.rua) + ' - ' + (user.numero)}
-                        info4={('Telefone: ') + (user.telefone)}
+                        name={(date.userPet.nome) + ' ' +  (date.userPet.sobrenome)}
+                        age={date.userPet.estado}
+                        location={date.userPet.cidade}
+                        info1={'Cep: ' + (date.userPet.cep)}
+                        info2={'Cidade: ' + (date.userPet.cidade)}
+                        info3={'Rua: ' + (date.userPet.rua) + ' - ' + (date.userPet.numero)}
+                        info4={('Telefone: ') + (date.userPet.telefone)}
 
                     />
                 </Renderif>
 
 
-                <View style={{ marginBottom: 20, marginTop: -20 }}>
+                <View style={{ marginBottom: 20, marginTop: 10 }}>
                     <View style={styles.matchesProfileItemInfDono}>
                         {!date.infDono ?
                             <TouchableOpacity
@@ -186,7 +206,7 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
                                     infDono: true
                                 })}>
                                 <Text style={styles.matchesTextProfileItem}>
-                                    <FontAwesome name="info-circle" />  Informações do Dono
+                                    <FontAwesome name="info-circle" />  Ver informações do Dono
                          </Text>
                             </TouchableOpacity>
                             :
@@ -197,7 +217,7 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
                                     infDono: false
                                 })}>
                                 <Text style={styles.matchesTextProfileItem}>
-                                    <FontAwesome name="info-circle" />  Informações do Animal
+                                    <FontAwesome name="info-circle" /> Ver Informações do Animal
                                 </Text>
                             </TouchableOpacity>}
 
@@ -208,6 +228,7 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
                     date_Doacao.dataDoacao == null ?
                     <View style={style.button}>
                         <TouchableOpacity
+                            disabled={!date.disabledButton ? false : true}
                             style={style.signIn}
                             onPress={() => { _enviar() }}
                         >
@@ -217,7 +238,7 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
                             >
                                 <Text style={[style.textSign, {
                                     color: '#fff'
-                                }]}>Adotar Animal</Text>
+                                }]}>{date.nameButton}</Text>
                             </LinearGradient>
                         </TouchableOpacity>
                     </View> : null
@@ -231,11 +252,7 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
 
 export default editAnimalsDoacaoScreen;
 
-const { height } = Dimensions.get("screen");
-const height_logo = height * 0.28;
-
 const style = StyleSheet.create({
-
 
     button: {
         alignItems: 'center',

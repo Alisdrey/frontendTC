@@ -29,28 +29,35 @@ import { Picker } from '@react-native-community/picker';
 import ResponsiveImage from 'react-native-responsive-image';
 import styles from '../settings/styles';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { useIsFocused } from "@react-navigation/native"
 import Server from '../settings/Server';
-
-
-
-const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
 
 const RegisterPhotoAnimalsTree = ({ route, navigation, props }) => {
 
 
     const { idanimal } = route.params;
-    const { imagem } = route.params;
+    const { imagemone } = route.params;
+    const { imagemtwo } = route.params;
 
     const [date, setData] = React.useState({
         idanimal: idanimal,
-        imagem: imagem,
-        user: {},
+        imagemone: imagemone,
+        imagemtwo: imagemtwo,
+        imagemtree: [],
         variant: '',
         haveimg: false
-
-
     });
 
+
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        console.log(date)
+        date.idanimal = idanimal,
+        date.imagemtree = []
+        date.variant = ''
+        date.haveimg = false
+    }, [isFocused]);
 
     const fullWidth = Dimensions.get('window').width;
     const imageStyle = [
@@ -70,22 +77,25 @@ const RegisterPhotoAnimalsTree = ({ route, navigation, props }) => {
     ];
 
     const _enviar = () => {
-        if (date.imagem.length != 0) {
+        if (date.imagem != "") {
             sendToServer().then(() => {
-                date.imagem.forEach(element => {
-                    console.log("element", element)
-                });
+                date.idanimal = []
+               console.log("sucesso")
+               
             })
         }
     }
 
-
-
     const sendToServer = async () => {
+
+        let imagem = []
+
+        imagem = [date.imagemone,date.imagemtwo, date.imagemtree];
+console.log(imagem)
         try {
             let formdata_img = new FormData();
 
-            date.imagem.forEach(item => {
+            imagem.forEach(item => {
 
                 const fileURL = item.imagem.path;
                 const fileName = fileURL.split("/").pop();
@@ -108,6 +118,7 @@ const RegisterPhotoAnimalsTree = ({ route, navigation, props }) => {
                     body: formdata_img
                 }).then(response => response.json())
                     .then(response => {
+                        
                        navigation.navigate("HomeAP")
 
                     }).catch(error => {
@@ -122,77 +133,31 @@ const RegisterPhotoAnimalsTree = ({ route, navigation, props }) => {
 
     const _handleActionSheetButton = (btnIndex) => {
         { console.log(date) }
-        switch (btnIndex) {
-            case 0:
-                ImagePicker.openCamera({
-                    width: 800,
-                    height: 800,
-                    includeBase64: true,
-                    cropping: true,
-                    compressImageQuality: 0.4,
-                    compressImageMaxWidth: 800,
-                    compressImageMaxHeight: 800,
-                    cropperChooseText: "Confirmar",
-                    cropperCancelText: "Cancelar",
-                    loadingLabelText: "Carregando",
-                    cropperStatusBarColor: "#E76801",
-                    cropperToolbarColor: "#E76801",
-                    cropperActiveWidgetColor: "#E76801",
-                    cropperTintColor: "#E76801",
+      
+        ImagePicker.openPicker({
+            multiple: true,
+            width: 800,
+            height: 800,
+            includeBase64: true,
+            cropping: true,
+            compressImageQuality: 0.4,
+            compressImageMaxWidth: 800,
+            compressImageMaxHeight: 800,
+            cropperChooseText: "Confirmar",
+            cropperCancelText: "Cancelar",
+            loadingLabelText: "Carregando",
+            cropperStatusBarColor: "#E76801",
+            cropperToolbarColor: "#E76801",
+            cropperActiveWidgetColor: "#E76801",
+            cropperTintColor: "#E76801",
+        })
+            .then(imagem => {
+                setData({
+                    ...date,
+                    imagemtree: {"imagem": imagem[0]},
+                    haveimg: true
                 })
-                    .then(imagem => {
-                        console.log(imagem)
-                        const dados = {
-                            imagem: imagem
-                        }
-                    })
-                    .catch(error => {
-                        console.log(error);
-                    })
-                break;
-
-            case 1:
-                ImagePicker.openPicker({
-                    multiple: true,
-                    width: 800,
-                    height: 800,
-                    includeBase64: true,
-                    cropping: true,
-                    compressImageQuality: 0.4,
-                    compressImageMaxWidth: 800,
-                    compressImageMaxHeight: 800,
-                    cropperChooseText: "Confirmar",
-                    cropperCancelText: "Cancelar",
-                    loadingLabelText: "Carregando",
-                    cropperStatusBarColor: "#E76801",
-                    cropperToolbarColor: "#E76801",
-                    cropperActiveWidgetColor: "#E76801",
-                    cropperTintColor: "#E76801",
-                })
-                    .then(imagem => {
-                        setData(prevState => ({
-                            ...date,
-                            imagem: [...prevState.imagem, { "imagem": imagem[0] }],
-                            haveimg: true
-                        }))
-                    })
-                break;
-
-            default:
-                break;
-        }
-    }
-    const _handleChooseImage = () => {
-        ActionSheet.show(
-            {
-                options: ["Câmera", "Galeria", "Cancelar"],
-                cancelButtonIndex: 2,
-                title: "Escolha o que fazer"
-            },
-            buttonIndex => {
-                _handleActionSheetButton(buttonIndex);
-            }
-        );
+            })
     }
 
 
@@ -201,7 +166,7 @@ const RegisterPhotoAnimalsTree = ({ route, navigation, props }) => {
             <View style={styles.containerCardItem}>
                 <TouchableOpacity
                     style={{ padding: 15, }}
-                    onPress={() => { _handleChooseImage() }}
+                    onPress={() => { _handleActionSheetButton() }}
                 >
                     {
                         !date.haveimg ?
@@ -211,20 +176,13 @@ const RegisterPhotoAnimalsTree = ({ route, navigation, props }) => {
                             <Image source={{
                                 uri:
                                     "data:image/jpeg;base64," +
-                                    date.imagem[2].imagem.data
+                                    date.imagemtree.imagem.data
                             }} style={imageStyle} />
 
                     }
 
                 </TouchableOpacity>
 
-                {/* <View style={styles.matchesCardItem}>
-                    <Text style={styles.matchesTextCardItem}>
-                        <FontAwesome name="heart" />
-                    </Text>
-                </View> */}
-
-                {/* <Text style={nameStyle}>olá</Text> */}
 
                 <Text style={styles.descriptionCardItem, nameStyle}>3/3</Text>
 

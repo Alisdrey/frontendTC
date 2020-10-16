@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
     View,
     Text,
@@ -9,7 +9,8 @@ import {
     Alert,
     ScrollView,
     Dimensions,
-    Image
+    BackHandler,
+    ToastAndroid
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
@@ -18,8 +19,7 @@ import { useTheme } from 'react-native-paper';
 import { Picker } from '@react-native-community/picker';
 import Server from '../settings/Server';
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
-
-
+import {useFocusEffect} from '@react-navigation/native';
 
 const FormRecommendsScreens = ({ route, navigation, props }) => {
 
@@ -209,6 +209,33 @@ const FormRecommendsScreens = ({ route, navigation, props }) => {
 
     });
 
+
+    const [numberClick, setNumberClick] = useState(0);
+  
+    const backHandler = useCallback(() => {
+      if (numberClick === 1) {
+        BackHandler.exitApp();
+      }
+      setNumberClick(2);
+      ToastAndroid.show(
+        'Pressione novamente para sair do aplicativo',
+        ToastAndroid.SHORT,
+      );
+      setTimeout(() => {
+        setNumberClick(1);
+      }, 1000);
+      return true;
+    }, [numberClick]);
+  
+    useFocusEffect(
+      useCallback(() => {
+        BackHandler.addEventListener('hardwareBackPress', backHandler);
+        return () => {
+          BackHandler.removeEventListener('hardwareBackPress', backHandler);
+        };
+      }, [backHandler]),
+    );
+
     const { colors } = useTheme();
 
     useEffect(() => {
@@ -275,8 +302,6 @@ const FormRecommendsScreens = ({ route, navigation, props }) => {
         });
 
         concatPelo = concatPelo.substr(0, concatPelo.length - 1);
-
-
 
         if (data.raca != '' && data.filhote != '' &&
             data.cor != '' && data.sexo != '' &&
@@ -402,13 +427,8 @@ const FormRecommendsScreens = ({ route, navigation, props }) => {
             <StatusBar backgroundColor='#323a4e' barStyle="light-content" />
             <View style={styles.header}>
 
-                <Text style={styles.text_header}> Por fim {"\n"}Informe seus gostos para sabermos melhor sobre você ;D</Text>
-                <TouchableOpacity style={{ flexDirection: 'row', alignContent: 'center' }}
-                    onPress={() => navigation.goBack()}>
-                    <Image style={{ width: 25, height: 25, marginLeft: 5, bottom: 85 }}
-                        source={require('../../source/arrow.png')}
-                        resizeMode='contain' />
-                </TouchableOpacity>
+                <Text style={styles.text_header}>Seu cadastro foi realizado com sucesso. {"\n"} Por fim, Informe seus gostos para sabermos melhor sobre você ;D</Text>
+              
             </View>
 
             <Animatable.View
@@ -417,7 +437,7 @@ const FormRecommendsScreens = ({ route, navigation, props }) => {
                     backgroundColor: colors.background
                 }]}
             >
-                <ScrollView style={{ width: "100%", marginBottom: -25 }}>
+                <ScrollView style={{ width: "100%", marginBottom: -25 }} keyboardShouldPersistTaps={'handled'}>
 
                       {/* ========= Especie ========= */}
                       <Text style={[styles.text_footer, {

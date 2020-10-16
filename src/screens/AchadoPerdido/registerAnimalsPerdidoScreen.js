@@ -9,7 +9,6 @@ import {
     StatusBar,
     Alert,
     ScrollView,
-    Dimensions,
     Image
 } from 'react-native';
 import {Textarea} from "native-base";
@@ -20,6 +19,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { useTheme } from 'react-native-paper';
 import { Picker } from '@react-native-community/picker';
 import Server from '../settings/Server';
+import { useIsFocused } from "@react-navigation/native"
 
 
 const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
@@ -46,9 +46,39 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
   const [cidade, setCidade] = useState([]);
   const [estado, setEstado] = useState([]);
 
-
-
     const { colors } = useTheme();
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        setData({
+            ...data,
+            user: {},
+            animalusuario: [],
+            idanimal: "",
+            estado: "",
+            cidade: "",
+            descricao: "",
+            selected: "key0",
+            nameButton: 'Cadastrar',
+            disabledButton: false
+        })
+    }, [isFocused]);
+
+    const [load, setLoad] = useState(true)
+
+    const _clear = () => {
+    setData({
+        ...data,
+        user: {},
+        animalusuario: [],
+        idanimal: "",
+        estado: "",
+        cidade: "",
+        descricao: "",
+        selected: "key0",
+        nameButton: 'Cadastrar',
+        disabledButton: false
+    })}
 
     useEffect(() => {
 
@@ -59,7 +89,6 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
             fetch(url)
                 .then(response => response.json())
                 .then(responseJson => {
-                    console.log(responseJson)
                     if (responseJson != null) {
                         setData({
                             ...data,
@@ -80,7 +109,10 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                     console.log(error);
                 });
         });
-    }, []);
+
+        _clear()
+        navigation.addListener('focus', () => setLoad(!load))
+    }, [load, navigation]);
 
 
 
@@ -91,7 +123,8 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
 
             setData({
                 ...data,
-                nameButton:'Cadastrando...'
+                nameButton:'Cadastrando...',
+                disabledButton: true
             })
 
             let formdata = new FormData();
@@ -101,8 +134,6 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
             formdata.append('cidade', cidade)
             formdata.append('estado', estado)
             formdata.append('descricao', data.descricao)
-            console.log(formdata)
-
 
             fetch(Server.API_INSERIR_PET_PERDIDO, {
                 method: "POST",
@@ -110,12 +141,18 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                 body: formdata
             }).then(response => response.json())
                 .then(response => {
-                    console.log("erro", response)
+                
                     navigation.navigate("HomeAP")
 
                 })
 
         } else {
+            setData({
+                ...data,
+                nameButton:'Cadastrar',
+                disabledButton: false
+            })
+    
             Alert.alert(
                 "Campos vazios",
                 "Preencha todos os campos e tente novamente. ",
@@ -133,9 +170,8 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
     }
 
     const textInputChangeAnimal = (val) => {
-        console.log(val)
-        if (val) {
 
+        if (val) {
             setData({
                 ...data,
                 idanimal: val,
@@ -201,12 +237,10 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                     duraton="1500"
                     source={require('../../source/logo.png')}
                     style={styles.logo}
-
-                // resizeMode="contain"
                 />
-                <TouchableOpacity style={{ flexDirection: 'row', alignContent: 'center' }}
+                <TouchableOpacity style={{ alignContent: 'center',  bottom: 85  }}
                     onPress={() => navigation.goBack()}>
-                    <Image style={{ width: 80, height: 25, bottom: 90 }}
+                    <Image style={{ width: 40, height: 25, marginLeft:5}}
                         source={require('../../source/arrow.png')}
                         resizeMode='contain' />
                 </TouchableOpacity>
@@ -218,7 +252,7 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                 }]}
             >
                 <ScrollView style={{ width: "100%", marginBottom: -25 }} keyboardShouldPersistTaps={'handled'}>
-
+                    <Text style={styles.text_title}>Animal Perdido</Text>
                     <Text style={[styles.text_footer, {
                         color: colors.text, marginTop: 10
                     }]}>Escolha seu animal</Text>
@@ -226,7 +260,7 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                         <Picker
                             note
                             mode="dialog"
-                            style={{ width: "100%" }}
+                            style={{ width: "100%", right:5 }}
                             selectedValue={data.idanimal}
                             onValueChange={textInputChangeAnimal.bind(this)}
                             placeholder={"Selecione..."}
@@ -237,7 +271,6 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                                 data.animalusuario.map((item, index) =>
                                     <Picker.Item key={index} label={item.nome} value={item.idAnimal} />
                                 )
-
                             }
 
                         </Picker>
@@ -321,6 +354,7 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                         <View style={{ flex: 1, flexDirection: 'column' }}>
 
                             <Textarea style={{ height: 90 }}
+                                value={data.descricao}
                                 placeholder="Informe uma descrição detalhada de onde foi perdido seu animalzinho."
                                 //value={this.state.descricao}
                                 onChangeText={(val) => textInputChangeDescricao(val)}
@@ -339,6 +373,7 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
                     <View style={styles.button}>
 
                         <TouchableOpacity
+                            disabled={!data.disabledButton ? false : true}
                             style={styles.signIn}
                             onPress={() =>  _enviar() }
 
@@ -361,9 +396,6 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
 
 export default RegisterAnimalPerdidoScreen;
 
-const { height } = Dimensions.get("screen");
-const height_logo = height * 0.28;
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -381,6 +413,12 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 30,
         paddingHorizontal: 20,
         paddingVertical: 30
+    },
+    text_title: {
+        color: 'black', 
+        textAlign: 'center',
+        fontSize:20,
+        marginBottom:20
     },
     text_header: {
         color: "white",

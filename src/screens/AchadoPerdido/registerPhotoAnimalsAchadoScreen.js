@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
     View,
     Text,
     TouchableOpacity,
     Alert,
-    PermissionsAndroid,
     Image,
     Dimensions
 
@@ -14,7 +13,6 @@ import ImagePicker from 'react-native-image-crop-picker';
 import styles from '../settings/styles';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Server from '../settings/Server';
-import { useIsFocused } from "@react-navigation/native"
 
 const registerPhotoAnimalsAchadoScreen = ({ route, navigation, props }) => {
 
@@ -59,15 +57,8 @@ const registerPhotoAnimalsAchadoScreen = ({ route, navigation, props }) => {
         }
     ];
 
-    const isFocused = useIsFocused();
-
-    useEffect(() => {
-        console.log(date)
-    }, [isFocused]);
-
-
     const _enviar = () => {
-        console.log(date.imagem)
+        
         if (date.imagem.length != 0) {
             sendToServer().then(() => {
                 console.log('cadastrado')

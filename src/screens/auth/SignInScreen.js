@@ -9,8 +9,6 @@ import {
     StatusBar,
     Alert,
     ScrollView,
-    Dimensions,
-
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';

@@ -9,6 +9,7 @@ import {
     StatusBar,
     Alert,
     ScrollView,
+    Image
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
@@ -19,7 +20,7 @@ import Server from '../settings/Server';
 import AsyncStorage from '@react-native-community/async-storage';
 
 
-const SignUpTreeScreen = ({ route, navigation, props}) => {
+const SignUpTreeScreen = ({ route, navigation}) => {
 
     const { nome } = route.params;
     const { sobrenome } = route.params;
@@ -52,6 +53,8 @@ const SignUpTreeScreen = ({ route, navigation, props}) => {
 
         username: '',
         password: '',
+        nameButton: 'Próximo',
+        disabledButton: false,
         check_textInputChange: false,
         secureTextEntry: true,
         isValidUser: true,
@@ -129,6 +132,14 @@ const SignUpTreeScreen = ({ route, navigation, props}) => {
     }
 
     const loginHandle = () => {
+     
+        setData({
+            ...data,
+            nameButton:'Aguarde...',
+            disabledButton: true,
+            buttonDisable: true
+        })
+
         if (data.username != "" && data.password != "") {
           
             let formdata = new FormData();
@@ -152,24 +163,14 @@ const SignUpTreeScreen = ({ route, navigation, props}) => {
                 'Content-Type': 'multipart/form-data',
                 body: formdata
                 
-            }).then(val => {
-            console.log(val)
-
-                Alert.alert(
-                    "Êxito",
-                    "Cadastro realizado com sucesso",
-                    [
-                        {
-                            text: "OK",
-                            onPress: () =>
-                               _login(),
-                            style: "default"
-                        },
-                    ],
-                    { cancelable: false }
-                )
-            })
+            }).then(val => { _login()  })
         } else {
+
+            setData({
+                ...data,
+                nameButton:'Próximo...',
+                disabledButton: false
+            })
             Alert.alert(
                 "Ação Bloqueada",
                 "Senhas não conferem, verifique e tente novamente.",
@@ -188,12 +189,14 @@ const SignUpTreeScreen = ({ route, navigation, props}) => {
 
 
     const _login = () => {
-
+        setData({
+            ...data,
+            nameButton:'Aguarde...',
+            disabledButton: true,
+            buttonDisable: true
+        })
         if (data.username != "" && data.password != "") {
-            setData({
-                ...data,
-                buttonDisable: true
-            });
+          
             const url = Server.API +
                 data.username +
                 "/" +
@@ -212,7 +215,11 @@ const SignUpTreeScreen = ({ route, navigation, props}) => {
                         });
 
                     } else {
-
+                        setData({
+                            ...data,
+                            nameButton:'Próximo...',
+                            disabledButton: false
+                        })
                         Alert.alert(
                             "Nome ou senha de usuário incorreto",
                             "O nome de usuário ou senha não parece pertencer a uma conta. Verifique seus dados e tente novamente. ",
@@ -253,6 +260,12 @@ const SignUpTreeScreen = ({ route, navigation, props}) => {
         <View style={styles.container}>
             <StatusBar backgroundColor='#323a4e' barStyle="light-content" />
                 <View style={styles.header}>
+                <TouchableOpacity style={{ alignContent: 'center',  bottom: 5  }}
+                    onPress={() => navigation.goBack()}>
+                    <Image style={{ width: 25, height: 25, marginLeft: 5}}
+                        source={require('../../source/arrow.png')}
+                        resizeMode='contain' />
+                </TouchableOpacity>
                 <Text style={styles.text_header}> Falta pouco! {"\n"}Informe um login e senha para acesso ao aplicativo ;D</Text>
             </View>
             <View style={{ alignItems: 'center' }}>
@@ -264,7 +277,8 @@ const SignUpTreeScreen = ({ route, navigation, props}) => {
                         backgroundColor: colors.background
                     }]}
                 >
-            <ScrollView style={{ width: "100%", marginBottom: -25 }}>
+
+            <ScrollView style={{ width: "100%", marginBottom: -25 }} keyboardShouldPersistTaps={'handled'}>
 
                     <Text style={[styles.text_footer, {
                         color: colors.text
@@ -351,7 +365,7 @@ const SignUpTreeScreen = ({ route, navigation, props}) => {
 
                     <View style={styles.button}>
                         <TouchableOpacity
-                            disabled={data.buttonDisable}
+                            disabled={data.buttonDisable ? true : false}
                             style={styles.signIn}
                             onPress={() => { loginHandle() }}
                         >
@@ -363,7 +377,7 @@ const SignUpTreeScreen = ({ route, navigation, props}) => {
                             >
                                 <Text style={[styles.textSign, {
                                     color: '#fff'
-                                }]}>Cadastrar</Text>
+                                }]}>{data.nameButton}</Text>
                             </LinearGradient>
                         </TouchableOpacity>
 
