@@ -25,10 +25,38 @@ export default {
     API_DOADO_EDITAR: "https://petworld.marinamendesacademy.com.br/doacao/editar",
     API_RECOMENDACAO_CONTEUDO: "https://petworld.marinamendesacademy.com.br/recomendacao/pessoal/",
     API_RECOMENDACAO_COLABORATIVA: "https://petworld.marinamendesacademy.com.br/recomendacao/colaborativa/",
-    API_RECOMENDACAO_GOSTO_POST: "http://petworld.marinamendesacademy.com.br/gosto/inserir"
+    API_RECOMENDACAO_GOSTO_POST: "https://petworld.marinamendesacademy.com.br/gosto/inserir",
+    API_USUARIO_EDIT: "http://petworld.marinamendesacademy.com.br/gosto/inserir/usuario/editar",
+    API_GET_ANIMAL_USER: "http://petworld.marinamendesacademy.com.br/usuario/"
 
 
-
+    // API_PRINC: "http://192.168.1.245:8021/petWorld/",
+    // API:  "http://192.168.1.245:8021/petWorld/usuario/autenticar/",
+    // API_INSERIR_USER:  "http://192.168.1.245:8021/petWorld/usuario/inserir",
+    // API_ANIMAL: "http://192.168.1.245:8021/petWorld/animal/",
+    // API_GET_DOADO: "http://192.168.1.245:8021/petWorld/doacao/doacao/",
+    // API_UPLOAD_IMG: "http://192.168.1.245:8021/petWorld/animal/galeria",
+    // API_GET_IMG: "http://192.168.1.245:8021/petWorld/animal/galeria/",
+    // API_PET_DO_USUARIO: "http://192.168.1.245:8021/petWorld/usuario/",
+    // API_INSERIR_PET_PERDIDO: "http://192.168.1.245:8021/petWorld/perdido/inserir",
+    // API_GET_PET_PERDIDO: "http://192.168.1.245:8021/petWorld/perdido",
+    // API_GET_PET_ACHADO: "http://192.168.1.245:8021/petWorld/achado",
+    // API_INSERIR_IMAGEM_ACHADO: "http://192.168.1.245:8021/petWorld/achado/inserir",
+    // API_EDITAR_PERDIDO: "http://192.168.1.245:8021/petWorld/perdido/editar",
+    // API_EDITAR_ACHADO: "http://192.168.1.245:8021/petWorld/achado/editar",
+    // API_ACHADO_USER: "http://192.168.1.245:8021/petWorld/achado/usuario/",
+    // API_PERDIDO_USER: "http://192.168.1.245:8021/petWorld/perdido/usuario/",
+    // API_GET_PET_ACHADO_ID: "http://192.168.1.245:8021/petWorld/achado/",
+    // API_GET_PET_PERDIDO_ID: "http://192.168.1.245:8021/petWorld/perdido/",
+    // API_INSERT_DOACAO: "http://192.168.1.245:8021/petWorld/doacao/inserir",
+    // API_GET_DOADO: "http://192.168.1.245:8021/petWorld/doacao",
+    // API_INSERT_ANIMAL: "http://192.168.1.245:8021/petWorld/animal/inserir",
+    // API_DOADO_USER: "http://192.168.1.245:8021/petWorld/doacao/usuario/",
+    // API_DOADO_ID: "http://192.168.1.245:8021/petWorld/doacao/",
+    // API_DOADO_EDITAR: "http://192.168.1.245:8021/petWorld/doacao/editar",
+    // API_RECOMENDACAO_CONTEUDO: "http://192.168.1.245:8021/petWorld/recomendacao/pessoal/",
+    // API_RECOMENDACAO_COLABORATIVA: "http://192.168.1.245:8021/petWorld/recomendacao/colaborativa/",
+    // API_RECOMENDACAO_GOSTO_POST: "http://192.168.1.245:8021/petWorld/gosto/inserir"
 
 
 

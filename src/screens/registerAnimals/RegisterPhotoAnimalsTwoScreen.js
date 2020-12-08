@@ -10,18 +10,18 @@ import {
 } from 'react-native';
 import { Root } from 'native-base'
 import ImagePicker from 'react-native-image-crop-picker';
-import styles from '../settings/styles';
+import styles from '../settings/Styles';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Server from '../settings/Server';
 import { useIsFocused } from "@react-navigation/native"
 
 const RegisterPhotoAnimalsTwo = ({ route, navigation, props }) => {
 
-    const { idanimal } = route.params;
+    const { formdata } = route.params;
     const { imagem } = route.params;
 
     const [date, setData] = React.useState({
-        idanimal: idanimal,
+        formdata: formdata,
         imagemone: imagem,
         imagemtwo: [],
         variant: '',
@@ -45,12 +45,12 @@ const RegisterPhotoAnimalsTwo = ({ route, navigation, props }) => {
         }
     ];
 
-    
+
     const isFocused = useIsFocused();
 
     useEffect(() => {
         console.log(date)
-        date.idanimal = idanimal,
+        date.formdata = formdata,
         date.imagemtwo = []
         date.variant = ''
         date.haveimg = false
@@ -58,7 +58,7 @@ const RegisterPhotoAnimalsTwo = ({ route, navigation, props }) => {
 
 
     const _enviar = () => {
-    
+
         if (date.imagem != "") {
 
             sendToServer().then(() => {
@@ -84,46 +84,53 @@ const RegisterPhotoAnimalsTwo = ({ route, navigation, props }) => {
 
     const sendToServer = async () => {
 
-        let imagem = []
+        fetch(Server.API_INSERT_ANIMAL, {
+            method: "POST",
+            'Content-Type': 'multipart/form-data',
+            body: date.formdata
+        }).then(response => response.json())
+            .then(response => {
 
-        imagem = [date.imagemone,date.imagemtwo];
 
-        try {
+                try {
 
-            let formdata_img = new FormData();
+                    let formdata_img = new FormData();
+                    let imagem = []
 
-            imagem.forEach(item => {
+                    imagem = [date.imagemone, date.imagemtwo];
+                    imagem.forEach(item => {
 
-                const fileURL = item.imagem.path;
-                const fileName = fileURL.split("/").pop();
-                const ext = fileURL.split(".").pop();
+                        const fileURL = item.imagem.path;
+                        const fileName = fileURL.split("/").pop();
+                        const ext = fileURL.split(".").pop();
 
-                formdata_img.append("file", {
-                    type: "image/" + ext,
-                    uri: fileURL,
-                    name: fileName,
+                        formdata_img.append("file", {
+                            type: "image/" + ext,
+                            uri: fileURL,
+                            name: fileName,
 
-                });
+                        });
 
-                formdata_img.append("idanimal", date.idanimal);
+                        formdata_img.append("idanimal", response.idAnimal);
 
-                console.log(formdata_img)
+                        console.log(formdata_img)
 
-                fetch(Server.API_UPLOAD_IMG, {
-                    method: "POST",
-                    'Content-Type': 'multipart/form-data',
-                    body: formdata_img
-                }).then(response => response.json())
-                    .then(response => {
-                        navigation.navigate("HomeAP")
+                        fetch(Server.API_UPLOAD_IMG, {
+                            method: "POST",
+                            'Content-Type': 'multipart/form-data',
+                            body: formdata_img
+                        }).then(response => response.json())
+                            .then(response => {
+                                navigation.navigate("meusanimais")
 
-                    }).catch(error => {
-                        console.log(error);
+                            }).catch(error => {
+                                console.log(error);
+                            })
                     })
+                } catch (err) {
+                    console.log(err);
+                }
             })
-        } catch (err) {
-            console.log(err);
-        }
     }
 
 
@@ -149,7 +156,7 @@ const RegisterPhotoAnimalsTwo = ({ route, navigation, props }) => {
             .then(imagem => {
                 setData({
                     ...date,
-                    imagemtwo: {"imagem": imagem[0]},
+                    imagemtwo: { "imagem": imagem[0] },
                     haveimg: true
                 })
             })
@@ -158,14 +165,14 @@ const RegisterPhotoAnimalsTwo = ({ route, navigation, props }) => {
 
 
     const _navigation = () => {
-       console.log(date)
+        console.log(date)
         if (date.imagemtwo != "") {
             navigation.navigate(
                 "RegisterPhotoAnimalsTree"
                 , {
                     imagemone: date.imagemone,
                     imagemtwo: date.imagemtwo,
-                    idanimal: date.idanimal
+                    formdata: date.formdata
                 }
             )
         } else {

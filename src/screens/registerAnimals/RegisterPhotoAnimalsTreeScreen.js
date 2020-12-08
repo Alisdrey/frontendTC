@@ -27,7 +27,7 @@ import { Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
 import ImagePicker from 'react-native-image-crop-picker';
 import { Picker } from '@react-native-community/picker';
 import ResponsiveImage from 'react-native-responsive-image';
-import styles from '../settings/styles';
+import styles from '../settings/Styles';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useIsFocused } from "@react-navigation/native"
 import Server from '../settings/Server';
@@ -35,12 +35,12 @@ import Server from '../settings/Server';
 const RegisterPhotoAnimalsTree = ({ route, navigation, props }) => {
 
 
-    const { idanimal } = route.params;
+    const { formdata } = route.params;
     const { imagemone } = route.params;
     const { imagemtwo } = route.params;
 
     const [date, setData] = React.useState({
-        idanimal: idanimal,
+        formdata: formdata,
         imagemone: imagemone,
         imagemtwo: imagemtwo,
         imagemtree: [],
@@ -53,8 +53,8 @@ const RegisterPhotoAnimalsTree = ({ route, navigation, props }) => {
 
     useEffect(() => {
         console.log(date)
-        date.idanimal = idanimal,
-        date.imagemtree = []
+        date.formdata = formdata,
+            date.imagemtree = []
         date.variant = ''
         date.haveimg = false
     }, [isFocused]);
@@ -80,60 +80,67 @@ const RegisterPhotoAnimalsTree = ({ route, navigation, props }) => {
         if (date.imagem != "") {
             sendToServer().then(() => {
                 date.idanimal = []
-               console.log("sucesso")
-               
+                console.log("sucesso")
+
             })
         }
     }
 
     const sendToServer = async () => {
 
-        let imagem = []
+        fetch(Server.API_INSERT_ANIMAL, {
+            method: "POST",
+            'Content-Type': 'multipart/form-data',
+            body: date.formdata
+        }).then(response => response.json())
+            .then(response => {
 
-        imagem = [date.imagemone,date.imagemtwo, date.imagemtree];
-console.log(imagem)
-        try {
-            let formdata_img = new FormData();
+                let imagem = []
 
-            imagem.forEach(item => {
+                imagem = [date.imagemone, date.imagemtwo, date.imagemtree];
+                try {
+                    let formdata_img = new FormData();
 
-                const fileURL = item.imagem.path;
-                const fileName = fileURL.split("/").pop();
-                const ext = fileURL.split(".").pop();
+                    imagem.forEach(item => {
 
-                formdata_img.append("file", {
-                    type: "image/" + ext,
-                    uri: fileURL,
-                    name: fileName,
+                        const fileURL = item.imagem.path;
+                        const fileName = fileURL.split("/").pop();
+                        const ext = fileURL.split(".").pop();
 
-                });
+                        formdata_img.append("file", {
+                            type: "image/" + ext,
+                            uri: fileURL,
+                            name: fileName,
 
-                formdata_img.append("idanimal", date.idanimal);
+                        });
 
-                console.log(formdata_img)
+                        formdata_img.append("idanimal", response.idAnimal);
 
-                fetch(Server.API_UPLOAD_IMG, {
-                    method: "POST",
-                    'Content-Type': 'multipart/form-data',
-                    body: formdata_img
-                }).then(response => response.json())
-                    .then(response => {
-                        
-                       navigation.navigate("HomeAP")
+                        console.log(formdata_img)
 
-                    }).catch(error => {
-                        console.log(error);
+                        fetch(Server.API_UPLOAD_IMG, {
+                            method: "POST",
+                            'Content-Type': 'multipart/form-data',
+                            body: formdata_img
+                        }).then(response => response.json())
+                            .then(response => {
+
+                                navigation.navigate("meusanimais")
+
+                            }).catch(error => {
+                                console.log(error);
+                            })
                     })
+                } catch (err) {
+                    console.log(err);
+                }
             })
-        } catch (err) {
-            console.log(err);
-        }
     }
 
 
     const _handleActionSheetButton = (btnIndex) => {
         { console.log(date) }
-      
+
         ImagePicker.openPicker({
             multiple: true,
             width: 800,
@@ -154,7 +161,7 @@ console.log(imagem)
             .then(imagem => {
                 setData({
                     ...date,
-                    imagemtree: {"imagem": imagem[0]},
+                    imagemtree: { "imagem": imagem[0] },
                     haveimg: true
                 })
             })
@@ -189,14 +196,14 @@ console.log(imagem)
 
                 <View style={styles.actionsCardItem}>
 
-                <TouchableOpacity
-                       style={{ padding: 20 }}
+                    <TouchableOpacity
+                        style={{ padding: 20 }}
                         onPress={() =>
                             navigation.goBack()} >
                         <View style={styles.matchesCardItem}>
                             <Text style={styles.matchesTextGoBack}>
-                                <FontAwesome style={{fontSize:15}} name="arrow-left" />
-                            {/* <Text>{'\n'}voltar </Text> */}
+                                <FontAwesome style={{ fontSize: 15 }} name="arrow-left" />
+                                {/* <Text>{'\n'}voltar </Text> */}
                             </Text>
                         </View>
                     </TouchableOpacity>
@@ -204,7 +211,7 @@ console.log(imagem)
                     <TouchableOpacity style={{ padding: 20 }} onPress={() => _enviar()}>
                         <View style={styles.matchesCardItem}>
                             <Text style={styles.matchesTextConfirm}>
-                                <FontAwesome style={{fontSize:40}} name="check" />
+                                <FontAwesome style={{ fontSize: 40 }} name="check" />
                                 {/* <Text>{'\n'} confirmar </Text> */}
                             </Text>
                         </View>

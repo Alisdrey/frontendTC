@@ -199,17 +199,10 @@ const RegisterAnimalScreen = ({ route, navigation }) => {
             formdata.append('porte', data.porte)
             formdata.append('filhote', data.filhote)
 
-            fetch(Server.API_INSERT_ANIMAL, {
-                method: "POST",
-                'Content-Type': 'multipart/form-data',
-                body: formdata
-            }).then(response => response.json())
-                .then(response => {
+            navigation.navigate("RegisterPhotoAnimals", {
+                formdata: formdata
+            })
 
-                    navigation.navigate("RegisterPhotoAnimals", {
-                        idanimal: response.idAnimal
-                    })
-                })
 
         } else {
             setData({

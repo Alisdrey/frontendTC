@@ -85,7 +85,7 @@ const RegisterAnimalPerdidoScreen = ({ route, navigation }) => {
         AsyncStorage.getItem("User").then(userText => {
             const user = JSON.parse(userText);
 
-            let url = Server.API_PET_DO_USUARIO + user.idUsuario + '/pets'
+            let url = Server.API_PET_DO_USUARIO + user.idUsuario + '/pets/perdido'
             fetch(url)
                 .then(response => response.json())
                 .then(responseJson => {

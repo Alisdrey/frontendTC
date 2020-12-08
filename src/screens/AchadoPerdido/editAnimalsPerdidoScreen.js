@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styles from '../settings/styles';
+import styles from '../settings/Styles';
 import { useIsFocused } from '@react-navigation/native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Renderif from "../../componets/RenderIf";
@@ -28,14 +28,25 @@ const editAnimalsPerdidoScreen = ({ route, navigation, props }) => {
         userPet: [],
         user: {},
         images: [],
-        infDono: false
+        infDono: false,
+        loadinUser: false
     });
 
     const [load, setLoad] = useState(true)
 
     useEffect(() => {
-        getImagem();
-        getUserPet();
+
+        // navigation.addListener('focus', () => {
+        //     setData({
+        //         ...date,
+        //         detailperdido: date_Perdido,
+        //         userPet: [],
+        //         user: {},
+        //         images: [],
+        //         infDono: false,
+        //         loadinUser: false
+        //     })
+        // });
 
         const url = Server.API_GET_PET_PERDIDO_ID + date_Perdido.idPerdido
         fetch(url)
@@ -48,12 +59,13 @@ const editAnimalsPerdidoScreen = ({ route, navigation, props }) => {
                     })
                     setLoadingPerdido(true)
 
+                    getImagem();
+                    getUserPet();
                 }
             })
             .catch(err => {
                 console.log(err);
             });
-
 
         navigation.addListener('focus', () => setLoad(!load))
     }, [load, navigation])
@@ -65,10 +77,11 @@ const editAnimalsPerdidoScreen = ({ route, navigation, props }) => {
             .then(response => response.json())
             .then(responseJson => {
                 if (responseJson) {
-                    console.log("OI", responseJson)
+                    console.log(responseJson)
                     setData({
                         ...date,
-                        userPet: responseJson
+                        userPet: responseJson,
+                        loadinUser: true
                     })
                 }
             })
@@ -80,8 +93,8 @@ const editAnimalsPerdidoScreen = ({ route, navigation, props }) => {
     const getImagem = () => {
 
         var imagem = [];
-        for (let i = 0; i < date.detailperdido.Animal.Galeria.length; i++) {
-            imagem[i] = 'https://petworld.marinamendesacademy.com.br/' + date.detailperdido.Animal.Galeria[i].url
+        for (let i = 0; i < date_Perdido.Animal.Galeria.length; i++) {
+            imagem[i] = 'https://petworld.marinamendesacademy.com.br/' + date_Perdido.Animal.Galeria[i].url
         }
 
         setData({
@@ -89,11 +102,10 @@ const editAnimalsPerdidoScreen = ({ route, navigation, props }) => {
             images: imagem
         })
     }
-    const isFocused = useIsFocused();
 
     return (
         <>
-            {loadingPerdido ?
+            {loadingPerdido && date.loadinUser ?
 
                 <ImageBackground
                     style={styles.bg, { backgroundColor: '#ebebeb' }}
@@ -121,8 +133,7 @@ const editAnimalsPerdidoScreen = ({ route, navigation, props }) => {
                     ))}
                 </CardStack> */}
 
-
-                        <ImageBackground source={{ uri: Server.API_PRINC + date.detailperdido.Animal.Galeria[0].url }} style={styles.photo}>
+                        <ImageBackground source={{ uri: Server.API_PRINC + date_Perdido.Animal.Galeria[0].url }} style={styles.photo}>
                             <View style={styles.top}>
                                 <TouchableOpacity style={{ bottom: 20, alignContent: 'center' }}
                                     onPress={() => navigation.goBack()}>
@@ -136,17 +147,17 @@ const editAnimalsPerdidoScreen = ({ route, navigation, props }) => {
                             <ProfileItem
                                 navigation={navigation}
                                 matches={'Detalhes Animal'}
-                                name={date.detailperdido.Animal.nome.toUpperCase()}
-                                age={date.detailperdido.estado}
-                                location={date.detailperdido.cidade}
-                                info1={'Raça: ' + (date.detailperdido.Animal.raca)}
-                                info2={'Porte: ' + (date.detailperdido.Animal.porte)}
-                                info3={(date.detailperdido.Animal.especie) + ' - ' + (date.detailperdido.Animal.sexo == 'M' ? 'Macho' : 'Fêmea')}
-                                info4={('Filhote: ') + (date.detailperdido.Animal.filhote == '1' ? 'Sim' : 'Não')}
-                                info5={('Descrição do local: ') + (date.detailperdido.descricao)}
-                                info7={date.detailperdido}
+                                name={date_Perdido.Animal.nome.toUpperCase()}
+                                age={date_Perdido.estado}
+                                location={date_Perdido.cidade}
+                                info1={'Raça: ' + (date_Perdido.Animal.raca)}
+                                info2={'Porte: ' + (date_Perdido.Animal.porte)}
+                                info3={(date_Perdido.Animal.especie) + ' - ' + (date_Perdido.Animal.sexo == 'M' ? 'Macho' : 'Fêmea')}
+                                info4={('Filhote: ') + (date_Perdido.Animal.filhote == '1' ? 'Sim' : 'Não')}
+                                info5={('Descrição do local: ') + (date_Perdido.descricao)}
+                                info7={date_Perdido}
                                 iduser={user.idUsuario}
-                                iduserPerdido={date.detailperdido.idUsuario}
+                                iduserPerdido={date_Perdido.idUsuario}
 
                             />
                         </Renderif>
@@ -161,9 +172,9 @@ const editAnimalsPerdidoScreen = ({ route, navigation, props }) => {
                                 info3={'Cidade: ' + (date.userPet.cidade)}
                                 info2={'Rua: ' + (date.userPet.rua) + ' - ' + (date.userPet.numero)}
                                 info3={('Telefone: ') + (date.userPet.telefone)}
-                                info7={date.detailperdido}
+                                info7={date_Perdido}
                                 iduser={user.idUsuario}
-                                iduserPerdido={date.detailperdido.idUsuario}
+                                iduserPerdido={date_Perdido.idUsuario}
 
                             />
                         </Renderif>
@@ -178,7 +189,7 @@ const editAnimalsPerdidoScreen = ({ route, navigation, props }) => {
                                         })}>
                                         <Text style={styles.matchesTextProfileItem}>
                                             <FontAwesome name="info-circle" />   Ver informações do Dono
-                         </Text>
+                                        </Text>
                                     </TouchableOpacity>
                                     :
 

@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Root, ActionSheet } from 'native-base'
 import ImagePicker from 'react-native-image-crop-picker';
-import styles from '../settings/styles';
+import styles from '../settings/Styles';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Server from '../settings/Server';
 
@@ -23,7 +23,6 @@ const registerPhotoAnimalsAchadoScreen = ({ route, navigation, props }) => {
     const { cidade } = route.params;
     const { estado } = route.params;
     const { acolhido } = route.params;
-
     const [date, setData] = React.useState({
         hasImage: false,
         idusuario: idusuario,
@@ -83,7 +82,7 @@ const registerPhotoAnimalsAchadoScreen = ({ route, navigation, props }) => {
 
 
     const sendToServer = async () => {
-        console.log("entrou", date.imagem)
+        console.log("entrou", date)
         try {
             let formdata_img = new FormData();
 

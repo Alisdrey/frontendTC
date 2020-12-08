@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styles from '../settings/styles';
+import styles from '../settings/Styles';
 import AsyncStorage from '@react-native-community/async-storage';
 import Renderif from "../../componets/RenderIf";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -12,7 +12,7 @@ import {
     TouchableOpacity,
     Image,
     StyleSheet,
-    Dimensions,
+    Spinner,
     Alert
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -45,6 +45,7 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
     const { user } = route.params;
     const [load, setLoad] = useState(true)
 
+
     const [date, setData] = React.useState({
         detailDoacao: date_Doacao,
         user: user,
@@ -52,12 +53,24 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
         nameButton: 'Adotar Animal',
         disabledButton: false,
         userPet: {},
+        loadinUser: false
     });
 
 
     useEffect(() => {
+
+        navigation.addListener('focus', () => {
+            postRecommends();
+        });
+
+
         getUserPet();
-        console.log('date_Doacao',date_Doacao)
+
+
+        // navigation.addListener('focus', () => setLoad(!load))
+    }, [])
+
+    const postRecommends = () => {
         let formdata = new FormData();
 
         formdata.append('idUsuario', date.user.idUsuario)
@@ -68,18 +81,16 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
         formdata.append('pelo', date_Doacao.Animal.pelo)
         formdata.append('porte', date_Doacao.Animal.porte)
         formdata.append('filhote', date_Doacao.Animal.filhote)
-      
+
         fetch(Server.API_RECOMENDACAO_GOSTO_POST, {
             method: "POST",
             'Content-Type': 'multipart/form-data',
             body: formdata
-        }).then(response => response.json())
-            .then(response => {
+        }).then(val => {
+            console.log('')
+        })
 
-            })
-
-        navigation.addListener('focus', () => setLoad(!load))
-    }, [load, navigation])
+    }
 
     const getUserPet = () => {
         const url = Server.API_PET_DO_USUARIO + date_Doacao.idAntigoDono
@@ -89,13 +100,15 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
                 if (responseJson) {
                     setData({
                         ...date,
-                        userPet: responseJson
+                        userPet: responseJson,
+                        loadinUser: true
                     })
                 }
             })
             .catch(err => {
                 console.log(err);
             });
+
     }
 
     const _enviar = () => {
@@ -117,10 +130,10 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
                         })
                         let formdata = new FormData();
 
-                        formdata.append('idDoacao', date.detailDoacao.idDoacao)
-                        formdata.append('idanimal', date.detailDoacao.Animal.idAnimal)
-                        formdata.append('idAntigoDono', date.detailDoacao.Animal.idUsuario)
-                        formdata.append('idNovoDono', date.user.idUsuario)
+                        formdata.append('idDoacao', date_Doacao.idDoacao)
+                        formdata.append('idanimal', date_Doacao.Animal.idAnimal)
+                        formdata.append('idAntigoDono', date_Doacao.Animal.idUsuario)
+                        formdata.append('idNovoDono', user.idUsuario)
                         formdata.append('DataDoacao', moment().format('YYYY-MM-DD hh:mm:ss'))
 
 
@@ -130,6 +143,11 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
                             body: formdata
                         }).then(response => response.json())
                             .then(response => {
+                                setData({
+                                    ...date,
+                                    nameButton: 'Adotar Animal',
+                                    disabledButton: true
+                                })
                                 Alert.alert(
                                     "Parabéns!",
                                     "Você acabou de fazer uma ótima ação <3",
@@ -152,101 +170,108 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
 
     return (
 
-        <ImageBackground
-            style={styles.bg, { backgroundColor: '#ebebeb', height: "100%" }}
-        >
-            <ScrollView style={styles.containerProfile}>
-                <ImageBackground source={{ uri: Server.API_PRINC + date_Doacao.Animal.Galeria[0].url }} style={styles.photo}>
-                    <View style={styles.top}>
-                        <TouchableOpacity style={{ flexDirection: 'row', alignContent: 'center' }}
-                            onPress={() => navigation.goBack()}>
-                            <Image style={{ width: 25, height: 25, marginLeft: 5, bottom: 20 }}
-                                source={require('../../source/arrow.png')}
-                                resizeMode='contain' />
-                        </TouchableOpacity>
-                    </View>
-                </ImageBackground>
-                <Renderif test={!date.infDono}>
-                    <ProfileItem
-                        matches={'Detalhes do Animal'}
-                        name={date_Doacao.Animal.nome.toUpperCase()}
-                        age={'Não compre amor'}
-                        location={'adote e faça um animalzinho feliz.'}
-                        info1={'Raça: ' + (date_Doacao.Animal.raca)}
-                        info2={'Porte: ' + (date_Doacao.Animal.porte)}
-                        info3={(date_Doacao.Animal.especie) + ' - ' + (date_Doacao.Animal.sexo == 'M' ? 'Macho' : 'Fêmea')}
-                        info4={('Filhote: ') + (date_Doacao.Animal.filhote == '1' ? 'Sim' : 'Não')}
-                        info5={('Descrição do local: ') + (date_Doacao.descricao)}
+        <>
 
-                    />
-                </Renderif>
+            {true ?
 
-                <Renderif test={date.infDono}>
-                    <ProfileItem
-                        navigation={navigation}
-                        matches={'Dados do usuário'}
-                        name={(date.userPet.nome) + ' ' +  (date.userPet.sobrenome)}
-                        age={date.userPet.estado}
-                        location={date.userPet.cidade}
-                        info1={'Cep: ' + (date.userPet.cep)}
-                        info2={'Cidade: ' + (date.userPet.cidade)}
-                        info3={'Rua: ' + (date.userPet.rua) + ' - ' + (date.userPet.numero)}
-                        info4={('Telefone: ') + (date.userPet.telefone)}
-
-                    />
-                </Renderif>
+                <ImageBackground
+                    style={styles.bg, { backgroundColor: '#ebebeb', height: "100%" }}
+                >
+                    <ScrollView style={styles.containerProfile}>
+                        <ImageBackground source={{ uri: Server.API_PRINC + date_Doacao.Animal.Galeria[0].url }} style={styles.photo}>
+                            <View style={styles.top}>
+                                <TouchableOpacity style={{ flexDirection: 'row', alignContent: 'center' }}
+                                    onPress={() => navigation.goBack()}>
+                                    <Image style={{ width: 25, height: 25, marginLeft: 5, bottom: 20 }}
+                                        source={require('../../source/arrow.png')}
+                                        resizeMode='contain' />
+                                </TouchableOpacity>
+                            </View>
+                        </ImageBackground>
 
 
-                <View style={{ marginBottom: 20, marginTop: 10 }}>
-                    <View style={styles.matchesProfileItemInfDono}>
-                        {!date.infDono ?
-                            <TouchableOpacity
-                                onPress={() => setData({
-                                    ...date,
-                                    infDono: true
-                                })}>
-                                <Text style={styles.matchesTextProfileItem}>
-                                    <FontAwesome name="info-circle" />  Ver informações do Dono
-                         </Text>
-                            </TouchableOpacity>
-                            :
+                        <Renderif test={!date.infDono}>
+                            <ProfileItem
+                                matches={'Detalhes do Animal'}
+                                name={date_Doacao.Animal.nome.toUpperCase()}
+                                age={'Não compre amor'}
+                                location={'adote e faça um animalzinho feliz.'}
+                                info1={'Raça: ' + (date_Doacao.Animal.raca)}
+                                info2={'Porte: ' + (date_Doacao.Animal.porte)}
+                                info3={(date_Doacao.Animal.especie) + ' - ' + (date_Doacao.Animal.sexo == 'M' ? 'Macho' : 'Fêmea')}
+                                info4={('Filhote: ') + (date_Doacao.Animal.filhote == '1' ? 'Sim' : 'Não')}
+                                info5={('Descrição do local: ') + (date_Doacao.descricao)}
 
-                            <TouchableOpacity
-                                onPress={() => setData({
-                                    ...date,
-                                    infDono: false
-                                })}>
-                                <Text style={styles.matchesTextProfileItem}>
-                                    <FontAwesome name="info-circle" /> Ver Informações do Animal
+                            />
+                        </Renderif>
+
+                        <Renderif test={date.infDono}>
+                            <ProfileItem
+                                navigation={navigation}
+                                matches={'Dados do usuário'}
+                                name={(date.userPet.nome) + ' ' + (date.userPet.sobrenome)}
+                                age={date.userPet.estado}
+                                location={date.userPet.cidade}
+                                info1={'Cep: ' + (date.userPet.cep)}
+                                info2={'Cidade: ' + (date.userPet.cidade)}
+                                info3={'Rua: ' + (date.userPet.rua) + ' - ' + (date.userPet.numero)}
+                                info4={('Telefone: ') + (date.userPet.telefone)}
+
+                            />
+                        </Renderif>
+
+
+                        <View style={{ marginBottom: 20, marginTop: 10 }}>
+                            <View style={styles.matchesProfileItemInfDono}>
+                                {!date.infDono ?
+                                    <TouchableOpacity
+                                        onPress={() => setData({
+                                            ...date,
+                                            infDono: true
+                                        })}>
+                                        <Text style={styles.matchesTextProfileItem}>
+                                            <FontAwesome name="info-circle" />  Ver informações do Dono
+                                        </Text>
+                                    </TouchableOpacity>
+                                    :
+
+                                    <TouchableOpacity
+                                        onPress={() => setData({
+                                            ...date,
+                                            infDono: false
+                                        })}>
+                                        <Text style={styles.matchesTextProfileItem}>
+                                            <FontAwesome name="info-circle" /> Ver Informações do Animal
                                 </Text>
-                            </TouchableOpacity>}
+                                    </TouchableOpacity>}
 
-                    </View>
-                </View>
+                            </View>
+                        </View>
 
-                {user.idUsuario != date_Doacao.idAntigoDono &&
-                    date_Doacao.dataDoacao == null ?
-                    <View style={style.button}>
-                        <TouchableOpacity
-                            disabled={!date.disabledButton ? false : true}
-                            style={style.signIn}
-                            onPress={() => { _enviar() }}
-                        >
-                            <LinearGradient
-                                colors={['#ff9517', '#ff9517']}
-                                style={style.signIn}
-                            >
-                                <Text style={[style.textSign, {
-                                    color: '#fff'
-                                }]}>{date.nameButton}</Text>
-                            </LinearGradient>
-                        </TouchableOpacity>
-                    </View> : null
+                        {user.idUsuario != date_Doacao.idAntigoDono &&
+                            date_Doacao.dataDoacao == null ?
+                            <View style={style.button}>
+                                <TouchableOpacity
+                                    disabled={!date.disabledButton ? false : true}
+                                    style={style.signIn}
+                                    onPress={() => { _enviar() }}
+                                >
+                                    <LinearGradient
+                                        colors={['#ff9517', '#ff9517']}
+                                        style={style.signIn}
+                                    >
+                                        <Text style={[style.textSign, {
+                                            color: '#fff'
+                                        }]}>{date.nameButton}</Text>
+                                    </LinearGradient>
+                                </TouchableOpacity>
+                            </View> : null
+                        }
 
-                }
-
-            </ScrollView>
-        </ImageBackground>
+                    </ScrollView>
+                </ImageBackground>
+                : <Spinner color='#ff9517' />}
+        </>
     );
 };
 

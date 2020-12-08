@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../screens/settings/styles';
+import styles from '../screens/settings/Styles';
 import { Text, View, TouchableOpacity } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Renderif from "../componets/RenderIf";

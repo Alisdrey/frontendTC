@@ -43,16 +43,19 @@ const registerDoadoScreen = ({ route, navigation }) => {
     });
 
     const { colors } = useTheme();
+    const [load, setLoad] = useState(true)
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
 
         AsyncStorage.getItem("User").then(userText => {
             const user = JSON.parse(userText);
 
-            let url = Server.API_PET_DO_USUARIO + user.idUsuario + '/pets'
+            let url = Server.API_PET_DO_USUARIO + user.idUsuario + '/pets/doacao'
             fetch(url)
                 .then(response => response.json())
                 .then(responseJson => {
+                    console.log(responseJson)
                     if (responseJson != null) {
                         setData({
                             ...data,
@@ -65,7 +68,8 @@ const registerDoadoScreen = ({ route, navigation }) => {
                     console.log(error);
                 });
         });
-    }, []);
+        navigation.addListener('focus', () => setLoad(!load))
+    }, [load, navigation]);
 
 
     const textInputChangeAnimal = (val) => {

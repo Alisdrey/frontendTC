@@ -8,16 +8,18 @@ import {
   Text,
   TouchableOpacity,
   BackHandler,
-  ToastAndroid
+  ToastAndroid,
+  ScrollView,
+  RefreshControl
+
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import {
   Tab,
   Tabs,
-  ScrollableTab,
   TabHeading,
   Content,
-  Spinner
+  Spinner,
 } from 'native-base';
 import AsyncStorage from '@react-native-community/async-storage';
 import { CustomHeader } from '../../index';
@@ -46,7 +48,11 @@ moment.updateLocale("pt-br", {
 });
 moment.locale("pt-br");
 
-
+const wait = (timeout) => {
+  return new Promise(resolve => {
+    setTimeout(resolve, timeout);
+  });
+}
 const HomeAPScreen = ({ navigation, props }) => {
 
   const [feedConteudo, setFeedConteudo] = useState([]);
@@ -86,26 +92,7 @@ const HomeAPScreen = ({ navigation, props }) => {
     }, [backHandler]),
   );
 
-
-  useEffect(() => {
-    const url = Server.API_GET_DOADO
-    fetch(url)
-      .then(response => response.json())
-      .then(responseJson => {
-        if (responseJson) {
-          setFeedDoacao(responseJson);
-          setLoadingDoado(true)
-
-        }
-      })
-      .catch(err => {
-        console.log(err);
-      });
-    navigation.addListener('focus', () => setLoad(!load))
-  }, [load, navigation]);
-
-
-  useEffect(() => {
+  const getPerdido = () => {
     const url = Server.API_GET_PET_PERDIDO
     fetch(url)
       .then(response => response.json())
@@ -120,10 +107,9 @@ const HomeAPScreen = ({ navigation, props }) => {
       .catch(err => {
         console.log(err);
       });
-    navigation.addListener('focus', () => setLoad(!load))
-  }, [load, navigation]);
+  }
 
-  useEffect(() => {
+  const getAchado = () => {
     const url = Server.API_GET_PET_ACHADO
     fetch(url)
       .then(response => response.json())
@@ -136,6 +122,28 @@ const HomeAPScreen = ({ navigation, props }) => {
       .catch(err => {
         console.log(err);
       });
+  }
+
+  const getDoado = () => {
+    const url = Server.API_GET_DOADO
+    fetch(url)
+      .then(response => response.json())
+      .then(responseJson => {
+        if (responseJson) {
+          setFeedDoacao(responseJson);
+          setLoadingDoado(true)
+
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  useEffect(() => {
+    getPerdido()
+    getAchado();
+    getDoado();
     navigation.addListener('focus', () => setLoad(!load))
   }, [load, navigation]);
 
@@ -178,6 +186,28 @@ const HomeAPScreen = ({ navigation, props }) => {
       });
   }
 
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+
+    const url = Server.API_GET_DOADO
+    fetch(url)
+      .then(response => response.json())
+      .then(responseJson => {
+        if (responseJson) {
+          setFeedDoacao(responseJson);
+          setLoadingDoado(true)
+
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+
   function renderItemRecomendacaoCounteudo({ item: feed }) {
     return (
       <>
@@ -185,7 +215,7 @@ const HomeAPScreen = ({ navigation, props }) => {
           <TouchableOpacity
             key={feed.idDoacao}
             activeOpacity={0.6}
-            onPress={() => navigation.navigate('editAnimalDoacao', { date_Doacao: feedDoacao[0], user: user })}
+            onPress={() => navigation.navigate('editAnimalDoacao', { date_Doacao:feed, user: user })}
           >
             <Cover source={{ uri: Server.API_PRINC + feed.Animal.Galeria[0].url }} />
           </TouchableOpacity>
@@ -201,13 +231,11 @@ const HomeAPScreen = ({ navigation, props }) => {
         <TouchableOpacity
           key={feed.idDoacao}
           activeOpacity={0.6}
-          onPress={() => navigation.navigate('editAnimalDoacao', { date_Doacao: feedDoacao[0], user: user })}
+          onPress={() => navigation.navigate('editAnimalDoacao', { date_Doacao: feed, user: user })}
 
         >
           <Cover source={{ uri: Server.API_PRINC + feed.Animal.Galeria[0].url }} />
         </TouchableOpacity>
-
-
       </View>
     );
   }
@@ -222,9 +250,7 @@ const HomeAPScreen = ({ navigation, props }) => {
             </View>
 
             <View style={styles.postOptions}>
-              <TouchableOpacity>
-
-              </TouchableOpacity>
+       
             </View>
           </View>
           <Header>
@@ -278,7 +304,6 @@ const HomeAPScreen = ({ navigation, props }) => {
       </>
     );
   }
-
 
   function renderItemAchado({ item: feed }) {
     return (
@@ -345,7 +370,6 @@ const HomeAPScreen = ({ navigation, props }) => {
       </View>
     );
   }
-
 
   function renderItemPerdido({ item: feed }) {
     return (
@@ -426,7 +450,6 @@ const HomeAPScreen = ({ navigation, props }) => {
           tabBarBackgroundColor={'#323a4e'}
           tabBarUnderlineStyle={{ backgroundColor: "white" }}
         >
-
           <Tab heading={
             <TabHeading
               style={{
@@ -439,17 +462,24 @@ const HomeAPScreen = ({ navigation, props }) => {
             </TabHeading>
           }>
 
-            <Content padder style={{ backgroundColor: '#f0f0f0' }}>
-              {feedPerdido.length > 0 ?
-                <FlatList
-                  horizontal={false}
-                  data={feedPerdido}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={renderItemPerdido}
-                />
-                : !loadingPerdido ? <Spinner color='#ff9517' />
-                  : <Text style={{ textAlign: 'center' }}>Nenhum registro encontrado!</Text>}
-            </Content>
+            <ScrollView
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+            >
+              <Content padder style={{ backgroundColor: '#f0f0f0' }}>
+                {feedPerdido.length > 0 ?
+                  <FlatList
+                    horizontal={false}
+                    data={feedPerdido}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={renderItemPerdido}
+                  />
+                  : !loadingPerdido ? <Spinner color='#ff9517' />
+                    : <Text style={{ textAlign: 'center' }}>Nenhum registro encontrado!</Text>}
+              </Content>
+            </ScrollView>
+
           </Tab>
 
           <Tab heading={
@@ -461,17 +491,24 @@ const HomeAPScreen = ({ navigation, props }) => {
               <Text style={{ color: "white" }}>Achados </Text>
             </TabHeading>
           }>
-            <Content padder style={{ backgroundColor: '#f0f0f0' }}>
-              {feedAchado.length > 0 ?
-                <FlatList
-                  data={feedAchado}
-                  horizontal={false}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={renderItemAchado}
-                />
-                : !loadingAchado ? <Spinner color='#ff9517' />
-                  : <Text style={{ textAlign: 'center' }}>Nenhum registro encontrado!</Text>}
-            </Content>
+            {feedAchado.length > 0 ?
+              <ScrollView
+                refreshControl={
+                  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
+              >
+                <Content padder style={{ backgroundColor: '#f0f0f0' }}>
+                  <FlatList
+                    data={feedAchado}
+                    horizontal={false}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={renderItemAchado}
+                  />
+
+                </Content>
+              </ScrollView>
+              : !loadingAchado ? <Spinner color='#ff9517' />
+                : <Text style={{ textAlign: 'center', padding: 10 }}>Nenhum registro encontrado!</Text>}
           </Tab>
 
           <Tab heading={
@@ -487,43 +524,51 @@ const HomeAPScreen = ({ navigation, props }) => {
           }>
 
             {feedDoacao.length > 0 ?
-              <Content padder style={{ backgroundColor: '#f0f0f0' }}>
 
-                <Renderif test={feedColaborativo != ''}>
+              <ScrollView
+                refreshControl={
+                  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
+              >
+                <Content padder style={{ backgroundColor: '#f0f0f0' }}>
 
-                  <Text style={{ fontWeight: 'bold', padding: 5 }}>Outras pessoas gostaram</Text>
+
+                  <Renderif test={feedConteudo != ''}>
+
+                    <Text style={{ fontWeight: 'bold', padding: 5 }}>Recomendados para você</Text>
+
+                    <FlatList
+                      horizontal={true}
+                      data={feedConteudo}
+                      keyExtractor={(feedConteudo, index) => index.toString()}
+                      renderItem={renderItemRecomendacaoCounteudo}
+                    />
+
+                  </Renderif>
+
+                  <Renderif test={feedColaborativo != ''}>
+
+                    <Text style={{ fontWeight: 'bold', padding: 5 }}>Outras pessoas gostaram</Text>
+
+                    <FlatList
+                      horizontal={true}
+                      data={feedColaborativo}
+                      keyExtractor={(feedColaborativo, index) => index.toString()}
+                      renderItem={renderItemRecomendacaoColaborativa}
+                    />
+
+                  </Renderif>
+                  <Text style={{ fontWeight: 'bold', padding: 10, fontSize:18 }}>Doações</Text>
 
                   <FlatList
-                    horizontal={true}
-                    data={feedColaborativo}
-                    keyExtractor={(feedColaborativo, index) => index.toString()}
-                    renderItem={renderItemRecomendacaoColaborativa}
+                    data={feedDoacao}
+                    horizontal={false}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={renderItemDoacao}
                   />
 
-
-                </Renderif>
-
-                <Renderif test={feedConteudo != ''}>
-
-                  <Text style={{ fontWeight: 'bold', padding: 5 }}>Recomendados para você</Text>
-
-                  <FlatList
-                    horizontal={true}
-                    data={feedConteudo}
-                    keyExtractor={(feedConteudo, index) => index.toString()}
-                    renderItem={renderItemRecomendacaoCounteudo}
-                  />
-
-                </Renderif>
-
-                <FlatList
-                  data={feedDoacao}
-                  horizontal={false}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={renderItemDoacao}
-                />
-
-              </Content>
+                </Content>
+              </ScrollView>
               : !loadingDoado ? <Spinner color='#ff9517' />
                 : <Text style={{ textAlign: 'center', padding: 10 }}>Nenhum registro encontrado!</Text>}
 

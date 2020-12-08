@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../screens/settings/styles';
+import styles from '../screens/settings/Styles';
 import { Text, View } from 'react-native';
 import Icon from './Icon';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';

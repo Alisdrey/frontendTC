@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styles from '../settings/styles';
+import styles from '../settings/Styles';
 import {
     Tab,
     Tabs,
@@ -54,7 +54,7 @@ const minhaspublicacoesScreen = ({ navigation, props }) => {
     const [feedDoado, setFeedDoado] = useState([]);
     const [loadingDoado, setLoadingDoado] = useState(false);
     const [user, setUser] = useState([]);
-
+    const [load, setLoad] = useState(true)
 
     const fullWidth = Dimensions.get('window').width;
     const imageStyle = [
@@ -101,7 +101,8 @@ const minhaspublicacoesScreen = ({ navigation, props }) => {
                     console.log(error);
                 });
         });
-    }, []);
+        navigation.addListener('focus', () => setLoad(!load))
+    }, [load, navigation]);
 
     useEffect(() => {
 
@@ -121,7 +122,8 @@ const minhaspublicacoesScreen = ({ navigation, props }) => {
                     console.log(error);
                 });
         });
-    }, []);
+        navigation.addListener('focus', () => setLoad(!load))
+    }, [load, navigation]);
 
     useEffect(() => {
 
@@ -142,11 +144,9 @@ const minhaspublicacoesScreen = ({ navigation, props }) => {
                     console.log(error);
                 });
         });
-    }, []);
-
-
-
-
+        navigation.addListener('focus', () => setLoad(!load))
+    }, [load, navigation]);
+    
 
     function renderItemPerdido({ item: feed }) {
         return (
@@ -184,7 +184,7 @@ const minhaspublicacoesScreen = ({ navigation, props }) => {
                         user: user
                     })}>
                     <Image source={{ uri: Server.API_PRINC + feed.url }} style={imageStyle} />
-                    <Text style={nameStyle}>{'fdfd'}</Text>
+                    <Text style={nameStyle}>{'teste'}</Text>
                 </TouchableOpacity>
 
 
@@ -208,7 +208,6 @@ const minhaspublicacoesScreen = ({ navigation, props }) => {
                     <Image source={{ uri: Server.API_PRINC + feed.Animal.Galeria[0].url }} style={imageStyle} />
                     <Text style={nameStyle}>{'fdfd'}</Text>
                 </TouchableOpacity>
-
 
             </View>
         );

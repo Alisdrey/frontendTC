@@ -66,7 +66,7 @@ const updatePerdidoScreen = ({ route, navigation, props }) => {
                     disabledButton: false
                 })
                 navigation.navigate("editAnimalAchado", {
-                    date_Achado: date_Achado
+                    date_Achado: response
                 })
             })
             

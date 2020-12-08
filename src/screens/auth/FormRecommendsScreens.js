@@ -276,7 +276,7 @@ const FormRecommendsScreens = ({ route, navigation, props }) => {
             if(item == 'Macho'){
                 item = 'M'
             } 
-            if(item == 'Femêa'){
+            if(item == 'Fêmea'){
                 item = 'F'
             }
           
@@ -324,10 +324,10 @@ const FormRecommendsScreens = ({ route, navigation, props }) => {
                 method: "POST",
                 'Content-Type': 'multipart/form-data',
                 body: formdata
-            }).then(response => response.json())
-                .then(response => {
-                    navigation.navigate("HomeAP")
-                })
+            }).then(val => { navigation.navigate("HomeAP")  })
+                // .then(responseJson => {
+                //     navigation.navigate("HomeAP")
+            // }).then(val => { _login()  })
 
         } else {
             Alert.alert(

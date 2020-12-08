@@ -54,12 +54,12 @@ const SignUpScreen = ({ navigation }) => {
             disabledButton: true
         })
 
-        let data_nascimento
+        //let data_nascimento
 
         if (data.nome && data.sobrenome && sexo &&
-            data.nascimento && data.telefone) {
+            data.telefone) {
 
-            data_nascimento = moment(new Date(data.nascimento)).format("YYYY-MM-DD");
+            //data_nascimento = moment(new Date(data.nascimento)).format("YYYY-MM-DD");
 
             navigation.navigate(
                 "SignUpTwo"
@@ -67,7 +67,7 @@ const SignUpScreen = ({ navigation }) => {
                     nome: data.nome,
                     sobrenome: data.sobrenome,
                     sexo: sexo,
-                    nascimento: data_nascimento,
+                    nascimento: '1970-01-01',
                     telefone: data.telefone
                 }
             )
@@ -368,7 +368,7 @@ const SignUpScreen = ({ navigation }) => {
 
                     {/* =============== NASCIMENTO ======== */}
 
-                    <Text style={[styles.text_footer, {
+                    {/* <Text style={[styles.text_footer, {
                         color: colors.text,
                         marginTop: 35
                     }]}>Data de Nascimento</Text>
@@ -406,7 +406,7 @@ const SignUpScreen = ({ navigation }) => {
                         <Animatable.View animation="fadeInLeft" duration={500}>
                             <Text style={styles.errorMsg}>Campo obrigatório.</Text>
                         </Animatable.View>
-                    }
+                    } */}
 
                     {/* ===============  SEXO ============= */}
 
