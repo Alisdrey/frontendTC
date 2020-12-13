@@ -42,9 +42,9 @@ moment.locale("pt-br");
 const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
 
     const { date_Doacao } = route.params;
+    const { dateRecom } = route.params;
     const { user } = route.params;
-    const [load, setLoad] = useState(true)
-
+    const { recomendacao } = route.params;
 
     const [date, setData] = React.useState({
         detailDoacao: date_Doacao,
@@ -56,19 +56,15 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
         loadinUser: false
     });
 
+    const [load, setLoad] = useState(true)
 
     useEffect(() => {
-
         navigation.addListener('focus', () => {
             postRecommends();
         });
-
-
-        getUserPet();
-
-
-        // navigation.addListener('focus', () => setLoad(!load))
-    }, [])
+            getUserPet();
+        navigation.addListener('focus', () => setLoad(!load))
+    }, [date_Doacao.idAntigoDono])
 
     const postRecommends = () => {
         let formdata = new FormData();
@@ -93,7 +89,13 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
     }
 
     const getUserPet = () => {
-        const url = Server.API_PET_DO_USUARIO + date_Doacao.idAntigoDono
+        let value = "";
+        if(recomendacao) {
+            value = dateRecom.idAntigoDono
+        } else {
+            value = date_Doacao.idAntigoDono
+        }
+        const url = Server.API_PET_DO_USUARIO +  value
         fetch(url)
             .then(response => response.json())
             .then(responseJson => {
@@ -108,7 +110,6 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
             .catch(err => {
                 console.log(err);
             });
-
     }
 
     const _enviar = () => {
@@ -128,41 +129,55 @@ const editAnimalsDoacaoScreen = ({ route, navigation, props }) => {
                             nameButton: 'Aguarde...',
                             disabledButton: true
                         })
-                        let formdata = new FormData();
-
-                        formdata.append('idDoacao', date_Doacao.idDoacao)
-                        formdata.append('idanimal', date_Doacao.Animal.idAnimal)
-                        formdata.append('idAntigoDono', date_Doacao.Animal.idUsuario)
-                        formdata.append('idNovoDono', user.idUsuario)
-                        formdata.append('DataDoacao', moment().format('YYYY-MM-DD hh:mm:ss'))
-
-
+                        const formdata = new FormData();
+                        if(recomendacao) {
+                            formdata.append('idDoacao', dateRecom.idDoacao)
+                            formdata.append('idanimal', date_Doacao.Animal.idAnimal)
+                            formdata.append('idNovoDono', user.idUsuario)
+                            formdata.append('DataDoacao', moment().format('YYYY-MM-DD hh:mm:ss'))
+                        } else {
+                            formdata.append('idDoacao', date_Doacao.idDoacao)
+                            formdata.append('idanimal', date_Doacao.Animal.idAnimal)
+                            formdata.append('idAntigoDono', date_Doacao.Animal.idUsuario)
+                            formdata.append('idNovoDono', user.idUsuario)
+                            formdata.append('DataDoacao', moment().format('YYYY-MM-DD hh:mm:ss'))
+                        }
+                      
                         fetch(Server.API_DOADO_EDITAR, {
                             method: "POST",
                             'Content-Type': 'multipart/form-data',
                             body: formdata
                         }).then(response => response.json())
                             .then(response => {
-                                setData({
-                                    ...date,
-                                    nameButton: 'Adotar Animal',
-                                    disabledButton: true
-                                })
-                                Alert.alert(
-                                    "Parabéns!",
-                                    "Você acabou de fazer uma ótima ação <3",
-                                    [
-                                        {
-                                            text: "OK",
-                                            onPress: () =>
-                                                navigation.navigate("HomeAP"),
-                                            style: "default"
-                                        },
-                                    ],
-                                    { cancelable: false }
-                                )
+                                if (response) {
+                                    setData({
+                                        ...date,
+                                        nameButton: 'Adotar Animal',
+                                        disabledButton: true
+                                    })
+                                    Alert.alert(
+                                        "Parabéns!",
+                                        "Você acabou de fazer uma ótima ação <3",
+                                        [
+                                            {
+                                                text: "OK",
+                                                onPress: () =>
+                                                    navigation.navigate("HomeAP"),
+                                                style: "default"
+                                            },
+                                        ],
+                                        { cancelable: false }
+                                    )
 
+                                } else {
+                                    setData({
+                                        ...date,
+                                        nameButton: 'Adotar Animal',
+                                        disabledButton: false
+                                    })
+                                }
                             })
+
                     }
                 }
             ]);

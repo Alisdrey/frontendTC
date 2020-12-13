@@ -97,7 +97,7 @@ const meusanimaisScreen = ({ navigation, props }) => {
 
 
                         {feed.Galeria != '' ? <Image source={{ uri: Server.API_PRINC + feed.Galeria[0].url }} style={imageStyle} />
-                            : console.log("tnc")
+                            : console.log("d")
                         }
                         <Text style={nameStyle}>{(feed.nome)}</Text>
                         <Text style={{ fontSize: 15, color: '#363636', textAlign: 'center', paddingBottom: 10 }}>{feed.raca}</Text>
@@ -113,6 +113,12 @@ const meusanimaisScreen = ({ navigation, props }) => {
             <CustomHeader title="Home" isHome={true} navigation={navigation} />
 
             <View style={styles.containerMatches}>
+                <Text style={{
+                    paddingLeft: 10,
+                    paddingTop: 10,
+                    fontSize:18,
+                    fontWeight: "bold"
+                }}>Meus Animais</Text>
                 {feedMeuAnimal.length > 0 ?
                     <FlatList
                         numColumns={2}

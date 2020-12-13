@@ -18,7 +18,7 @@ const CustomDrawerContent = ({ props, navigation }) => {
 
   const clearAsync = async () => {
     await AsyncStorage.removeItem('User').then(responseJson => {
-      alert(user.nome)
+      navigation.navigate("Splash")
     })
       .catch(err => {
         console.log(err);

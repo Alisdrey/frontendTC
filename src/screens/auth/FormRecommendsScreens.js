@@ -54,7 +54,7 @@ const FormRecommendsScreens = ({ route, navigation, props }) => {
 
     const itemsRaca = [
         {
-            name: 'Cachorro',
+            name: 'Cão',
             id: 0,
             children: [
                 {
@@ -195,6 +195,7 @@ const FormRecommendsScreens = ({ route, navigation, props }) => {
         },
     ];
 
+    const [itensRaca, setItensRaca] = React.useState({})
 
     const [data, setData] = React.useState({
 
@@ -206,7 +207,6 @@ const FormRecommendsScreens = ({ route, navigation, props }) => {
         pelo: [],
         porte: [],
         filhote: "",
-
     });
 
 
@@ -377,6 +377,136 @@ const FormRecommendsScreens = ({ route, navigation, props }) => {
 
     const textInputChangeEspecie = (val) => {
         if (val) {
+            if(val == "Cão") {
+                setItensRaca([
+                    {
+                        name: 'Cão',
+                        id: 0,
+                        children: [
+                            {
+                                name: 'Pug',
+                                id: 1,
+                            },
+                            {
+                                name: 'Maltês',
+                                id: 2,
+                            },
+                            {
+                                name: 'Buldogue',
+                                id: 3,
+                            },
+                            {
+                                name: 'PitBull',
+                                id: 4,
+                            },
+                            {
+                                name: 'Spitz Alemão',
+                                id: 5,
+                            },
+                            {
+                                name: 'Raça Indefinida',
+                                id: 6,
+                            },
+                        ],
+                    },
+                ]);
+            } else if(val == "Gato") {
+                setItensRaca([
+                    {
+                        name: 'Gato',
+                        id: 1,
+                        children: [
+                            {
+                                name: 'Persa',
+                                id: 1,
+                            },
+                            {
+                                name: 'Siamês',
+                                id: 2,
+                            },
+                            {
+                                name: 'Maine Coon',
+                                id: 3,
+                            },
+                            {
+                                name: 'Ragdoll',
+                                id: 4,
+                            },
+                            {
+                                name: 'Sphynx',
+                                id: 5,
+                            },
+                            {
+                                name: 'Raça Indefinida',
+                                id: 6,
+                            },
+                        ],
+                    },
+                ]);
+            } else {
+                setItensRaca([
+                    {
+                        name: 'Cão',
+                        id: 0,
+                        children: [
+                            {
+                                name: 'Pug',
+                                id: 1,
+                            },
+                            {
+                                name: 'Maltês',
+                                id: 2,
+                            },
+                            {
+                                name: 'Buldogue',
+                                id: 3,
+                            },
+                            {
+                                name: 'PitBull',
+                                id: 4,
+                            },
+                            {
+                                name: 'Spitz Alemão',
+                                id: 5,
+                            },
+                            {
+                                name: 'Raça Indefinida',
+                                id: 6,
+                            },
+                        ],
+                    },
+                    {
+                        name: 'Gato',
+                        id: 1,
+                        children: [
+                            {
+                                name: 'Persa',
+                                id: 1,
+                            },
+                            {
+                                name: 'Siamês',
+                                id: 2,
+                            },
+                            {
+                                name: 'Maine Coon',
+                                id: 3,
+                            },
+                            {
+                                name: 'Ragdoll',
+                                id: 4,
+                            },
+                            {
+                                name: 'Sphynx',
+                                id: 5,
+                            },
+                            {
+                                name: 'Raça Indefinida',
+                                id: 6,
+                            },
+                        ],
+                    },
+                ]);
+            }
             setData({
                 ...data,
                 especie: val
@@ -419,8 +549,7 @@ const FormRecommendsScreens = ({ route, navigation, props }) => {
             });
         }
     }
-
-
+    
     return (
 
         <View style={styles.container}>
@@ -472,10 +601,10 @@ const FormRecommendsScreens = ({ route, navigation, props }) => {
                         color: colors.text
                     }]}>Raça</Text>
                     <View style={styles.action, { width: '100%', }}>
-
+                        {console.log(itensRaca)}
                         <SectionedMultiSelect
                             showCancelButton={true}
-                            items={itemsRaca}
+                            items={itensRaca}
                             uniqueKey="name"
                             subKey="children"
                             selectText="Selecione..."

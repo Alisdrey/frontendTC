@@ -58,7 +58,6 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
     const _clear = () => {
     setData({
         ...data,
-        user: {},
         descricaolocal: "",
         descricaoanimal: "",
         estado: "",
@@ -103,7 +102,7 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
 
 
     const textInputChangeAnimal = (val) => {
-        if (val.trim().length > 0) {
+        if (val.trim().length >= 0) {
 
             setData({
                 ...data,
@@ -122,7 +121,7 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
 
     const textInputChangeLocal = (val) => {
 
-        if (val.trim().length > 0) {
+        if (val.trim().length >= 0) {
 
             setData({
                 ...data,
@@ -188,7 +187,6 @@ const registerAnimalsAchadoScreen = ({ route, navigation }) => {
     }
 
     const _enviar = () => {
-        console.log("data",data)
         if (data.descricaolocal != '' && data.descricaoanimal != '' &&
             cidade != '' && estado != '' && data.acolhido != '') {
             navigation.navigate(

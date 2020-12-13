@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import styles from '../settings/Styles';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Renderif from "../../componets/RenderIf";
+import LinearGradient from 'react-native-linear-gradient';
 import {
     ScrollView,
     View,
     Text,
     ImageBackground,
     TouchableOpacity,
-    Image
+    Image,
+    Alert
 } from 'react-native';
 import ProfileItem from '../../componets/ProfileItemAchado';
 import Server from '../settings/Server';
@@ -25,7 +27,9 @@ const editAnimalsAchadoScreen = ({ route, navigation, props }) => {
         detailachado: date_Achado,
         infDono: false,
         userPet: {},
-        loadinUser: false
+        loadinUser: false,
+        nameButton: 'Animal Encontrado',
+        disabledButton: false,
 
     });
 
@@ -84,6 +88,68 @@ const editAnimalsAchadoScreen = ({ route, navigation, props }) => {
             .catch(err => {
                 console.log(err);
             });
+    }
+
+    const _enviar = () => {
+        Alert.alert(
+            "Confirmação",
+            "Animal Realmente Encontrado? ",
+            [
+                {
+                    text: "Não",
+                    onPress: () => null,
+                    style: "cancel"
+                },
+                {
+                    text: "Sim", onPress: () => {
+                        setData({
+                            ...date,
+                            nameButton: 'Aguarde...',
+                            disabledButton: true
+                        })
+                        let formdata = new FormData();
+
+                        formdata.append('idAchado', date_Achado.idAchado)
+                        formdata.append('idusuario', date_Achado.idUsuario)
+                        formdata.append('descricaoLocal', date_Achado.descricaoLocal)
+                        formdata.append('descricaoAnimal', date_Achado.descricaoAnimal)
+                        formdata.append('estado', date_Achado.estado)
+                        formdata.append('cidade', date_Achado.cidade)
+                        formdata.append('acolhido', date_Achado.acolhido)
+                        formdata.append('status', 0)
+                        formdata.append('file', null)
+
+
+                        fetch(Server.API_EDITAR_ACHADO, {
+                            method: "POST",
+                            'Content-Type': 'multipart/form-data',
+                            body: formdata
+                        }).then(response => response.json())
+                            .then(response => {
+                                setData({
+                                    ...date,
+                                    nameButton: 'Animal Encontrado',
+                                    disabledButton: false
+                                })
+                                Alert.alert(
+                                    "Parabéns!",
+                                    "Você acabou de fazer uma ótima ação <3",
+                                    [
+                                        {
+                                            text: "OK",
+                                            onPress: () =>
+                                            navigation.navigate("minhaspublicacoes"),
+                                            style: "default"
+                                        },
+                                    ],
+                                    { cancelable: false }
+                                )
+                                
+
+                            })
+                    }
+                }
+            ]);
     }
 
     return (
@@ -148,7 +214,7 @@ const editAnimalsAchadoScreen = ({ route, navigation, props }) => {
                                             infDono: true
                                         })}>
                                         <Text style={styles.matchesTextProfileItem}>
-                                            <FontAwesome name="info-circle" />  Ver informações do Dono
+                                            <FontAwesome name="info-circle" /> Ver informações do responsável
                                     </Text>
                                     </TouchableOpacity>
                                     :
@@ -165,6 +231,42 @@ const editAnimalsAchadoScreen = ({ route, navigation, props }) => {
 
                             </View>
                         </View>
+                        {user.idUsuario == date_Achado.idUsuario &&
+                            date_Achado.status == 1 ?
+                            <View style={{
+                                alignItems: 'center',
+                                marginBottom: 20
+                            }}>
+                                <TouchableOpacity
+                                    disabled={!date.disabledButton ? false : true}
+                                    style={{
+                                        width: '95%',
+                                        height: 50,
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        borderRadius: 10
+                                    }}
+                                    onPress={() => { _enviar() }}
+                                >
+                                    <LinearGradient
+                                        colors={['#ff9517', '#ff9517']}
+                                        style={{
+                                            width: '95%',
+                                            height: 50,
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            borderRadius: 10
+                                        }}
+                                    >
+                                        <Text style={{
+                                             fontSize: 18,
+                                             fontWeight: 'bold',
+                                            color: '#fff'
+                                        }}>{date.nameButton}</Text>
+                                    </LinearGradient>
+                                </TouchableOpacity>
+                            </View> : null
+                        }
                     </ScrollView>
                 </ImageBackground>
                 : <Spinner color='#ff9517' />}

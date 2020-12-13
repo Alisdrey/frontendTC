@@ -215,7 +215,7 @@ const HomeAPScreen = ({ navigation, props }) => {
           <TouchableOpacity
             key={feed.idDoacao}
             activeOpacity={0.6}
-            onPress={() => navigation.navigate('editAnimalDoacao', { date_Doacao:feed, user: user })}
+            onPress={() => navigation.navigate('editAnimalDoacao', { date_Doacao: feed, user: user, dateRecom: feed.Doacao, recomendacao: true })}
           >
             <Cover source={{ uri: Server.API_PRINC + feed.Animal.Galeria[0].url }} />
           </TouchableOpacity>
@@ -231,7 +231,7 @@ const HomeAPScreen = ({ navigation, props }) => {
         <TouchableOpacity
           key={feed.idDoacao}
           activeOpacity={0.6}
-          onPress={() => navigation.navigate('editAnimalDoacao', { date_Doacao: feed, user: user })}
+          onPress={() => navigation.navigate('editAnimalDoacao', { date_Doacao: feed, user: user, dateRecom: feed.Doacao,  recomendacao: true })}
 
         >
           <Cover source={{ uri: Server.API_PRINC + feed.Animal.Galeria[0].url }} />
@@ -250,7 +250,7 @@ const HomeAPScreen = ({ navigation, props }) => {
             </View>
 
             <View style={styles.postOptions}>
-       
+
             </View>
           </View>
           <Header>
@@ -462,23 +462,23 @@ const HomeAPScreen = ({ navigation, props }) => {
             </TabHeading>
           }>
 
-            <ScrollView
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }
-            >
-              <Content padder style={{ backgroundColor: '#f0f0f0' }}>
-                {feedPerdido.length > 0 ?
+            {feedPerdido.length > 0 ?
+              <ScrollView
+                refreshControl={
+                  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
+              >
+                <Content padder style={{ backgroundColor: '#f0f0f0' }}>
                   <FlatList
                     horizontal={false}
                     data={feedPerdido}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={renderItemPerdido}
                   />
-                  : !loadingPerdido ? <Spinner color='#ff9517' />
-                    : <Text style={{ textAlign: 'center' }}>Nenhum registro encontrado!</Text>}
-              </Content>
-            </ScrollView>
+                </Content>
+              </ScrollView>
+              : !loadingPerdido ? <Spinner color='#ff9517' />
+                : <Text style={{ textAlign: 'center', padding: 10 }}>Nenhum registro encontrado!</Text>}
 
           </Tab>
 
@@ -558,7 +558,7 @@ const HomeAPScreen = ({ navigation, props }) => {
                     />
 
                   </Renderif>
-                  <Text style={{ fontWeight: 'bold', padding: 10, fontSize:18 }}>Doações</Text>
+                  <Text style={{ fontWeight: 'bold', padding: 10, fontSize: 18 }}>Doações</Text>
 
                   <FlatList
                     data={feedDoacao}

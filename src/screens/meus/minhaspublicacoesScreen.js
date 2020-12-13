@@ -184,7 +184,7 @@ const minhaspublicacoesScreen = ({ navigation, props }) => {
                         user: user
                     })}>
                     <Image source={{ uri: Server.API_PRINC + feed.url }} style={imageStyle} />
-                    <Text style={nameStyle}>{'teste'}</Text>
+                    <Text style={nameStyle}>{feed.nome}</Text>
                 </TouchableOpacity>
 
 
@@ -206,7 +206,7 @@ const minhaspublicacoesScreen = ({ navigation, props }) => {
                         user: user
                     })}>
                     <Image source={{ uri: Server.API_PRINC + feed.Animal.Galeria[0].url }} style={imageStyle} />
-                    <Text style={nameStyle}>{'fdfd'}</Text>
+                    <Text style={nameStyle}>{feed.Animal.nome}</Text>
                 </TouchableOpacity>
 
             </View>
